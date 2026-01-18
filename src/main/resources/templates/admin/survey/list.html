@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xml:lang="ja"
+    layout:decorate="~{admin/admin_layout}">
+
+<head>
+    <title>アンケート一覧</title>
+</head>
+
+<body>
+    <main layout:fragment="content">
+        <h2>アンケート一覧</h2>
+
+        <!-- Flashメッセージの表示 -->
+        <p th:if="${message}" th:text="${message}" style="color: blue;">
+            完了メッセージ
+        </p>
+        <p th:if="${errorMessage}" th:text="${errorMessage}" style="color:red;">
+            エラーメッセージ
+        </p>
+
+        <table class="table table-striped table-hover">
+            <thead>
+                <th>ID</th>
+                <th>タイトル</th>
+                <th>詳細</th>
+            </thead>
+            <tbody>
+                <tr th:each="enquete : ${enquetes}">
+                    <td th:text="${enquete.id}">ID</td>
+                    <td th:text="${enquete.title}">タイトル</td>
+                    <td>
+                        <a th:href="@{/admin/enquete/detail/{id}(id=${enquete.id})}">
+                            詳細
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <a th:href="@{/admin/enquete/new}" class="btn btn-primary">新規登録</a>
+        <br>
+        <!-- メニュー画面へ -->
+        <a th:href="@{/}" class="btn btn-link mt-3">メニュー画面へ</a>
+
+    </main>
+</body>
+
+</html>

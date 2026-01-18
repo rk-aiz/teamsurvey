@@ -1,19 +1,14 @@
 package com.github.rk_aiz.teamsurvey.application.service;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
 
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
-import com.github.rk_aiz.teamsurvey.domain.repository.SurveyRepository;
+import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
 
-import lombok.RequiredArgsConstructor;
+public interface SurveyService {
 
-@Service
-@Transactional
-@RequiredArgsConstructor
-public class SurveyService {
-
-    private final SurveyRepository surveyRepository;
+    /** 全てのアンケートを取得します */
+    List<Survey> findAllSurveys();
 
     /**
      * アンケート詳細を取得します。
@@ -22,15 +17,14 @@ public class SurveyService {
      * @return アンケートドメインモデル
      * @throws IllegalArgumentException アンケートが存在しない場合
      */
-    public Survey getSurvey(Integer surveyId) {
-        // Serviceは「どうやってDBから取るか」や「Entityの変換」を知らなくていい
-        // ただ「Repositoryからドメインモデルが返ってくる」ことだけを知っている
-        Survey survey = surveyRepository.findById(surveyId);
+    Survey findSurveyById(Integer surveyId);
 
-        if (survey == null) {
-            throw new IllegalArgumentException("指定されたアンケートが見つかりません: " + surveyId);
-        }
+    /**
+     * ユースケース: 既存アンケートを流用して、新規登録用の雛形を取得する
+     */
+    Survey findSurveyAsDraftCopy(Integer id);
 
-        return survey;
-    }
+    public Survey saveSurvey(Survey survey);
+
+    public boolean tryChangeStatusById(Integer id, SurveyStatus status);
 }

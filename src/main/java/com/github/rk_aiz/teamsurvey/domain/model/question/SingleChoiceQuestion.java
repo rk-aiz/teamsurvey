@@ -1,5 +1,6 @@
 package com.github.rk_aiz.teamsurvey.domain.model.question;
 
+import com.github.rk_aiz.teamsurvey.domain.model.AnswerOption;
 import com.github.rk_aiz.teamsurvey.domain.type.QuestionType;
 
 import lombok.Builder;
@@ -26,7 +27,7 @@ public class SingleChoiceQuestion extends Question {
 
     @Override
     public boolean isValidQuestion() {
-        return super.isValidQuestion() && !answerOption.isEmpty();
+        return super.isValidQuestion() && !getAnswerOption().isEmpty();
     }
 
     @Override
@@ -38,7 +39,7 @@ public class SingleChoiceQuestion extends Question {
                 .build();
     }
 
-    public void setAnswerOption(AnswerOption answerOption) {
-        this.answerOption = (answerOption != null) ? answerOption : AnswerOption.EMPTY;
+    public AnswerOption getAnswerOption() {
+        return this.answerOption != null ? this.answerOption : AnswerOption.EMPTY;
     }
 }

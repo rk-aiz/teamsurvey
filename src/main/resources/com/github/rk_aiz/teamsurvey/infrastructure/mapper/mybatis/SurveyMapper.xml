@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.SurveyMapper">
+
+    <!-- 
+		マッピング定義 (ResultMap)
+		DBの結合結果を、EnqueteオブジェクトとList<Question>にマッピングします
+		
+		※Enum型 (status, resultVisibility, type等) はデフォルトで定数名(String)としてマッピングされます。
+		数値(Ordinal)や独自のコード値でマッピングする場合は、typeHandler属性の指定や@EnumValueの設定が必要です。
+        TODO : このマッピングの実行回数を、Redisなどで減らせるか調査
+    -->
+    <resultMap id="SurveyResultMap" type="com.github.rk_aiz.teamsurvey.infrastructure.entity.SurveyEntity">
+        <id property="id" column="id" />
+        <result property="title" column="title" />
+        <result property="allowGuest" column="allow_guest" />
+        <result property="status" column="status" />
+        <!-- 例: Ordinal(数値)でマッピングする場合 -->
+        <!-- <result property="status" column="status" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler" /> -->
+        <result property="resultVisibility" column="result_visibility" />
+        <result property="deadline" column="deadline" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+
+        <!-- 1対多の関係をマッピング -->
+        <collection property="questions" ofType="com.github.rk_aiz.teamsurvey.infrastructure.entity.QuestionEntity">
+            <id property="id" column="q_id" />
+            <result property="enqueteId" column="id" />
+            <result property="text" column="question_text" />
+            <result property="type" column="question_type" />
+            <result property="required" column="required" />
+            <result property="displayOrder" column="display_order" />
+            <result property="createdAt" column="q_created_at" />
+            <result property="updatedAt" column="q_updated_at" />
+            <association property="answerPattern"
+                javaType="com.github.rk_aiz.teamsurvey.infrastructure.entity.AnswerPatternEntity">
+                <id property="id" column="answer_pattern_id" />
+                <result property="patternName" column="pattern_name" />
+                
+                <collection property="items" ofType="com.github.rk_aiz.teamsurvey.infrastructure.entity.AnswerPatternItemEntity">
+                    <id property="id" column="item_id" />
+                    <result property="answerPatternId" column="answer_pattern_id" />
+                    <result property="itemText" column="item_text"/>
+                    <result property="itemOrder" column="item_order"/>
+                </collection>
+            </association>
+        </collection>
+    </resultMap>
+
+    <!-- 全件取得: ここでは質問リストは取得せず、軽量にする -->
+    <select id="selectAll" resultType="com.github.rk_aiz.teamsurvey.infrastructure.entity.SurveyEntity"> SELECT id, title,
+        created_at, updated_at FROM enquetes ORDER BY id </select>
+
+    <!-- ヘッダーのみ取得 (軽量: 質問リストなどは取得しない) -->
+    <select id="selectHeaderById" resultType="com.github.rk_aiz.teamsurvey.infrastructure.entity.SurveyEntity">
+        SELECT id, title, allow_guest, status, result_visibility, deadline, created_at, updated_at
+        FROM enquetes
+        WHERE id = #{id}
+    </select>
+
+    <!-- ID指定取得: JOINして質問リストも一緒に取得する -->
+    <select id="selectById" resultMap="SurveyResultMap">
+        SELECT  e.id, 
+                e.title,
+                e.allow_guest,
+                e.status,
+                e.result_visibility,
+                e.deadline,
+                e.created_at,
+                e.updated_at, 
+                q.id as q_id, 
+                q.question_text, 
+                q.question_type, 
+                q.display_order,
+                q.created_at AS q_created_at,
+                q.updated_at AS q_updated_at,
+                ap.id AS answer_pattern_id,
+                ap.pattern_name AS pattern_name,
+                api.id AS item_id,
+                api.item_text AS item_text,
+                api.item_order AS item_order
+        FROM    enquetes as e 
+        LEFT JOIN questions as q 
+        ON      e.id = q.enquete_id
+        LEFT JOIN answer_patterns as ap
+        ON      q.answer_pattern_id = ap.id
+        LEFT JOIN answer_pattern_items as api
+        ON      ap.id = api.answer_pattern_id
+        WHERE e.id = #{id} ORDER BY q.display_order, q.id, api.item_order
+    </select>
+
+    <!-- 権限グループの取得 -->
+    <select id="selectAllowedGroups" resultType="com.github.rk_aiz.teamsurvey.infrastructure.entity.UserGroupEntity">
+        SELECT g.id, g.group_name 
+        FROM user_groups g
+        INNER JOIN enquete_target_groups ep ON g.id = ep.group_id
+        WHERE ep.enquete_id = #{enqueteId}
+        ORDER BY g.id
+    </select>
+
+    <insert id="insertPermission">
+        INSERT INTO enquete_target_groups (enquete_id, group_id) VALUES (#{enqueteId}, #{groupId})
+    </insert>
+
+    <delete id="deletePermissions">
+        DELETE FROM enquete_target_groups WHERE enquete_id = #{enqueteId}
+    </delete>
+
+    <!-- 
+        ログインユーザーが回答可能なアンケート一覧を取得
+        ユーザーの所属グループ(user_group_mappings)と、
+        アンケートの公開権限(enquete_target_groups)を結合して動的に判定します。
+        これにより、将来グループに追加されたユーザーも自動的に対象になります。
+    -->
+    <select id="selectByUserId" resultType="com.github.rk_aiz.teamsurvey.infrastructure.entity.SurveyEntity">
+        SELECT DISTINCT
+            e.id, e.title, e.allow_guest, e.status, e.result_visibility, 
+            e.deadline, e.created_at, e.updated_at
+        FROM enquetes e
+        INNER JOIN enquete_target_groups ep ON e.id = ep.enquete_id
+        INNER JOIN user_group_mappings ugm ON ep.group_id = ugm.group_id
+        WHERE 
+            ugm.username = #{userId}
+            AND e.status = 'PUBLISHED'
+            AND (e.deadline IS NULL OR e.deadline > CURRENT_TIMESTAMP)
+        ORDER BY 
+            e.created_at DESC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"> INSERT INTO enquetes (title, created_at, updated_at) VALUES (#{title},
+        CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) </insert>
+
+    <update id="update"> 
+        UPDATE enquetes 
+        SET title = #{title}, 
+            allow_guest = #{allowGuest},
+            status = #{status},
+            result_visibility = #{resultVisibility},
+            deadline = #{deadline},
+            updated_at = CURRENT_TIMESTAMP 
+        WHERE id = #{id} 
+    </update>
+
+    <delete id="delete"> DELETE FROM enquetes WHERE id = #{id} </delete>
+
+</mapper>

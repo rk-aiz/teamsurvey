@@ -1,4 +1,4 @@
-package com.github.rk_aiz.teamsurvey.domain.model.question;
+package com.github.rk_aiz.teamsurvey.domain.model;
 
 import java.util.ArrayList;
 import java.util.Collections;

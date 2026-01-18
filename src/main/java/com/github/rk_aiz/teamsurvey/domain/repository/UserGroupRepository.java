@@ -12,7 +12,6 @@ public interface UserGroupRepository {
 
     /**
      * 指定されたユーザーが所属するグループの一覧を取得します。
-     * (Active DirectoryのmemberOf属性に相当する逆引き検索)
      * 
      * @param username ユーザーID
      */

@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 public class Survey {
 
     /** 主キー */
-    private Integer id;
+    private Integer surveyId;
 
     /** アンケート名 */
     private String title;
@@ -75,7 +75,7 @@ public class Survey {
      * 
      * @return 複製された新しいSurvey
      */
-    public Survey createDraftCopy() {
+    public Survey toDraftCopy() {
         Survey copy = Survey.builder()
                 .title(this.getTitle() + " (コピー)")
                 .resultVisibility(this.getResultVisibility())
@@ -86,7 +86,7 @@ public class Survey {
         for (Question q : this.getQuestions()) {
             copy.getQuestions().add(q.createCopy());
         }
-        // 権限設定(グループID)のコピー
+        // 対象グループのコピー
         copy.setTargetGroups(new ArrayList<>(this.getTargetGroups()));
         return copy;
     }

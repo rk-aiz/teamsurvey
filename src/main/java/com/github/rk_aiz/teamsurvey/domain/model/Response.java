@@ -15,14 +15,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Response {
-    /** 主キー */
-    private Integer id;
+    /** 回答ID */
+    private Integer responseId;
     /** アンケートID */
     private Integer surveyId;
     /** 回答ユーザーID */
-    private String userId;
-    /** 回答時のIPアドレス */
-    private String ipAddress;
+    private User user;
     /** 回答ステータス */
     @Builder.Default
     private ResponseStatus status = ResponseStatus.UNVERIFIED;
@@ -33,5 +31,4 @@ public class Response {
 
     /** 質問に対する回答のリスト */
     private List<ResponseDetail> responseDetails;
-
 }

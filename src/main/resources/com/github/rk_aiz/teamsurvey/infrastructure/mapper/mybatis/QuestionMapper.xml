@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.QuestionMapper">
+
+    <resultMap id="QuestionResultMap" type="com.github.rk_aiz.teamsurvey.infrastructure.entity.QuestionEntity">
+        <id property="id" column="id" />
+        <result property="enqueteId" column="enquete_id" />
+        <result property="text" column="question_text" />
+        <result property="type" column="question_type" />
+        <result property="required" column="is_required" />
+        <result property="displayOrder" column="display_order" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+        
+        <!-- AnswerPatternとの結合 -->
+        <association property="answerPattern" javaType="com.github.rk_aiz.teamsurvey.infrastructure.entity.AnswerPatternEntity">
+            <id property="id" column="ap_id" />
+            <result property="patternName" column="pattern_name" />
+        </association>
+    </resultMap>
+
+    <!-- 共通のSELECT句 -->
+    <sql id="selectColumns">
+        q.id,
+        q.enquete_id,
+        q.question_text,
+        q.question_type,
+        q.is_required,
+        q.display_order,
+        q.created_at,
+        q.updated_at,
+        q.answer_pattern_id,
+        ap.id AS ap_id,
+        ap.pattern_name
+    </sql>
+
+    <select id="selectAll" resultMap="QuestionResultMap">
+        SELECT <include refid="selectColumns" />
+        FROM questions q
+        LEFT JOIN answer_patterns ap ON q.answer_pattern_id = ap.id
+        ORDER BY q.display_order
+    </select>
+
+    <select id="selectById" resultMap="QuestionResultMap">
+        SELECT <include refid="selectColumns" />
+        FROM questions q
+        LEFT JOIN answer_patterns ap ON q.answer_pattern_id = ap.id
+        WHERE q.id = #{id}
+    </select>
+
+    <select id="selectByEnqueteId" resultMap="QuestionResultMap">
+        SELECT <include refid="selectColumns" />
+        FROM questions q
+        LEFT JOIN answer_patterns ap ON q.answer_pattern_id = ap.id
+        WHERE q.enquete_id = #{enqueteId}
+        ORDER BY q.display_order
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO questions (
+            enquete_id,
+            question_text,
+            question_type,
+            is_required,
+            display_order,
+            answer_pattern_id,
+            created_at,
+            updated_at
+        ) VALUES (
+            #{enqueteId},
+            #{text},
+            #{type}::question_type,
+            #{required},
+            #{displayOrder},
+            #{answerPattern.id},
+            #{createdAt},
+            #{updatedAt}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE questions SET enquete_id = #{enqueteId}, question_text = #{text}, question_type = #{type}::question_type, is_required = #{required}, display_order = #{displayOrder}, answer_pattern_id = #{answerPattern.id}, updated_at = #{updatedAt} WHERE id = #{id}
+    </update>
+
+    <delete id="delete"> DELETE FROM questions WHERE id = #{id} </delete>
+
+</mapper>

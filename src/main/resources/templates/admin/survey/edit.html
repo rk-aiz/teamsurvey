@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xml:lang="ja"
+    layout:decorate="~{admin/admin_layout}">
+
+<head>
+    <title th:text="${title} ?: 'アンケート編集'">アンケート編集</title>
+</head>
+
+<body>
+    <main layout:fragment="content">
+        <h2>アンケート編集</h2>
+
+        <form th:action="@{/admin/enquete/save}" method="post" th:object="${enqueteForm}">
+            <!-- アンケートID (更新時に必要) -->
+            <input type="hidden" th:field="*{id}">
+            <input type="hidden" th:field="*{new}">
+
+            <!-- グローバルエラー (公開時の整合性チェックなど) -->
+            <div th:if="${#fields.hasErrors('global')}" style="color: red; margin-bottom: 10px;">
+                <p th:each="err : ${#fields.errors('global')}" th:text="${err}"></p>
+            </div>
+
+            <table class="table table-borderless">
+                <tr>
+                    <th>タイトル</th>
+                    <td>
+                        <input type="text" th:field="*{title}" class="form-control">
+                        <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" style="color:red;"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>ステータス</th>
+                    <td>
+                        <!-- 編集画面では変更不可（詳細画面で変更） -->
+                        <span th:text="*{status}"></span>
+                        <input type="hidden" th:field="*{status}">
+                    </td>
+                </tr>
+                <tr>
+                    <th>回答対象グループ</th>
+                    <td>
+                        <div class="card p-2 bg-light mb-2">
+                            回答許可グループ:<br>
+                            <div th:each="group : ${userGroups}" class="form-check form-check-inline">
+                                <input type="checkbox" class="form-check-input" th:field="*{groupIds}"
+                                    th:value="${group.id}">
+                                <span th:text="${group.groupName}"></span>
+                            </div>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" th:field="*{allowGuest}" id="allowGuest">
+                            <label class="form-check-label" for="allowGuest">ゲスト回答を許可</label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>集計公開設定</th>
+                    <td>
+                        アンケート集計結果を閲覧できる範囲:<br>
+                        <select th:field="*{resultVisibility}" class="form-select" style="width: auto;">
+                            <option th:each="vis : ${T(com.example.demo.enums.ResultVisibility).values()}"
+                                th:value="${vis}" th:text="${vis.label}"></option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>締め切り</th>
+                    <td>
+                        <input type="datetime-local" th:field="*{deadline}" class="form-control" style="width: auto;">
+                        <span th:if="${#fields.hasErrors('deadline')}" th:errors="*{deadline}"
+                            style="color:red;"></span>
+                        <br>
+                        <small>※未選択の場合は無期限</small>
+                    </td>
+                </tr>
+            </table>
+
+            <hr>
+            <h3>設問の編集</h3>
+
+            <!-- 公開中・終了の場合はメッセージを表示 -->
+            <div th:if="${enqueteForm.status.name() != 'DRAFT'}"
+                style="background-color: #fff3cd; color: #856404; padding: 10px; border: 1px solid #ffeeba; border-radius: 5px; margin-bottom: 15px;">
+                <strong>注意:</strong> アンケートが公開（または終了）されているため、設問の構成は変更できません。
+                <br>変更が必要な場合は、詳細画面から「複製して新規作成」を行ってください。
+            </div>
+
+            <!-- 質問リストのループ -->
+            <!-- stat.index を使うことで、questions[0], questions[1]... という名前で送信できる -->
+            <div th:each="question, stat : *{questions}" class="question-item card mb-3 p-3 bg-light"
+                style="transition: background-color 0.3s;">
+
+                <!-- 質問IDとアンケートID (更新時に必要) -->
+                <input type="hidden" th:field="*{questions[__${stat.index}__].id}">
+
+                <div style="margin-bottom: 10px;">
+                    <strong>Q<span class="q-number" th:text="${stat.count}">1</span></strong>
+                </div>
+
+                <div style="margin-bottom: 5px;">
+                    <!-- th:for と th:id で紐付ける -->
+                    <label th:for="${'q_text_' + stat.index}">設問文:</label><br>
+                    <input th:id="${'q_text_' + stat.index}" type="text" th:field="*{questions[__${stat.index}__].text}"
+                        class="form-control" th:disabled="${enqueteForm.status.name() != 'DRAFT'}">
+                    <span th:if="${#fields.hasErrors('questions[__${stat.index}__].text')}"
+                        th:errors="*{questions[__${stat.index}__].text}" style="color:red;"></span>
+                </div>
+
+                <div style="display: flex; gap: 20px;">
+                    <div>
+                        <label th:for="${'q_type_' + stat.index}">タイプ:</label>
+                        <select th:id="${'q_type_' + stat.index}" class="form-select"
+                            th:field="*{questions[__${stat.index}__].type}"
+                            th:disabled="${enqueteForm.status.name() != 'DRAFT'}">
+                            <option value="RADIO">単一選択 (RADIO)</option>
+                            <option value="CHECKBOX">複数選択 (CHECKBOX)</option>
+                            <option value="TEXT">自由記述 (TEXT)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-check mt-4">
+                        <input type="checkbox" class="form-check-input"
+                            th:field="*{questions[__${stat.index}__].required}" th:id="${'q_req_' + stat.index}"
+                            th:disabled="${enqueteForm.status.name() != 'DRAFT'}">
+                        <label class="form-check-label" th:for="${'q_req_' + stat.index}">必須</label>
+                    </div>
+
+                    <!-- 回答パターン選択 -->
+                    <div class="pattern-container">
+                        <label th:for="${'ans_pattern_' + stat.index}">回答パターン:</label>
+                        <!-- answerPattern.id に直接バインド -->
+                        <select th:id="${'ans_pattern_' + stat.index}" class="form-select"
+                            th:field="*{questions[__${stat.index}__].answerPattern.id}"
+                            th:disabled="${enqueteForm.status.name() != 'DRAFT'}">
+                            <option value="">-- 選択してください --</option>
+                            <option th:each="ptn : ${answerPatterns}" th:value="${ptn.id}" th:text="${ptn.patternName}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- 並べ替えボタン (JavaScriptで制御) -->
+                    <div th:if="${enqueteForm.status.name() == 'DRAFT'}">
+                        <button type="button" onclick="moveUp(this)" class="btn btn-sm btn-outline-secondary mt-4">
+                            ↑
+                        </button>
+                        <button type="button" onclick="moveDown(this)" class="btn btn-sm btn-outline-secondary mt-4">
+                            ↓
+                        </button>
+                    </div>
+
+                    <!-- 削除ボタン -->
+                    <div style="margin-left: auto;" th:if="${enqueteForm.status.name() == 'DRAFT'}">
+                        <button type="submit" name="removeQuestion" th:value="${stat.index}" formnovalidate
+                            class="btn btn-sm btn-outline-danger mt-4">
+                            削除
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 追加ボタン -->
+            <div class="mt-3" th:if="${enqueteForm.status.name() == 'DRAFT'}">
+                <!-- name="addQuestion" が重要 -->
+                <button type="submit" name="addQuestion" class="btn btn-secondary">
+                    <i class="bi bi-plus-circle"></i> 設問を追加
+                </button>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <button type="submit" class="btn btn-primary fw-bold px-4">保存</button>
+            </div>
+        </form>
+
+        <br>
+        <a th:href="@{/admin/enquete/detail/{id}(id=${enqueteForm.id})}" class="btn btn-link">詳細に戻る</a>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const allowGuest = document.querySelector('input[name="allowGuest"]');
+                const userGroups = document.querySelectorAll('input[name="groupIds"]');
+
+                function toggleUserGroups() {
+                    const isGuest = allowGuest.checked;
+                    userGroups.forEach(function (checkbox) {
+                        checkbox.disabled = isGuest;
+                        if (isGuest) {
+                            checkbox.checked = false;
+                        }
+                    });
+                }
+
+                if (allowGuest) {
+                    allowGuest.addEventListener('change', toggleUserGroups);
+                    // 初期表示時にも実行
+                    toggleUserGroups();
+                }
+
+                // 設問タイプと回答パターンの連動
+                const questionItems = document.querySelectorAll('.question-item');
+                questionItems.forEach(function (item) {
+                    // name属性に .type や .answerPattern.id が含まれるselect要素を取得
+                    const typeSelect = item.querySelector('select[name*=".type"]');
+                    const patternSelect = item.querySelector('select[name*=".answerPattern.id"]');
+                    const patternContainer = item.querySelector('.pattern-container');
+
+                    if (typeSelect && patternSelect && patternContainer) {
+                        function updatePatternState() {
+                            // アンケートが公開中などで編集不可(disabled)の場合はJSで操作しない
+                            if (typeSelect.disabled) return;
+
+                            if (typeSelect.value === 'TEXT') {
+                                patternSelect.value = ""; // パターンなし(空)に強制変更
+                                patternContainer.style.display = 'none'; // 非表示
+                            } else {
+                                patternContainer.style.display = 'block'; // 表示
+                            }
+                        }
+                        typeSelect.addEventListener('change', updatePatternState);
+                        // 初期表示時にも適用
+                        updatePatternState();
+                    }
+                });
+            });
+        </script>
+
+        <!-- 並べ替え用の簡易スクリプト -->
+        <script>
+            // 上へ移動
+            function moveUp(btn) {
+                const current = btn.closest('.question-item');
+                const prev = current.previousElementSibling;
+                // 前の要素があり、かつ質問ブロックであれば入れ替え
+                if (prev && prev.classList.contains('question-item')) {
+                    current.parentNode.insertBefore(current, prev);
+                    updateIndices(); // インデックスを振り直す
+                }
+            }
+
+            // 下へ移動
+            function moveDown(btn) {
+                const current = btn.closest('.question-item');
+                const next = current.nextElementSibling;
+                // 次の要素があり、かつ質問ブロックであれば入れ替え
+                if (next && next.classList.contains('question-item')) {
+                    current.parentNode.insertBefore(next, current);
+                    updateIndices(); // インデックスを振り直す
+                }
+            }
+
+            // Springが正しくバインドできるように name属性のインデックス[0], [1]... を振り直す関数
+            function updateIndices() {
+                const items = document.querySelectorAll('.question-item');
+                items.forEach((item, index) => {
+                    // 1. 表示上の番号 (Q1, Q2...) を更新
+                    const label = item.querySelector('.q-number');
+                    if (label) label.textContent = index + 1;
+
+                    // 2. 削除ボタンの value (サーバー側での削除用インデックス) を更新
+                    const removeBtn = item.querySelector('button[name="removeQuestion"]');
+                    if (removeBtn) removeBtn.value = index;
+
+                    // 3. すべての input/select の name属性 (questions[x].field) を更新
+                    const inputs = item.querySelectorAll('[name*="questions["]');
+                    inputs.forEach(input => {
+                        const name = input.getAttribute('name');
+                        // 正規表現で questions[数字] を新しい数字に置換
+                        const newName = name.replace(/questions\[\d+\]/, `questions[${index}]`);
+                        input.setAttribute('name', newName);
+                    });
+                });
+            }
+        </script>
+    </main>
+</body>
+
+</html>
