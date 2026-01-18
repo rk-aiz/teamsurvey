@@ -4,7 +4,7 @@
 
     <resultMap id="ResponseResultMap" type="com.github.rk_aiz.teamsurvey.infrastructure.entity.ResponseEntity">
         <id property="id" column="id" />
-        <result property="enqueteId" column="enquete_id" />
+        <result property="surveyId" column="survey_id" />
         <result property="userId" column="user_id" />
         <result property="distributionTokenId" column="distribution_token_id" />
         <result property="createdAt" column="created_at" />
@@ -23,7 +23,7 @@
     <!-- 共通のSELECT句 -->
     <sql id="selectColumns">
         r.id,
-        r.enquete_id,
+        r.survey_id,
         r.user_id,
         r.distribution_token_id,
         r.status,
@@ -37,7 +37,7 @@
 
     <!-- 全件取得: ここでは回答リストは取得せず、軽量にする -->
     <select id="selectAll" resultType="com.github.rk_aiz.teamsurvey.infrastructure.entity.ResponseEntity">
-    	SELECT id, enquete_id, user_id, 
+    	SELECT id, survey_id, user_id, 
     		distribution_token_id, status,
     		created_at, updated_at 
     	FROM responses ORDER BY id
@@ -56,18 +56,18 @@
         FROM responses r
         LEFT JOIN response_details as rd 
         ON r.id = rd.response_id
-        WHERE r.enquete_id = #{enqueteId}
+        WHERE r.survey_id = #{surveyId}
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO responses (
-        	enquete_id, 
+        	survey_id, 
         	user_id, 
         	distribution_code_id, 
         	created_at, 
         	updated_at
         ) VALUES (
-        	#{enqueteId}, 
+        	#{surveyId}, 
         	#{userId}, 
         	#{distributionTokenId}, 
         	#{createdAt}, 
@@ -76,7 +76,7 @@
 
     <update id="update">
         UPDATE responses
-           SET enquete_id = #{enqueteId}, 
+           SET survey_id = #{surveyId}, 
 				question_text = #{text}, status = #{status}::response_status, updated_at = CURRENT_TIMESTAMP
 		WHERE id = #{id}
     </update>

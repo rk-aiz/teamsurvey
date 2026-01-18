@@ -112,11 +112,13 @@ public class Survey {
     }
 
     /**
-     * 質問リストを設定します。
-     * nullが渡された場合は空リストを設定します。
+     * 設問リストを返します。nullの場合は空のリストを作成して返します。
      */
-    public void setQuestions(List<Question> questions) {
-        this.questions = (questions != null) ? questions : new ArrayList<>();
+    public List<Question> getQuestions() {
+        if (this.questions == null) {
+            this.setQuestions(new ArrayList<>());
+        }
+        return this.questions;
     }
 
     /**

@@ -1,12 +1,41 @@
 package com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis;
 
-import org.apache.ibatis.annotations.Mapper;
+import java.util.List;
 
-import com.github.rk_aiz.teamsurvey.domain.repository.SurveyRepository;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import com.github.rk_aiz.teamsurvey.infrastructure.entity.SurveyEntity;
 
 /**
  * MyBatisが自動生成する実装クラスがそのままRepositoryの実装になります。
  */
 @Mapper
-public interface SurveyMapper extends SurveyRepository {
+public interface SurveyMapper {
+
+    /**
+     * 全てのアンケート(ヘッダー)を取得します
+     */
+    List<SurveyEntity> selectAll();
+
+    /**
+     * 指定されたIDに対するアンケートを取得します
+     */
+    SurveyEntity selectById(@Param("id") Integer id);
+
+    /**
+     * 新しいアンケートを登録します
+     */
+    void insert(SurveyEntity enquete);
+
+    /**
+     * アンケートを更新します
+     */
+    void update(SurveyEntity enquete);
+
+    /**
+     * アンケートを削除します
+     */
+    void delete(@Param("id") Integer id);
+
 }

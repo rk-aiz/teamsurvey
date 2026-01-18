@@ -1,10 +1,11 @@
 package com.github.rk_aiz.teamsurvey.infrastructure.entity;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.ArrayList;
+
+import org.springframework.beans.BeanUtils;
 
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
-import com.github.rk_aiz.teamsurvey.domain.model.question.Question;
 import com.github.rk_aiz.teamsurvey.domain.type.ResultVisibility;
 import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
 
@@ -38,9 +39,10 @@ public class SurveyEntity {
     private ResultVisibility resultVisibility = ResultVisibility.ADMIN_ONLY;
     /** 回答締め切り日時 (nullの場合は無期限) */
     private LocalDateTime deadline;
-    /** 設問リスト */
-    private List<Question> questions;
 
+    /**
+     * Entity -> Domain Model 変換
+     */
     public Survey toModel() {
         return Survey.builder()
                 .surveyId(id)
@@ -50,7 +52,18 @@ public class SurveyEntity {
                 .deadline(deadline)
                 .status(status)
                 .resultVisibility(resultVisibility)
-                .questions(questions)
+                .questions(new ArrayList<>()) // Repositoryで後からsetする
                 .build();
+    }
+
+    /**
+     * Domain Model -> Entity 変換
+     */
+    public static SurveyEntity fromModel(Survey model) {
+        SurveyEntity entity = new SurveyEntity();
+        BeanUtils.copyProperties(model, entity);
+        entity.setId(model.getSurveyId());
+
+        return entity;
     }
 }

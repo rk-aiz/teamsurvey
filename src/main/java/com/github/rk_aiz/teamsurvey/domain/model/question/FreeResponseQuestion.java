@@ -22,6 +22,7 @@ public class FreeResponseQuestion extends Question {
 
     @Override
     public Question createCopy() {
+
         return FreeResponseQuestion.builder()
                 .text(this.getText())
                 .required(this.isRequired())

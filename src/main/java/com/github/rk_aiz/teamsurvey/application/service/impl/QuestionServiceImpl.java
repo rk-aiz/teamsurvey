@@ -29,8 +29,8 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public List<Question> findQuestionsBySurveyId(Integer enqueteId) {
-        return questionRepository.findBySurveyId(enqueteId);
+    public List<Question> findQuestionsBySurveyId(Integer surveyId) {
+        return questionRepository.findBySurveyId(surveyId);
     }
 
     @Override
