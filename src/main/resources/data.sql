@@ -67,14 +67,14 @@ INSERT INTO questions (id, survey_id, question_text, question_type, is_required,
 VALUES (6, 4, 'イベントで最も印象に残ったことは何ですか？', 'TEXT', TRUE, NULL, 1);
 
 -- 認証テーブルにダミーの認証データを登録
-INSERT INTO authentications (username, password, displayname, email)
+INSERT INTO authentications (username, password, display_name, email)
 VALUES ('admin', 
 		'$2a$10$aVhzT738nhBa.eTbZZib4ey0N8X2Xek6ulC47lYmhhXpm1HEdOv9W', 
 		'菅理太郎',
 		'admin@example.com');
 
 -- 認証テーブルにダミーの認証データを登録
-INSERT INTO authentications (username, password, displayname, email)
+INSERT INTO authentications (username, password, display_name, email)
 VALUES ('user', 
 		'$2a$10$/jar9xXQ6lrnVjLvLGv5BepFkLnGIO49RrGx42p2i.1hQt1BZ/7E2', 
 		'一般花子',

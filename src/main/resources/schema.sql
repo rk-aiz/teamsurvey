@@ -89,7 +89,7 @@ CREATE TABLE questions (
 	survey_id INTEGER NOT NULL REFERENCES surveys(id) ON DELETE CASCADE,
 	-- answer_pattern_id : 回答パターンID (外部キー) ※自由記述の場合はNULL
 	answer_pattern_id INTEGER REFERENCES answer_patterns(id) ON DELETE SET NULL,
-	-- detail (質問文)
+	-- question_text (質問文)
 	question_text text,
 	-- mode (回答形式)
 	question_type question_type NOT NULL,
@@ -110,7 +110,7 @@ CREATE TABLE authentications (
 	--- メールアドレス (RFC準拠で255文字あれば十分)
 	email VARCHAR(255) NOT NULL UNIQUE,
 	--- 表示名
-	displayname VARCHAR(50) NOT NULL,
+	display_name VARCHAR(50) NOT NULL,
 	-- created_at (作成日)
 	created_at timestamp without time zone,
 	-- updated_at (更新日)

@@ -31,7 +31,6 @@ public interface AnswerPatternMapper {
 
     /**
      * 指定されたIDに対する回答パターンを取得します
-     * (紐づく選択肢リストも取得します)
      */
     @Select("SELECT * FROM answer_patterns WHERE id = #{id}")
     @ResultMap("AnswerPatternMap")
@@ -47,7 +46,7 @@ public interface AnswerPatternMapper {
     /**
      * 回答パターンを更新します
      */
-    @Update("UPDATE answer_patterns SET pattern_name = #{patternName} WHERE id = #{id}")
+    @Update("UPDATE answer_patterns SET pattern_name = #{patternName}, is_deleted = #{deleted} WHERE id = #{id}")
     void update(AnswerPatternEntity pattern);
 
     /**
