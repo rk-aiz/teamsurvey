@@ -32,13 +32,26 @@ public class AnswerOption {
     /** 未設定時の回答パターン */
     public static final AnswerOption EMPTY = new EmptyAnswerOption();
 
+    public void addItem(Integer id, String itemText, Integer itemOrder) {
+        OptionItem item = OptionItem.builder()
+                .id(id)
+                .itemText(itemText)
+                .itemOrder(itemOrder)
+                .build();
+        
+        this.items.add(item);
+    }
+
+    public void removeItem(OptionItem item) {
+        this.items.remove(item);
+    }
+
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class OptionItem {
         private Integer id;
-        private Integer answerPatternId;
         private String itemText;
         private Integer itemOrder;
     }

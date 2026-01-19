@@ -36,16 +36,32 @@ public class AnswerOptionRepositoryImpl implements AnswerOptionRepository {
 
     @Override
     public List<AnswerOption> selectAllWithItems() {
-        return this.answerPatternMapper.selectAllWithItems()
+        List<AnswerOption> options = this.answerPatternMapper.selectAllWithItems()
                 .stream().map(AnswerPatternEntity::toModel).toList();
+
+        for (AnswerOption option : options) {
+            this.answerPatternItemMapper
+                    .selectByPatternId(option.getAnswerOptionId())
+                    .forEach(item -> {
+                        option.addItem(item.getId(), item.getItemText(), item.getItemOrder());
+                    });
+        }
+        return options;
     }
 
     @Override
     public AnswerOption findById(Integer id) {
         AnswerPatternEntity entity = this.answerPatternMapper.selectById(id);
-
+        if (entity == null) return null;
         
-        return (entity != null) ? entity.toModel() : null;
+        AnswerOption answerOption = entity.toModel();
+        this.answerPatternItemMapper
+                .selectByPatternId(entity.getId())
+                .forEach(item -> {
+                    answerOption.addItem(item.getId(), item.getItemText(), item.getItemOrder());
+                });
+        
+        return answerOption;
     }
 
     @Override
