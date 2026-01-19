@@ -36,7 +36,7 @@ public class AnswerOptionRepositoryImpl implements AnswerOptionRepository {
 
     @Override
     public List<AnswerOption> selectAllWithItems() {
-        List<AnswerOption> options = this.answerPatternMapper.selectAllWithItems()
+        List<AnswerOption> options = this.answerPatternMapper.selectAll()
                 .stream().map(AnswerPatternEntity::toModel).toList();
 
         for (AnswerOption option : options) {
