@@ -123,6 +123,7 @@ public class AnswerOptionRepositoryImpl implements AnswerOptionRepository {
 
     @Override
     public void remove(Integer id) {
+        this.answerPatternItemMapper.deleteByPatternId(id);
         this.answerPatternMapper.delete(id);
     }
 }
