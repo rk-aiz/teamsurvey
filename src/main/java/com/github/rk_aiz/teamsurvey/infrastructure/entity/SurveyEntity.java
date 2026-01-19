@@ -27,18 +27,18 @@ public class SurveyEntity {
     private Integer id;
     /** アンケート名 */
     private String title;
-    /** アンケート作成日時 */
-    private LocalDateTime createdAt;
-    /** アンケート更新日時 */
-    private LocalDateTime updatedAt;
     /** アンケートの状態 */
     @Builder.Default
     private SurveyStatus status = SurveyStatus.DRAFT;
-    /** 集計結果の公開範囲 */
+        /** 集計結果の公開範囲 */
     @Builder.Default
     private ResultVisibility resultVisibility = ResultVisibility.ADMIN_ONLY;
     /** 回答締め切り日時 (nullの場合は無期限) */
     private LocalDateTime deadline;
+    /** アンケート作成日時 */
+    private LocalDateTime createdAt;
+    /** アンケート更新日時 */
+    private LocalDateTime updatedAt;
 
     /**
      * Entity -> Domain Model 変換

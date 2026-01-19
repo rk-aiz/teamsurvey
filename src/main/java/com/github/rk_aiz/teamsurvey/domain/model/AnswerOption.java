@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AnswerOption {
 
-    private Integer id;
+    private Integer answerOptionId;
     private String patternName;
 
     // 1つのパターンは複数の選択肢項目を持つ
@@ -49,7 +49,7 @@ public class AnswerOption {
      */
     private static class EmptyAnswerOption extends AnswerOption {
         @Override
-        public void setId(Integer id) {
+        public void setAnswerOptionId(Integer id) {
             throw new UnsupportedOperationException("AnswerOption.EMPTY is immutable.");
         }
 
