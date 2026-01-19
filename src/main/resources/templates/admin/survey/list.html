@@ -25,18 +25,18 @@
                 <th>詳細</th>
             </thead>
             <tbody>
-                <tr th:each="enquete : ${enquetes}">
-                    <td th:text="${enquete.id}">ID</td>
-                    <td th:text="${enquete.title}">タイトル</td>
+                <tr th:each="survey : ${surveys}">
+                    <td th:text="${survey.surveyId}">ID</td>
+                    <td th:text="${survey.title}">タイトル</td>
                     <td>
-                        <a th:href="@{/admin/enquete/detail/{id}(id=${enquete.id})}">
+                        <a th:href="@{/admin/survey/detail/{id}(id=${survey.surveyId})}">
                             詳細
                         </a>
                     </td>
                 </tr>
             </tbody>
         </table>
-        <a th:href="@{/admin/enquete/new}" class="btn btn-primary">新規登録</a>
+        <a th:href="@{/admin/survey/new}" class="btn btn-primary">新規登録</a>
         <br>
         <!-- メニュー画面へ -->
         <a th:href="@{/}" class="btn btn-link mt-3">メニュー画面へ</a>

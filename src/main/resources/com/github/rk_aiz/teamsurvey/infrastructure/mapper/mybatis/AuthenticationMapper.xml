@@ -3,15 +3,53 @@
 <mapper
 	namespace="com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.AuthenticationMapper">
 
+	<!--  認証情報一覧を取得 -->
+	<select id="selectAll"
+			resultType="com.github.rk_aiz.teamsurvey.infrastructure.entity.AuthenticationEntity">
+		SELECT * FROM authentications
+	</select>
+
 	<!--  ユーザー名で認証情報を検索 -->
 	<select id="selectByUsername"
 			resultType="com.github.rk_aiz.teamsurvey.infrastructure.entity.AuthenticationEntity">
-		
-		SELECT username, password, authority, displayname
+		SELECT *
 		  FROM authentications
 		WHERE username = #{username}
-		
 	</select>
 	
+	<!--  新規ユーザーを登録 -->
+    <insert id="insert">
+        INSERT INTO authentications (
+            username,
+            password,
+			email,
+            displayname,
+			created_at,
+			updated_at
+        ) VALUES (
+            #{username},
+            #{password},
+			#{email},
+			#{displayname},
+			#{createdAt},
+			#{updatedAt}
+        )
+    </insert>
 	
+	<!--  ユーザー情報を更新 -->
+    <update id="update">
+        UPDATE authentications 
+            SET password = #{password}, 
+                email = #{email}, 
+                displayname = #{displayname}, 
+                updated_at = #{updatedAt}
+        WHERE username = #{username}
+    </update>
+
+	<!--  ユーザー情報を削除 -->
+    <delete id="delete">
+        DELETE FROM authentications
+        WHERE username = #{username} 
+    </delete>
+
 </mapper>

@@ -1,7 +1,5 @@
 package com.github.rk_aiz.teamsurvey.infrastructure.entity;
 
-import java.time.LocalDateTime;
-
 import org.springframework.beans.BeanUtils;
 
 import com.github.rk_aiz.teamsurvey.domain.model.question.FreeResponseQuestion;
@@ -61,6 +59,17 @@ public class QuestionEntity {
         QuestionEntity entity = new QuestionEntity();
         BeanUtils.copyProperties(model, entity);
         entity.setId(model.getQuestionId());
+        
+        switch(model.getType()) {
+            case RADIO, CHECKBOX -> { 
+                entity.setAnswerPatternId(
+                    ((SingleChoiceQuestion)model)
+                            .getAnswerOption()
+                            .getAnswerOptionId());
+            }
+            default -> {}
+        }
+        
         return entity;
     }
 }

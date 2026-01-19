@@ -10,7 +10,6 @@ import com.github.rk_aiz.teamsurvey.domain.model.question.SingleChoiceQuestion;
 import com.github.rk_aiz.teamsurvey.domain.type.QuestionType;
 import com.github.rk_aiz.teamsurvey.domain.util.StringUtils;
 
-import ch.qos.logback.core.util.StringUtil;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -64,17 +63,15 @@ public class QuestionForm {
             case RADIO -> new SingleChoiceQuestion();
             case CHECKBOX -> new MultipleChoiceQuestion();
         };
-
-        // TODO : 変換ロジック
         BeanUtils.copyProperties(this, question);
+        question.setQuestionId(id);
         return question;
     }
 
     public QuestionForm from(Question question) {
         QuestionForm form = new QuestionForm();
-
-        // TODO : 変換ロジック
         BeanUtils.copyProperties(question, form);
+        form.setId(id);
         return form;
     }
 }

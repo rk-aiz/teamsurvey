@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.UserGroupMapper">
+
+	<!--  ユーザーグループ一覧を取得 -->
+	<select id="selectAll"
+			resultType="com.github.rk_aiz.teamsurvey.infrastructure.entity.UserGroupEntity">
+		SELECT * FROM user_groups
+	</select>
+
+	<!--  IDからユーザーグループを取得 -->
+	<select id="selectById"
+			resultType="com.github.rk_aiz.teamsurvey.infrastructure.entity.UserGroupEntity">
+		SELECT * FROM user_groups WHERE id = #{id}
+	</select>
+
+	<!--  ユーザー名でユーザーグループを検索 -->
+	<select id="selectByUsername"
+			resultType="com.github.rk_aiz.teamsurvey.infrastructure.entity.UserGroupEntity">
+		SELECT
+			ug.id, ug.group_name, ug.authority
+		  FROM user_groups ug
+		  JOIN RIGHT user_group_mappings map ON ug.id = map.id
+		WHERE map.username = #{username}
+	</select>
+	
+	<!--  新規ユーザーグループを登録 -->
+    <insert id="insert">
+        INSERT INTO user_groups (
+            group_name,
+            authority
+        ) VALUES (
+			#{groupName},
+			#{authority}::authority
+        )
+    </insert>
+	
+	<!--  ユーザーグループ情報を更新 -->
+    <update id="update">
+        UPDATE user_groups 
+            SET group_name = #{groupName}, 
+                authority = #{authority}::authority
+        WHERE id = #{id}
+    </update>
+
+	<!--  ユーザーグループ情報を削除 -->
+    <delete id="delete">
+        DELETE FROM user_groups
+        WHERE id = #{id} 
+    </delete>
+
+</mapper>

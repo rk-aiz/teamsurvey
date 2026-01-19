@@ -1,5 +1,6 @@
 package com.github.rk_aiz.teamsurvey.domain.model;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,9 @@ public class User {
     private String email;
     private String displayName;
     private boolean enabled;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
 
     /** 所属グループリスト */
     @Builder.Default

@@ -106,7 +106,7 @@ public class SurveyForm {
             List<UserGroup> groups = new ArrayList<>();
             for (Integer id : this.getGroupIds()) {
                 UserGroup g = new UserGroup();
-                g.setId(id);
+                g.setGroupId(id);
                 groups.add(g);
             }
             survey.setTargetGroups(groups);

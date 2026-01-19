@@ -8,7 +8,7 @@ public interface UserGroupRepository {
 
     List<UserGroup> findAll();
 
-    UserGroup findById(Integer id);
+    UserGroup findById(Integer groupId);
 
     /**
      * 指定されたユーザーが所属するグループの一覧を取得します。
@@ -16,4 +16,10 @@ public interface UserGroupRepository {
      * @param username ユーザーID
      */
     List<UserGroup> findByUsername(String username);
+
+    void add(UserGroup group);
+
+    void set(UserGroup group);
+
+    void remove(Integer groupId);
 }

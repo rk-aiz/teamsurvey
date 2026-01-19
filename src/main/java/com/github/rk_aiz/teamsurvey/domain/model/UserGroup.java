@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class UserGroup {
-    private Integer id;
+    private Integer groupId;
     private String groupName;
     private Authority authority;
 }

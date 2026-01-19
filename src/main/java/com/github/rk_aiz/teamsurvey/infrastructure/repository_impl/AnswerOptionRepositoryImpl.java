@@ -15,7 +15,9 @@ import com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.AnswerPatternI
 import com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.AnswerPatternMapper;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class AnswerOptionRepositoryImpl implements AnswerOptionRepository {
@@ -51,17 +53,10 @@ public class AnswerOptionRepositoryImpl implements AnswerOptionRepository {
 
     @Override
     public AnswerOption findById(Integer id) {
-        AnswerPatternEntity entity = this.answerPatternMapper.selectById(id);
-        if (entity == null) return null;
+        AnswerPatternEntity pattern = this.answerPatternMapper.selectById(id);
+        if (pattern == null) return null;
         
-        AnswerOption answerOption = entity.toModel();
-        this.answerPatternItemMapper
-                .selectByPatternId(entity.getId())
-                .forEach(item -> {
-                    answerOption.addItem(item.getId(), item.getItemText(), item.getItemOrder());
-                });
-        
-        return answerOption;
+        return convertWithItems(pattern);
     }
 
     @Override
@@ -125,5 +120,15 @@ public class AnswerOptionRepositoryImpl implements AnswerOptionRepository {
     public void remove(Integer id) {
         this.answerPatternItemMapper.deleteByPatternId(id);
         this.answerPatternMapper.delete(id);
+    }
+
+    private AnswerOption convertWithItems(AnswerPatternEntity entity) {
+        AnswerOption answerOption = entity.toModel();
+        this.answerPatternItemMapper
+                .selectByPatternId(entity.getId())
+                .forEach(item -> {
+                    answerOption.addItem(item.getId(), item.getItemText(), item.getItemOrder());
+                });
+        return answerOption;
     }
 }

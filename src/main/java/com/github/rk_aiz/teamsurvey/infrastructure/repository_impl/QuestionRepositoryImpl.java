@@ -33,25 +33,13 @@ public class QuestionRepositoryImpl implements QuestionRepository {
         QuestionEntity entity = questionMapper.selectById(id);
         if (entity == null) return null;
         
-        Question question = entity.toModel();
-        switch (question.getType()) {
-            case RADIO -> {
-                ((SingleChoiceQuestion)question).setAnswerOption(
-                        answerOptionRepository.findById(entity.getAnswerPatternId()));
-            }
-            case CHECKBOX -> {
-                ((MultipleChoiceQuestion)question).setAnswerOption(
-                        answerOptionRepository.findById(entity.getAnswerPatternId()));
-            }
-            default -> {}
-        }
-        return question;
+        return convertWithAnswerOption(entity);
     }
 
     @Override
     public List<Question> findBySurveyId(Integer surveyId) {
         return this.questionMapper.selectBySurveyId(surveyId)
-                .stream().map(QuestionEntity::toModel).toList();
+                .stream().map(entity -> this.convertWithAnswerOption(entity)).toList();
     }
 
     @Override
@@ -72,5 +60,22 @@ public class QuestionRepositoryImpl implements QuestionRepository {
     public void remove(Integer id) {
         questionMapper.delete(id);
     }
+
+    private Question convertWithAnswerOption(QuestionEntity entity) {
+        Question question = entity.toModel();
+            switch (question.getType()) {
+                case RADIO -> {
+                    ((SingleChoiceQuestion)question).setAnswerOption(
+                            answerOptionRepository.findById(entity.getAnswerPatternId()));
+                }
+                case CHECKBOX -> {
+                    ((MultipleChoiceQuestion)question).setAnswerOption(
+                            answerOptionRepository.findById(entity.getAnswerPatternId()));
+                }
+                default -> {}
+            }
+        return question;
+    }
+        
 
 }

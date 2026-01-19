@@ -27,18 +27,9 @@ public interface QuestionMapper {
      */
     List<QuestionEntity> selectBySurveyId(@Param("surveyId") Integer surveyId);
 
-    /**
-     * 新しい質問を登録します
-     */
     void insert(QuestionEntity question);
 
-    /**
-     * 質問を更新します
-     */
     void update(QuestionEntity question);
 
-    /**
-     * 質問を削除します
-     */
     void delete(@Param("id") Integer id);
 }

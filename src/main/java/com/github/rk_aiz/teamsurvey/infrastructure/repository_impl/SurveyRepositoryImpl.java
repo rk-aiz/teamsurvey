@@ -12,7 +12,9 @@ import com.github.rk_aiz.teamsurvey.infrastructure.entity.SurveyEntity;
 import com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.SurveyMapper;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class SurveyRepositoryImpl implements SurveyRepository {
@@ -27,10 +29,12 @@ public class SurveyRepositoryImpl implements SurveyRepository {
 
     @Override
     public Survey findById(Integer id) {
+        log.info("survey find by id: " + id);
         // 1. Header取得
         SurveyEntity entity = surveyMapper.selectById(id);
         if (entity == null)
             return null;
+        
         Survey survey = entity.toModel();
 
         // 2. Questions取得 (別クエリ)

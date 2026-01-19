@@ -11,47 +11,24 @@
         <result property="displayOrder" column="display_order" />
         <result property="createdAt" column="created_at" />
         <result property="updatedAt" column="updated_at" />
-        
-        <!-- AnswerPatternとの結合 -->
-        <association property="answerPattern" javaType="com.github.rk_aiz.teamsurvey.infrastructure.entity.AnswerPatternEntity">
-            <id property="id" column="ap_id" />
-            <result property="patternName" column="pattern_name" />
-        </association>
+        <result property="answerPatternId" column="answer_pattern_id" />
     </resultMap>
 
-    <!-- 共通のSELECT句 -->
-    <sql id="selectColumns">
-        q.id,
-        q.survey_id,
-        q.question_text,
-        q.question_type,
-        q.is_required,
-        q.display_order,
-        q.created_at,
-        q.updated_at,
-        q.answer_pattern_id,
-        ap.id AS ap_id,
-        ap.pattern_name
-    </sql>
-
     <select id="selectAll" resultMap="QuestionResultMap">
-        SELECT <include refid="selectColumns" />
+        SELECT *
         FROM questions q
-        LEFT JOIN answer_patterns ap ON q.answer_pattern_id = ap.id
         ORDER BY q.display_order
     </select>
 
     <select id="selectById" resultMap="QuestionResultMap">
-        SELECT <include refid="selectColumns" />
+        SELECT *
         FROM questions q
-        LEFT JOIN answer_patterns ap ON q.answer_pattern_id = ap.id
         WHERE q.id = #{id}
     </select>
 
-    <select id="selectByEnqueteId" resultMap="QuestionResultMap">
-        SELECT <include refid="selectColumns" />
+    <select id="selectBySurveyId" resultMap="QuestionResultMap">
+        SELECT *
         FROM questions q
-        LEFT JOIN answer_patterns ap ON q.answer_pattern_id = ap.id
         WHERE q.survey_id = #{surveyId}
         ORDER BY q.display_order
     </select>
@@ -59,6 +36,7 @@
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO questions (
             survey_id,
+            answer_pattern_id,
             question_text,
             question_type,
             is_required,
@@ -68,20 +46,31 @@
             updated_at
         ) VALUES (
             #{surveyId},
+            #{answerPatternId},
             #{text},
             #{type}::question_type,
             #{required},
             #{displayOrder},
-            #{answerPattern.id},
+            #{answerPatternId},
             #{createdAt},
             #{updatedAt}
         )
     </insert>
 
     <update id="update">
-        UPDATE questions SET survey_id = #{surveyId}, question_text = #{text}, question_type = #{type}::question_type, is_required = #{required}, display_order = #{displayOrder}, answer_pattern_id = #{answerPattern.id}, updated_at = #{updatedAt} WHERE id = #{id}
+        UPDATE questions 
+            SET survey_id = #{surveyId}, 
+                question_text = #{text}, 
+                question_type = #{type}::question_type, 
+                is_required = #{required}, 
+                display_order = #{displayOrder}, 
+                answer_pattern_id = #{answerPatternId}
+        WHERE id = #{id}
     </update>
 
-    <delete id="delete"> DELETE FROM questions WHERE id = #{id} </delete>
+    <delete id="delete">
+        DELETE FROM questions 
+        WHERE id = #{id} 
+    </delete>
 
 </mapper>

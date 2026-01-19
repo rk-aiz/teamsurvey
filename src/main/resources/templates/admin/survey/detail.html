@@ -12,28 +12,25 @@
         <table class="table table-bordered">
             <tr>
                 <th>ID</th>
-                <td th:text="${enquete.id}"></td>
+                <td th:text="${survey.surveyId}"></td>
             </tr>
             <tr>
                 <th>タイトル</th>
-                <td th:text="${enquete.title}"></td>
+                <td th:text="${survey.title}"></td>
             </tr>
             <tr>
                 <th>ステータス</th>
                 <td>
-                    <strong th:text="${enquete.status}"
-                        th:style="${enquete.status.name() == 'PUBLISHED' ? 'color:green' : ''}"></strong>
+                    <strong th:text="${survey.status}"
+                        th:style="${survey.status.name() == 'PUBLISHED' ? 'color:green' : ''}"></strong>
                 </td>
             </tr>
             <tr>
                 <th>回答対象グループ</th>
                 <td>
-                    <div th:if="${enquete.allowGuest}" class="mb-1">
-                        <span class="badge bg-success">ゲスト回答許可</span>
-                    </div>
-                    <span th:each="group : ${enquete.selectedGroups}" class="badge bg-secondary me-1"
+                    <span th:each="group : ${survey.targetGroups}" class="badge bg-secondary me-1"
                         th:text="${group.groupName}"></span>
-                    <div th:if="${!enquete.allowGuest and #lists.isEmpty(enquete.selectedGroups)}" class="text-muted">
+                    <div th:if="${#lists.isEmpty(survey.targetGroups)}" class="text-muted">
                         指定なし
                     </div>
                 </td>
@@ -41,16 +38,16 @@
             <tr>
                 <th>締め切り日時</th>
                 <td
-                    th:text="${enquete.deadline != null ? #temporals.format(enquete.deadline, 'yyyy-MM-dd HH:mm') : '無期限'}">
+                    th:text="${survey.deadline != null ? #temporals.format(survey.deadline, 'yyyy-MM-dd HH:mm') : '無期限'}">
                 </td>
             </tr>
             <tr>
                 <th>作成日時</th>
-                <td th:text="${#temporals.format(enquete.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                <td th:text="${#temporals.format(survey.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
             </tr>
             <tr>
                 <th>更新日時</th>
-                <td th:text="${#temporals.format(enquete.updatedAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                <td th:text="${#temporals.format(survey.updatedAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
             </tr>
         </table>
 
@@ -61,14 +58,14 @@
             <div style="display: flex; gap: 10px;">
 
                 <!-- 下書き(DRAFT)の場合 -> 公開ボタン -->
-                <a th:if="${enquete.status.name() == 'DRAFT'}"
-                    th:href="@{/admin/enquete/publish/{id}(id=${enquete.id})}" class="btn btn-success">
+                <a th:if="${survey.status.name() == 'DRAFT'}"
+                    th:href="@{/admin/survey/publish/{id}(id=${survey.surveyId})}" class="btn btn-success">
                     公開設定へ
                 </a>
 
                 <!-- 公開中(PUBLISHED)の場合 -> 終了 or 下書き -->
-                <th:block th:if="${enquete.status.name() == 'PUBLISHED'}">
-                    <form th:action="@{/admin/enquete/status/{id}(id=${enquete.id})}" method="post">
+                <th:block th:if="${survey.status.name() == 'PUBLISHED'}">
+                    <form th:action="@{/admin/survey/status/{id}(id=${survey.surveyId})}" method="post">
                         <input type="hidden" name="status" value="CLOSED">
                         <button type="submit" onclick="return confirm('回答受付を終了しますか？')" class="btn btn-secondary">
                             締め切る
@@ -77,8 +74,8 @@
                 </th:block>
 
                 <!-- 終了(CLOSED)の場合 -> 再公開 -->
-                <th:block th:if="${enquete.status.name() == 'CLOSED'}">
-                    <form th:action="@{/admin/enquete/status/{id}(id=${enquete.id})}" method="post">
+                <th:block th:if="${survey.status.name() == 'CLOSED'}">
+                    <form th:action="@{/admin/survey/status/{id}(id=${survey.surveyId})}" method="post">
                         <input type="hidden" name="status" value="PUBLISHED">
                         <button type="submit" onclick="return confirm('再公開しますか？')" class="btn btn-success">
                             再公開する
@@ -87,7 +84,7 @@
                 </th:block>
 
                 <!-- 配布設定ボタン (公開中・終了に関わらず表示) -->
-                <a th:href="@{/admin/enquete/distribution/{id}(id=${enquete.id})}" class="btn btn-info text-white">
+                <a th:href="@{/admin/survey/distribution/{id}(id=${survey.surveyId})}" class="btn btn-info text-white">
                     配布設定
                 </a>
             </div>
@@ -95,26 +92,26 @@
 
         <hr>
         <h3>アンケート内容（プレビュー）</h3>
-        <div th:each="question, stat : ${enquete.questions}" class="card mb-3 p-3">
+        <div th:each="question, stat : ${survey.questions}" class="card mb-3 p-3">
             <div style="font-weight: bold; margin-bottom: 10px;">
                 <span th:text="'Q' + ${stat.count} + '.'">Q1.</span>
                 <span th:text="${question.text}">設問文</span>
             </div>
             <div>
                 <!-- 設問タイプ(TEXT, RADIO, CHECKBOX)によって出し分け -->
-                <div th:if="${question.textType}">
+                <div th:if="${question.type.name() == 'TEXT'}">
                     <input type="text" class="form-control" placeholder="回答入力欄" disabled style="width: 50%;">
                 </div>
 
-                <div th:if="${question.radioType}">
-                    <div class="form-check" th:each="item : ${question.answerPattern.items}">
-                        <input type="radio" class="form-check-input" th:name="${'dummy_radio_' + question.id}" disabled>
+                <div th:if="${question.type.name() == 'RADIO'}">
+                    <div class="form-check" th:each="item : ${question.answerOption.items}">
+                        <input type="radio" class="form-check-input" disabled>
                         <label class="form-check-label" th:text="${item.itemText}">選択肢</label>
                     </div>
                 </div>
 
-                <div th:if="${question.checkboxType}">
-                    <div class="form-check" th:each="item : ${question.answerPattern.items}">
+                <div th:if="${question.type.name() == 'CHECKBOX'}">
+                    <div class="form-check" th:each="item : ${question.answerOption.items}">
                         <input type="checkbox" class="form-check-input" disabled>
                         <label class="form-check-label" th:text="${item.itemText}">選択肢</label>
                     </div>
@@ -122,13 +119,13 @@
             </div>
         </div>
 
-        <a th:href="@{/admin/enquete/edit/{id}(id=${enquete.id})}" class="btn btn-primary">編集する</a>
-        <a th:href="@{/admin/enquete/list}" class="btn btn-outline-secondary">一覧に戻る</a>
+        <a th:href="@{/admin/survey/edit/{id}(id=${survey.surveyId})}" class="btn btn-primary">編集する</a>
+        <a th:href="@{/admin/survey/list}" class="btn btn-outline-secondary">一覧に戻る</a>
 
         <div
             style="margin-top: 50px; border-top: 1px solid #eee; padding-top: 10px; text-align: right; font-size: 0.9em;">
             <span style="color: #666;">その他の操作:</span>
-            <a th:href="@{/admin/enquete/copy/{id}(id=${enquete.id})}" onclick="return confirm('このアンケートを複製して新規作成しますか？')"
+            <a th:href="@{/admin/survey/copy/{id}(id=${survey.surveyId})}" onclick="return confirm('このアンケートを複製して新規作成しますか？')"
                 style="color: #666;">複製して新規作成</a>
         </div>
     </main>

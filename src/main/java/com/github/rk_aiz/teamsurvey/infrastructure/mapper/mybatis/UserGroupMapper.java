@@ -15,19 +15,15 @@ import com.github.rk_aiz.teamsurvey.infrastructure.entity.UserGroupEntity;
 @Mapper
 public interface UserGroupMapper {
 
-    @Select("SELECT * FROM user_groups")
     List<UserGroupEntity> selectAll();
 
-    @Select("SELECT * FROM user_groups WHERE id = #{id}")
     UserGroupEntity selectById(@Param("id") Integer id);
 
-    @Insert("INSERT INTO user_groups (group_name) VALUES (#{groupName})")
-    @Options(useGeneratedKeys = true, keyProperty = "id")
-    void insert(UserGroupEntity userGroup);
+    List<UserGroupEntity> selectByUsername(@Param("username") String username);
 
-    @Update("UPDATE user_groups SET group_name = #{groupName} WHERE id = #{id}")
+    void insert(UserGroupEntity userGroup);
+    
     void update(UserGroupEntity userGroup);
 
-    @Delete("DELETE FROM user_groups WHERE id = #{id}")
     void delete(@Param("id") Integer id);
 }
