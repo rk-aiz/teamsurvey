@@ -25,7 +25,8 @@ public interface AnswerPatternMapper {
     @Select("SELECT * FROM answer_patterns ORDER BY id")
     @Results(id = "AnswerPatternMap", value = {
             @Result(property = "id", column = "id", id = true),
-            @Result(property = "patternName", column = "pattern_name")
+            @Result(property = "patternName", column = "pattern_name"),
+            @Result(property = "isDeleted", column = "is_deleted")
     })
     List<AnswerPatternEntity> selectAll();
 
@@ -36,6 +37,7 @@ public interface AnswerPatternMapper {
     @Results(id = "AnswerPatternWithItemsMap", value = {
             @Result(property = "id", column = "id", id = true),
             @Result(property = "patternName", column = "pattern_name"),
+            @Result(property = "isDeleted", column = "is_deleted"),
             // 別のMapperメソッドを呼び出す場合は、パッケージ名を含めた完全修飾名で指定します
             @Result(property = "items", column = "id", many = @Many(select = "com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.AnswerPatternItemMapper.selectByPatternId"))
     })

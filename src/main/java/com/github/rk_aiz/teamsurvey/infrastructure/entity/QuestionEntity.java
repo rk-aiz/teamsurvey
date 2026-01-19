@@ -34,11 +34,9 @@ public class QuestionEntity {
     @Builder.Default
     private QuestionType type = QuestionType.RADIO;
     /** 必須回答かどうか */
-    private boolean required;
-    /** 質問作成日時 */
-    private LocalDateTime createdAt;
-    /** 質問更新日時 */
-    private LocalDateTime updatedAt;
+    private boolean isRequired;
+    /** 論理削除フラグ */
+    private boolean isDeleted;
 
     /**
      * Entity -> Domain Model 変換

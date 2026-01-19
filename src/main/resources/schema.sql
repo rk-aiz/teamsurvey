@@ -127,6 +127,7 @@ CREATE TABLE responses (
 	user_id VARCHAR(50) NOT NULL REFERENCES authentications(username) ON DELETE CASCADE, -- ログインユーザー (必須)
 	-- status : 回答の状態 (有効、無効、テストなど)
 	status response_status NOT NULL DEFAULT 'UNVERIFIED',
+	-- created_at (作成日)
 	created_at timestamp without time zone,
 	-- updated_at (更新日: 再回答された日時)
 	updated_at timestamp without time zone

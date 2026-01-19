@@ -2,7 +2,6 @@ package com.github.rk_aiz.teamsurvey.infrastructure.repository_impl;
 
 import java.util.List;
 
-import org.checkerframework.checker.units.qual.degrees;
 import org.springframework.stereotype.Repository;
 
 import com.github.rk_aiz.teamsurvey.domain.model.question.MultipleChoiceQuestion;
