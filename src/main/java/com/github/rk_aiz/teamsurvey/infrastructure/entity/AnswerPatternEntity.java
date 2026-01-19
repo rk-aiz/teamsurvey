@@ -4,12 +4,16 @@ import org.springframework.beans.BeanUtils;
 
 import com.github.rk_aiz.teamsurvey.domain.model.AnswerOption;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * answer_patternsテーブルに対応するEntity
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class AnswerPatternEntity {
     private Integer id;
     private String patternName;

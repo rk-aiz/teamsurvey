@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Many;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
@@ -26,7 +25,7 @@ public interface AnswerPatternMapper {
     @Results(id = "AnswerPatternMap", value = {
             @Result(property = "id", column = "id", id = true),
             @Result(property = "patternName", column = "pattern_name"),
-            @Result(property = "isDeleted", column = "is_deleted")
+            @Result(property = "deleted", column = "is_deleted")
     })
     List<AnswerPatternEntity> selectAll();
 
