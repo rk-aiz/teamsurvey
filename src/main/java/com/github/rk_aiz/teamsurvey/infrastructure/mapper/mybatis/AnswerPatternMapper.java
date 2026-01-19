@@ -35,7 +35,7 @@ public interface AnswerPatternMapper {
      * (紐づく選択肢リストも取得します)
      */
     @Select("SELECT * FROM answer_patterns WHERE id = #{id}")
-    @ResultMap("AnswerPatternWithItemsMap")
+    @ResultMap("AnswerPatternMap")
     AnswerPatternEntity selectById(@Param("id") Integer id);
 
     /**
