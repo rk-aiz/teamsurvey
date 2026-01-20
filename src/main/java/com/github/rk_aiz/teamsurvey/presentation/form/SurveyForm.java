@@ -28,7 +28,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Data
 @Builder
 @NoArgsConstructor
@@ -47,9 +49,6 @@ public class SurveyForm {
     /** ステータス */
     private SurveyStatus status;
 
-    /** ゲスト回答許可 */
-    private boolean allowGuest;
-
     /** 集計結果の公開範囲 */
     private ResultVisibility resultVisibility;
 
@@ -61,11 +60,11 @@ public class SurveyForm {
     /** 質問リスト */
     @Builder.Default
     @Valid // @Validで、リストの中身(QuestionForm)もバリデーションする
-    private List<QuestionForm> questions = new ArrayList<>();
+    private List<QuestionForm> questionForms = new ArrayList<>();
 
-    /** 公開対象グループIDリスト */
+    /** 公開対象グループリスト */
     @Builder.Default
-    private List<Integer> groupIds = new ArrayList<>();
+    private List<UserGroup> targetGroups = new ArrayList<>();
 
     /** 新規判定 */
     private boolean isNew;
@@ -74,14 +73,28 @@ public class SurveyForm {
      * Modelを受け取って、Formを返す静的メソッド
      */
     public static SurveyForm from(Survey model, boolean isNew) {
-        SurveyFormBuilder builder = SurveyForm.builder()
-                .title(model.getTitle())
-                .isNew(isNew);
+        SurveyForm form = new SurveyForm();
+        BeanUtils.copyProperties(model, form, "questions");
 
-        /**
-         * TODO 実装
-         */
-        return builder.build();
+        // 名前が異なるIDの詰め替え
+        form.setId(model.getSurveyId());
+        form.setNew(isNew);
+
+        // 質問リストの手動マッピング
+        if (model.getQuestions() != null) {
+            List<QuestionForm> questionForms = new ArrayList<>();
+            for (Question question : model.getQuestions()) {
+                QuestionForm qf = new QuestionForm();
+                BeanUtils.copyProperties(question, qf);
+                qf.setId(question.getQuestionId());
+                questionForms.add(qf);
+            }
+            form.setQuestionForms(questionForms);
+        }
+
+        log.info(form.getStatus().toString());
+
+        return form;
     }
 
     public Survey toModel() {
@@ -90,10 +103,10 @@ public class SurveyForm {
         BeanUtils.copyProperties(this, survey, "questions");
 
         // QuestionForm -> Question への変換
-        if (this.getQuestions() != null) {
+        if (this.getQuestionForms() != null) {
             List<Question> questions = new ArrayList<>();
             int order = 1;
-            for (QuestionForm qForm : this.getQuestions()) {
+            for (QuestionForm qForm : this.getQuestionForms()) {
                 Question q = qForm.toModel();
                 q.setDisplayOrder(order++); // リストの順番通りに番号を振る
                 questions.add(q);
@@ -101,16 +114,6 @@ public class SurveyForm {
             survey.setQuestions(questions);
         }
 
-        // GroupIds(List<Integer>) -> SelectedGroups(List<UserGroup>)
-        if (this.getGroupIds() != null) {
-            List<UserGroup> groups = new ArrayList<>();
-            for (Integer id : this.getGroupIds()) {
-                UserGroup g = new UserGroup();
-                g.setGroupId(id);
-                groups.add(g);
-            }
-            survey.setTargetGroups(groups);
-        }
         return survey;
     }
 

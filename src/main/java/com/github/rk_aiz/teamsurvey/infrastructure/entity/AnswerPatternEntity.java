@@ -1,7 +1,6 @@
 package com.github.rk_aiz.teamsurvey.infrastructure.entity;
 
 import org.springframework.beans.BeanUtils;
-
 import com.github.rk_aiz.teamsurvey.domain.model.AnswerOption;
 
 import lombok.AllArgsConstructor;
@@ -26,6 +25,7 @@ public class AnswerPatternEntity {
         AnswerOption model = new AnswerOption();
         BeanUtils.copyProperties(this, model);
         model.setAnswerOptionId(this.id);
+        model.setName(patternName);
         return model;
     }
     /**
@@ -35,6 +35,7 @@ public class AnswerPatternEntity {
         AnswerPatternEntity entity = new AnswerPatternEntity();
         BeanUtils.copyProperties(model, entity);
         entity.setId(model.getAnswerOptionId());
+        entity.setPatternName(model.getName());
         return entity;
     }
 }

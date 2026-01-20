@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class AnswerOption {
 
     private Integer answerOptionId;
-    private String patternName;
+    private String name;
 
     // 1つのパターンは複数の選択肢項目を持つ
     @Builder.Default
@@ -67,7 +67,7 @@ public class AnswerOption {
         }
 
         @Override
-        public void setPatternName(String patternName) {
+        public void setName(String name) {
             throw new UnsupportedOperationException("AnswerOption.EMPTY is immutable.");
         }
 

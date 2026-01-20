@@ -183,7 +183,7 @@ public class AdminSurveyController {
      */
     @PostMapping(value = "/survey/save", params = "addQuestion")
     public String addQuestion(@ModelAttribute SurveyForm form, Model model) {
-        form.getQuestions().add(new QuestionForm());
+        form.getQuestionForms().add(new QuestionForm());
         model.addAttribute("answerOptions", answerOptionService.findAll());
         return "admin/survey/edit";
     }
@@ -196,8 +196,8 @@ public class AdminSurveyController {
     public String removeQuestion(@ModelAttribute SurveyForm form, @RequestParam("removeQuestion") int index,
             Model model) {
         // 指定されたインデックスの質問をリストから削除
-        if (index >= 0 && index < form.getQuestions().size()) {
-            form.getQuestions().remove(index);
+        if (index >= 0 && index < form.getQuestionForms().size()) {
+            form.getQuestionForms().remove(index);
         }
         model.addAttribute("answerPatterns", answerOptionService.findAll());
         return "admin/survey/edit";

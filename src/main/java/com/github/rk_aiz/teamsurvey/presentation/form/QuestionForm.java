@@ -29,8 +29,7 @@ public class QuestionForm {
 
     private boolean required;
 
-    // 画面のバインド構造(th:field="*{questions[0].answerPattern.id}")に合わせて
-    // 一時的にEntityを使用します。必要に応じてAnswerPatternFormを作っても良いです。
+    // ここからanserOptionの内容を編集することはないのでModelを利用
     private AnswerOption answerOption;
 
     /**

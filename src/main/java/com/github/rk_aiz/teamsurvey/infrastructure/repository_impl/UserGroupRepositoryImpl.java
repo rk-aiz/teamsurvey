@@ -9,7 +9,6 @@ import com.github.rk_aiz.teamsurvey.infrastructure.entity.UserGroupEntity;
 import com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.UserGroupMapper;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Repository
 @RequiredArgsConstructor
