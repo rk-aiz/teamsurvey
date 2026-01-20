@@ -41,9 +41,7 @@
             question_type,
             is_required,
             display_order,
-            answer_pattern_id,
-            created_at,
-            updated_at
+            is_deleted
         ) VALUES (
             #{surveyId},
             #{answerPatternId},
@@ -51,20 +49,19 @@
             #{type}::question_type,
             #{required},
             #{displayOrder},
-            #{answerPatternId},
-            #{createdAt},
-            #{updatedAt}
+            #{isDeleted}
         )
     </insert>
 
     <update id="update">
         UPDATE questions 
             SET survey_id = #{surveyId}, 
+                answer_pattern_id = #{answerPatternId},
                 question_text = #{text}, 
                 question_type = #{type}::question_type, 
                 is_required = #{required}, 
                 display_order = #{displayOrder}, 
-                answer_pattern_id = #{answerPatternId}
+                is_deleted = #{isDeleted}
         WHERE id = #{id}
     </update>
 

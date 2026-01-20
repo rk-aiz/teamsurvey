@@ -90,9 +90,8 @@
     <update id="update"> 
         UPDATE surveys 
         SET title = #{title}, 
-            allow_guest = #{allowGuest},
             status = #{status},
-            result_visibility = #{resultVisibility},
+            result_visibility = #{resultVisibility}::result_visibility,
             deadline = #{deadline},
             updated_at = CURRENT_TIMESTAMP 
         WHERE id = #{id} 

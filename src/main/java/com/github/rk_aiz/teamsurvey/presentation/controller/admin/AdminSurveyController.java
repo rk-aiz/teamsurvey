@@ -22,6 +22,7 @@ import com.github.rk_aiz.teamsurvey.domain.model.Survey;
 import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
 import com.github.rk_aiz.teamsurvey.presentation.form.QuestionForm;
 import com.github.rk_aiz.teamsurvey.presentation.form.SurveyForm;
+import com.github.rk_aiz.teamsurvey.presentation.validation.SurveyValidationGroup;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -158,7 +159,7 @@ public class AdminSurveyController {
         validator.validate(
                 form,
                 bindingResult,
-                form.getValidationGroup());
+                SurveyValidationGroup.getValidationGroup(form.getStatus()));
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("answerOptions", answerOptionService.findAll());
@@ -174,7 +175,7 @@ public class AdminSurveyController {
             redirectAttributes.addFlashAttribute(MESSAGE, "アンケートを更新しました");
         }
         // PRGパターン
-        return "redirect:/admin/survey/detail/" + form.getId();
+        return "redirect:/admin/survey/detail/" + form.getSurveyId();
     }
 
     /**
@@ -222,4 +223,10 @@ public class AdminSurveyController {
         redirectAttributes.addFlashAttribute(MESSAGE, "ステータスを変更しました");
         return "redirect:/admin/survey/detail/" + id;
     }
+
+    @GetMapping("/survey/target/")
+    public String getMethodName(@RequestParam String param) {
+        return new String();
+    }
+    
 }

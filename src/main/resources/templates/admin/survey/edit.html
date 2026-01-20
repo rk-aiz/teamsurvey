@@ -12,7 +12,7 @@
 
         <form th:action="@{/admin/survey/save}" method="post" th:object="${surveyForm}">
             <!-- アンケートID (更新時に必要) -->
-            <input type="hidden" th:field="*{id}">
+            <input type="hidden" th:field="*{surveyId}">
             <input type="hidden" th:field="*{new}">
 
             <!-- グローバルエラー (公開時の整合性チェックなど) -->
@@ -89,15 +89,41 @@
                 <!-- 設問IDとアンケートID (更新時に必要) -->
                 <input type="hidden" th:field="*{questionForms[__${stat.index}__].id}">
 
-                <div style="margin-bottom: 10px;">
-                    <strong>Q<span class="q-number" th:text="${stat.count}">1</span></strong>
+                <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                    <div class="d-flex align-items-center gap-3">
+                        <h5 class="mb-0">Q<span class="q-number" th:text="${stat.count}">1</span></h5>
+                        <div class="form-check mb-0">
+                            <input type="checkbox" class="form-check-input"
+                                th:field="*{questionForms[__${stat.index}__].required}" th:id="${'q_req_' + stat.index}"
+                                th:disabled="${surveyForm.status.name() != 'DRAFT'}">
+                            <label class="form-check-label" th:for="${'q_req_' + stat.index}">必須</label>
+                        </div>
+                    </div>
+                
+                    <!-- 操作ボタン群 -->
+                    <div th:if="${surveyForm.status.name() == 'DRAFT'}">
+                        <button type="button" onclick="moveUp(this)" class="btn btn-sm btn-outline-secondary me-1">
+                            <i class="bi bi-arrow-up"></i>
+                        </button>
+                        <button type="button" onclick="moveDown(this)" class="btn btn-sm btn-outline-secondary me-2">
+                            <i class="bi bi-arrow-down"></i>
+                        </button>
+                        <button type="submit" name="removeQuestion" th:value="${stat.index}" formnovalidate
+                            class="btn btn-sm btn-outline-danger">
+                            削除
+                        </button>
+                    </div>
+                
                 </div>
 
+
+
+                <!-- 設問文入力欄 -->
                 <div style="margin-bottom: 5px;">
                     <!-- th:for と th:id で紐付ける -->
                     <label th:for="${'q_text_' + stat.index}">設問文:</label><br>
-                    <input th:id="${'q_text_' + stat.index}" type="text" th:field="*{questionForms[__${stat.index}__].text}"
-                        class="form-control" th:disabled="${surveyForm.status.name() != 'DRAFT'}">
+                    <textarea th:id="${'q_text_' + stat.index}" th:field="*{questionForms[__${stat.index}__].text}"
+                        class="form-control" rows="3" th:disabled="${surveyForm.status.name() != 'DRAFT'}"></textarea>
                     <span th:if="${#fields.hasErrors('questionForms[__${stat.index}__].text')}"
                         th:errors="*{questionForms[__${stat.index}__].text}" style="color:red;"></span>
                 </div>
@@ -114,42 +140,21 @@
                         </select>
                     </div>
 
-                    <div class="form-check mt-4">
-                        <input type="checkbox" class="form-check-input"
-                            th:field="*{questionForms[__${stat.index}__].required}" th:id="${'q_req_' + stat.index}"
-                            th:disabled="${surveyForm.status.name() != 'DRAFT'}">
-                        <label class="form-check-label" th:for="${'q_req_' + stat.index}">必須</label>
-                    </div>
-
                     <!-- 回答パターン選択 -->
                     <div class="pattern-container">
                         <label th:for="${'ans_pattern_' + stat.index}">回答パターン:</label>
-                        <!-- answerOption.answerOptionId に直接バインド -->
-                        <select th:id="${'ans_pattern_' + stat.index}" class="form-select"
-                            th:field="*{questionForms[__${stat.index}__].answerOption.answerOptionId}"
-                            th:disabled="${surveyForm.status.name() != 'DRAFT'}">
-                            <option value="">-- 選択してください --</option>
-                            <option th:each="ao : ${answerOptions}" th:value="${ao.answerOptionId}" th:text="${ao.name}">
-                            </option>
-                        </select>
-                    </div>
-
-                    <!-- 並べ替えボタン (JavaScriptで制御) -->
-                    <div th:if="${surveyForm.status.name() == 'DRAFT'}">
-                        <button type="button" onclick="moveUp(this)" class="btn btn-sm btn-outline-secondary mt-4">
-                            ↑
-                        </button>
-                        <button type="button" onclick="moveDown(this)" class="btn btn-sm btn-outline-secondary mt-4">
-                            ↓
-                        </button>
-                    </div>
-
-                    <!-- 削除ボタン -->
-                    <div style="margin-left: auto;" th:if="${surveyForm.status.name() == 'DRAFT'}">
-                        <button type="submit" name="removeQuestion" th:value="${stat.index}" formnovalidate
-                            class="btn btn-sm btn-outline-danger mt-4">
-                            削除
-                        </button>
+                        <div class="input-group">
+                            <select th:id="${'ans_pattern_' + stat.index}" class="form-select"
+                                th:field="*{questionForms[__${stat.index}__].answerOption.answerOptionId}"
+                                th:disabled="${surveyForm.status.name() != 'DRAFT'}">
+                                <option value="">-- 選択してください --</option>
+                                <option th:each="ao : ${answerOptions}" th:value="${ao.answerOptionId}" th:text="${ao.name}">
+                                </option>
+                            </select>
+                            <button class="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#patternEditor" aria-controls="patternEditor">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -167,29 +172,27 @@
             </div>
         </form>
 
+        <!-- 回答パターン編集サイドペイン (Offcanvas) -->
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="patternEditor" aria-labelledby="patternEditorLabel" style="width: 400px;">
+            <div class="offcanvas-header border-bottom">
+                <h5 class="offcanvas-title" id="patternEditorLabel">回答パターンのクイック編集</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <p class="small text-muted">ここでは選択中の回答パターンの内容を編集したり、新しいパターンをその場で作成したりできます（実装予定）。</p>
+                <!-- ここに非同期(AJAX)で読み込む編集フォームなどを配置する -->
+                <div id="pattern-editor-content">
+                    <div class="text-center mt-5 text-muted">パターンを選択してください</div>
+                </div>
+            </div>
+        </div>
+
         <br>
-        <a th:href="@{/admin/survey/detail/{id}(id=${surveyForm.id})}" class="btn btn-link">詳細に戻る</a>
+        <a th:href="@{/admin/survey/detail/{id}(id=${surveyForm.surveyId})}" class="btn btn-link">詳細に戻る</a>
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                const allowGuest = document.querySelector('input[name="allowGuest"]');
-                const userGroups = document.querySelectorAll('input[name="groupIds"]');
-
-                function toggleUserGroups() {
-                    const isGuest = allowGuest.checked;
-                    userGroups.forEach(function (checkbox) {
-                        checkbox.disabled = isGuest;
-                        if (isGuest) {
-                            checkbox.checked = false;
-                        }
-                    });
-                }
-
-                if (allowGuest) {
-                    allowGuest.addEventListener('change', toggleUserGroups);
-                    // 初期表示時にも実行
-                    toggleUserGroups();
-                }
+                const userGroups = document.querySelectorAll('input[name="targetGroups"]');
 
                 // 設問タイプと回答パターンの連動
                 const questionItems = document.querySelectorAll('.question-item');

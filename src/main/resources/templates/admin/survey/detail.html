@@ -8,6 +8,19 @@
 
 <body>
     <main layout:fragment="content">
+        <style>
+            /* プレビュー時のdisabled要素の視認性向上（ダークモード対応） */
+            .survey-preview .form-control:disabled {
+                background-color: var(--bs-secondary-bg);
+                color: var(--bs-body-color);
+                opacity: 1;
+            }
+            .survey-preview .form-check-input:disabled,
+            .survey-preview .form-check-input:disabled ~ .form-check-label {
+                opacity: 1;
+                color: var(--bs-body-color);
+            }
+        </style>
         <h2>アンケート詳細</h2>
         <table class="table table-bordered">
             <tr>
@@ -83,19 +96,21 @@
                     </form>
                 </th:block>
 
-                <!-- 配布設定ボタン (公開中・終了に関わらず表示) -->
-                <a th:href="@{/admin/survey/distribution/{id}(id=${survey.surveyId})}" class="btn btn-info text-white">
-                    配布設定
+                <!-- 対象グループ設定 -->
+                <a th:href="@{/admin/survey/target/{id}(id=${survey.surveyId})}" class="btn btn-info text-white">
+                    対象グループ設定
                 </a>
             </div>
         </div>
 
         <hr>
         <h3>アンケート内容（プレビュー）</h3>
+        <div class="survey-preview">
         <div th:each="question, stat : ${survey.questions}" class="card mb-3 p-3">
-            <div style="font-weight: bold; margin-bottom: 10px;">
-                <span th:text="'Q' + ${stat.count} + '.'">Q1.</span>
-                <span th:text="${question.text}">設問文</span>
+            <div class="d-flex align-items-start" style="font-weight: bold; margin-bottom: 10px;">
+                <h5 class="me-2 mb-0" style="white-space: nowrap;" th:text="'Q' + ${stat.count} + '.'">Q1.</h5>
+                <span th:if="${question.required}" class="badge bg-danger me-2" style="white-space: nowrap;">必須</span>
+                <span th:text="${question.text}" style="white-space: pre-wrap;">設問文</span>
             </div>
             <div>
                 <!-- 設問タイプ(TEXT, RADIO, CHECKBOX)によって出し分け -->
@@ -103,20 +118,21 @@
                     <input type="text" class="form-control" placeholder="回答入力欄" disabled style="width: 50%;">
                 </div>
 
-                <div th:if="${question.type.name() == 'RADIO'}">
+                <div th:if="${question.type.name() == 'RADIO'}" class="ms-3 p-3 border rounded bg-body-tertiary">
                     <div class="form-check" th:each="item : ${question.answerOption.items}">
                         <input type="radio" class="form-check-input" disabled>
                         <label class="form-check-label" th:text="${item.itemText}">選択肢</label>
                     </div>
                 </div>
 
-                <div th:if="${question.type.name() == 'CHECKBOX'}">
+                <div th:if="${question.type.name() == 'CHECKBOX'}" class="ms-3 p-3 border rounded bg-body-tertiary">
                     <div class="form-check" th:each="item : ${question.answerOption.items}">
                         <input type="checkbox" class="form-check-input" disabled>
                         <label class="form-check-label" th:text="${item.itemText}">選択肢</label>
                     </div>
                 </div>
             </div>
+        </div>
         </div>
 
         <a th:href="@{/admin/survey/edit/{id}(id=${survey.surveyId})}" class="btn btn-primary">編集する</a>

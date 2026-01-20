@@ -10,6 +10,8 @@ import com.github.rk_aiz.teamsurvey.domain.model.question.SingleChoiceQuestion;
 import com.github.rk_aiz.teamsurvey.domain.type.QuestionType;
 import com.github.rk_aiz.teamsurvey.domain.util.StringUtils;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,8 +25,10 @@ public class QuestionForm {
     private Integer id;
 
     @Size(max = 200, message = "質問文は{max}文字以内で入力してください")
+    @NotBlank(message = "質問文は必須です")
     private String text;
 
+    @NotNull(message = "設問の種類を指定してください")
     private QuestionType type;
 
     private boolean required;
@@ -32,6 +36,7 @@ public class QuestionForm {
     // ここからanserOptionの内容を編集することはないのでModelを利用
     private AnswerOption answerOption;
 
+    private Integer displayOrder;
     /**
      * ThymeleafのFormBindingでNPEを防ぐためのGetter
      */

@@ -39,7 +39,7 @@ public class SurveyForm {
 
     /** Survey ID */
     @CriticalNotNull(groups = OnPublishedSurvey.class)
-    private Integer id;
+    private Integer surveyId;
 
     /** title */
     @NotBlank(message = "Titleは必須です")
@@ -77,7 +77,7 @@ public class SurveyForm {
         BeanUtils.copyProperties(model, form, "questions");
 
         // 名前が異なるIDの詰め替え
-        form.setId(model.getSurveyId());
+        //form.setSurveyId(model.getSurveyId());
         form.setNew(isNew);
 
         // 質問リストの手動マッピング
@@ -101,6 +101,7 @@ public class SurveyForm {
         Survey survey = new Survey();
         // questionsは型が違うため除外してコピー
         BeanUtils.copyProperties(this, survey, "questions");
+        survey.setSurveyId(this.getSurveyId());
 
         // QuestionForm -> Question への変換
         if (this.getQuestionForms() != null) {
@@ -115,16 +116,5 @@ public class SurveyForm {
         }
 
         return survey;
-    }
-
-    public Class<? extends SurveyValidationGroup> getValidationGroup() {
-        return switch (this.getStatus()) {
-            case DRAFT -> OnDraftSurvey.class;
-            case PUBLISHED -> OnPublishedSurvey.class;
-            case SUSPENDED -> OnSuspendedSurvey.class;
-            case CLOSED -> OnClosedSurvey.class;
-            case DELETED -> OnDeletedSurvey.class;
-            default -> SurveyValidationGroup.class;
-        };
     }
 }
