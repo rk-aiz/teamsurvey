@@ -55,6 +55,8 @@ CREATE TABLE surveys (
 	status survey_status NOT NULL DEFAULT 'DRAFT',
 	-- result_visibility (集計結果の公開範囲)
 	result_visibility result_visibility NOT NULL DEFAULT 'ADMIN_ONLY',
+	-- target_group_id (対象グループ)
+	target_group_id INTEGER REFERENCES user_groups(id) ON DELETE SET NULL,
 	-- deadline (回答締め切り日時) NULLの場合は無期限
 	deadline timestamp without time zone,
 	-- created_at (作成日)
