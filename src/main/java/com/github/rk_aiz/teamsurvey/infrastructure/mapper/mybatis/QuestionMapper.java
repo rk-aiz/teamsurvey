@@ -7,9 +7,6 @@ import org.apache.ibatis.annotations.Param;
 
 import com.github.rk_aiz.teamsurvey.infrastructure.entity.QuestionEntity;
 
-/**
- * MyBatisが自動生成する実装クラスがそのままRepositoryの実装になります。
- */
 @Mapper
 public interface QuestionMapper {
     /**

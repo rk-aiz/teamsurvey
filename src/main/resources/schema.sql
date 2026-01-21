@@ -45,6 +45,7 @@ CREATE TYPE survey_status AS ENUM ('DRAFT', 'PUBLISHED', 'CLOSED', 'DELETED');
 -- 回答ステータスENUM型
 CREATE TYPE response_status AS ENUM ('UNVERIFIED', 'VALID', 'DUPLICATE', 'INVALID', 'TEST');
 
+
 -- アンケート本体のテーブル作成
 CREATE TABLE surveys (
 	-- id : 内部管理用ID (主キー)
@@ -55,14 +56,42 @@ CREATE TABLE surveys (
 	status survey_status NOT NULL DEFAULT 'DRAFT',
 	-- result_visibility (集計結果の公開範囲)
 	result_visibility result_visibility NOT NULL DEFAULT 'ADMIN_ONLY',
-	-- target_group_id (対象グループ)
-	target_group_id INTEGER REFERENCES user_groups(id) ON DELETE SET NULL,
 	-- deadline (回答締め切り日時) NULLの場合は無期限
 	deadline timestamp without time zone,
 	-- created_at (作成日)
 	created_at timestamp without time zone,
 	-- updated_at (更新日)
 	updated_at timestamp without time zone
+);
+
+-- 認証情報を格納するテーブル
+CREATE TABLE authentications (
+	--ユーザー名 : 主キー
+	username VARCHAR(50) PRIMARY KEY,
+	--- パスワード
+	password VARCHAR(255) NOT NULL,
+	--- メールアドレス (RFC準拠で255文字あれば十分)
+	email VARCHAR(255) NOT NULL UNIQUE,
+	--- 表示名
+	display_name VARCHAR(50) NOT NULL,
+	-- created_at (作成日)
+	created_at timestamp without time zone,
+	-- updated_at (更新日)
+	updated_at timestamp without time zone,
+	--- 有効フラグ (論理削除用: TRUE=有効, FALSE=無効/削除済み)
+	enabled BOOLEAN NOT NULL DEFAULT TRUE
+
+);
+
+
+-- ユーザーグループテーブル
+CREATE TABLE user_groups (
+	id serial PRIMARY KEY,
+	group_name VARCHAR(100) NOT NULL,
+	-- グループに紐づく権限
+	authority role NOT NULL DEFAULT 'USER',
+	-- システム上必須のグループかどうか（削除不可フラグ）
+	is_system_group BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 -- 回答パターン（親）テーブル
@@ -103,25 +132,6 @@ CREATE TABLE questions (
 	is_deleted BOOLEAN NOT NULL DEFAULT FALSE
 );
 
--- 認証情報を格納するテーブル
-CREATE TABLE authentications (
-	--ユーザー名 : 主キー
-	username VARCHAR(50) PRIMARY KEY,
-	--- パスワード
-	password VARCHAR(255) NOT NULL,
-	--- メールアドレス (RFC準拠で255文字あれば十分)
-	email VARCHAR(255) NOT NULL UNIQUE,
-	--- 表示名
-	display_name VARCHAR(50) NOT NULL,
-	-- created_at (作成日)
-	created_at timestamp without time zone,
-	-- updated_at (更新日)
-	updated_at timestamp without time zone,
-	--- 有効フラグ (論理削除用: TRUE=有効, FALSE=無効/削除済み)
-	enabled BOOLEAN NOT NULL DEFAULT TRUE
-
-);
-
 -- 回答ヘッダーテーブル（誰がいつ回答したか）
 CREATE TABLE responses (
 	id serial PRIMARY KEY,
@@ -144,12 +154,12 @@ CREATE TABLE response_details (
 	answer_text text -- 自由記述の場合
 );
 
--- ユーザーグループテーブル
-CREATE TABLE user_groups (
-	id serial PRIMARY KEY,
-	group_name VARCHAR(100) NOT NULL,
-	-- グループに紐づく権限 (デフォルトは一般ユーザー)
-	authority role NOT NULL DEFAULT 'USER'
+
+-- アンケートと対象グループの紐づけ
+CREATE TABLE survey_target_groups (
+	survey_id INTEGER NOT NULL REFERENCES surveys(id) ON DELETE CASCADE,
+	group_id INTEGER NOT NULL REFERENCES user_groups(id),
+	PRIMARY KEY (survey_id, group_id)
 );
 
 -- ユーザーとグループの紐付け（多対多）
@@ -157,11 +167,4 @@ CREATE TABLE user_group_mappings (
 	username VARCHAR(50) NOT NULL REFERENCES authentications(username) ON DELETE CASCADE,
 	group_id INTEGER NOT NULL REFERENCES user_groups(id) ON DELETE CASCADE,
 	PRIMARY KEY (username, group_id)
-);
-
--- アンケートと対象グループの紐づけ
-CREATE TABLE survey_target_groups (
-	survey_id INTEGER NOT NULL REFERENCES surveys(id) ON DELETE CASCADE,
-	group_id INTEGER NOT NULL REFERENCES user_groups(id),
-	PRIMARY KEY (survey_id, group_id)
 );

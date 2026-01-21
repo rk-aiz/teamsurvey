@@ -29,15 +29,14 @@ public class SurveyRepositoryImpl implements SurveyRepository {
 
     @Override
     public Survey findById(Integer id) {
-        log.info("survey find by id: " + id);
         // 1. Header取得
         SurveyEntity entity = surveyMapper.selectById(id);
         if (entity == null)
             return null;
-        
+
         Survey survey = entity.toModel();
 
-        // 2. Questions取得 (別クエリ)
+        // 2. Questions取得
         survey.setQuestions(questionRepository.findBySurveyId(id));
 
         return survey;
@@ -85,8 +84,7 @@ public class SurveyRepositoryImpl implements SurveyRepository {
 
     @Override
     public void remove(Integer id) {
-        // カスケード設定がない場合は子要素から削除が必要ですが、
-        // 通常はDBの外部キー制約(ON DELETE CASCADE)に任せるか、ここで明示的に削除します。
+        // 子要素の削除はDBの外部キー制約(ON DELETE CASCADE)に任せる
         surveyMapper.delete(id);
     }
 

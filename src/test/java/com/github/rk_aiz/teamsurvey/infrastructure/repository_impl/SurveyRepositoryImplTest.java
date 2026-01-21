@@ -61,7 +61,7 @@ class SurveyRepositoryImplTest {
     void findById_WhenExists_ReturnsSurveyWithQuestions() {
         Integer id = 1;
         when(surveyMapper.selectById(id)).thenReturn(surveyEntity);
-        
+
         Question question = new SingleChoiceQuestion();
         question.setQuestionId(10);
         when(questionRepository.findBySurveyId(id)).thenReturn(List.of(question));
@@ -72,7 +72,7 @@ class SurveyRepositoryImplTest {
         assertEquals(id, result.getSurveyId());
         assertEquals(1, result.getQuestions().size());
         assertEquals(10, result.getQuestions().get(0).getQuestionId());
-        
+
         verify(surveyMapper).selectById(id);
         verify(questionRepository).findBySurveyId(id);
     }
@@ -95,7 +95,7 @@ class SurveyRepositoryImplTest {
                 .title("New Survey")
                 .questions(new ArrayList<>())
                 .build();
-        
+
         Question newQuestion = new SingleChoiceQuestion(); // ID is null
         newSurvey.getQuestions().add(newQuestion);
 
@@ -110,7 +110,7 @@ class SurveyRepositoryImplTest {
 
         assertEquals(100, newSurvey.getSurveyId());
         assertEquals(100, newQuestion.getSurveyId()); // Check parent ID set
-        
+
         verify(surveyMapper).insert(any(SurveyEntity.class));
         verify(questionRepository).add(newQuestion);
     }
@@ -122,19 +122,19 @@ class SurveyRepositoryImplTest {
                 .title("Updated Survey")
                 .questions(new ArrayList<>())
                 .build();
-        
+
         Question existingQuestion = new SingleChoiceQuestion();
         existingQuestion.setQuestionId(10);
-        
+
         Question newQuestion = new SingleChoiceQuestion(); // ID null
-        
+
         existingSurvey.getQuestions().add(existingQuestion);
         existingSurvey.getQuestions().add(newQuestion);
 
         surveyRepository.set(existingSurvey);
 
         verify(surveyMapper).update(any(SurveyEntity.class));
-        
+
         // existing question -> set
         verify(questionRepository).set(existingQuestion);
         assertEquals(1, existingQuestion.getSurveyId());

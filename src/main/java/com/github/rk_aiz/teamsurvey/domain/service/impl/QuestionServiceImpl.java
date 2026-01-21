@@ -1,13 +1,13 @@
-package com.github.rk_aiz.teamsurvey.application.service.impl;
+package com.github.rk_aiz.teamsurvey.domain.service.impl;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.github.rk_aiz.teamsurvey.application.service.QuestionService;
 import com.github.rk_aiz.teamsurvey.domain.model.question.Question;
 import com.github.rk_aiz.teamsurvey.domain.repository.QuestionRepository;
+import com.github.rk_aiz.teamsurvey.domain.service.QuestionService;
 
 import lombok.RequiredArgsConstructor;
 

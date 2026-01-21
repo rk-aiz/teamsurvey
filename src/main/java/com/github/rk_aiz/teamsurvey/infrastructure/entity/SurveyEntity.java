@@ -30,7 +30,7 @@ public class SurveyEntity {
     /** アンケートの状態 */
     @Builder.Default
     private SurveyStatus status = SurveyStatus.DRAFT;
-        /** 集計結果の公開範囲 */
+    /** 集計結果の公開範囲 */
     @Builder.Default
     private ResultVisibility resultVisibility = ResultVisibility.ADMIN_ONLY;
     /** 回答締め切り日時 (nullの場合は無期限) */

@@ -81,9 +81,9 @@ VALUES ('user',
 		'user@example.com');
 
 -- ユーザーグループの登録
-INSERT INTO user_groups (id, group_name, authority) VALUES (1, '全社員', 'USER');
-INSERT INTO user_groups (id, group_name, authority) VALUES (2, 'エンジニア', 'USER');
-INSERT INTO user_groups (id, group_name, authority) VALUES (99, 'システム管理者', 'ADMIN');
+INSERT INTO user_groups (id, group_name, authority, is_system_group) VALUES (1, '全社員', 'USER', TRUE);
+INSERT INTO user_groups (id, group_name, authority, is_system_group) VALUES (2, 'エンジニア', 'USER', FALSE);
+INSERT INTO user_groups (id, group_name, authority, is_system_group) VALUES (99, 'システム管理者', 'ADMIN', TRUE);
 
 -- ユーザーとグループの紐付け
 INSERT INTO user_group_mappings (username, group_id) VALUES ('user', 1);

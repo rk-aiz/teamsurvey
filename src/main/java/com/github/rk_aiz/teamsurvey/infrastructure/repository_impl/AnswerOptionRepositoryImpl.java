@@ -5,9 +5,11 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Repository;
 
 import com.github.rk_aiz.teamsurvey.domain.model.AnswerOption;
+import com.github.rk_aiz.teamsurvey.domain.model.AnswerOption.OptionItem;
 import com.github.rk_aiz.teamsurvey.domain.repository.AnswerOptionRepository;
 import com.github.rk_aiz.teamsurvey.infrastructure.entity.AnswerPatternEntity;
 import com.github.rk_aiz.teamsurvey.infrastructure.entity.AnswerPatternItemEntity;
@@ -23,9 +25,8 @@ import lombok.extern.slf4j.Slf4j;
 public class AnswerOptionRepositoryImpl implements AnswerOptionRepository {
 
     /**
-     * AnswerOptionが集約ルート(Aggregate Root)として定義されているため、
+     * AnswerOptionが集約ルートとして定義されているため、
      * このリポジトリはルートエンティティ(AnswerPattern)と子エンティティ(AnswerPatternItem)の両方の永続化を担当します。
-     * そのため、内部的に2つのMapperを使用して集約単位での整合性を管理しています。
      */
     private final AnswerPatternMapper answerPatternMapper;
     private final AnswerPatternItemMapper answerPatternItemMapper;
@@ -41,21 +42,16 @@ public class AnswerOptionRepositoryImpl implements AnswerOptionRepository {
         List<AnswerOption> options = this.answerPatternMapper.selectAll()
                 .stream().map(AnswerPatternEntity::toModel).toList();
 
-        for (AnswerOption option : options) {
-            this.answerPatternItemMapper
-                    .selectByPatternId(option.getAnswerOptionId())
-                    .forEach(item -> {
-                        option.addItem(item.getId(), item.getItemText(), item.getItemOrder());
-                    });
-        }
+        options.forEach(this::loadItems);
         return options;
     }
 
     @Override
     public AnswerOption findById(Integer id) {
         AnswerPatternEntity pattern = this.answerPatternMapper.selectById(id);
-        if (pattern == null) return null;
-        
+        if (pattern == null)
+            return null;
+
         return convertWithItems(pattern);
     }
 
@@ -69,12 +65,7 @@ public class AnswerOptionRepositoryImpl implements AnswerOptionRepository {
         // 子要素(Items)の保存
         if (answerOption.getItems() != null) {
             for (AnswerOption.OptionItem item : answerOption.getItems()) {
-                AnswerPatternItemEntity itemEntity = new AnswerPatternItemEntity();
-                itemEntity.setAnswerPatternId(entity.getId());
-                itemEntity.setItemText(item.getItemText());
-                itemEntity.setItemOrder(item.getItemOrder());
-                this.answerPatternItemMapper.insert(itemEntity);
-                item.setId(itemEntity.getId());
+                item.setItemId(insertItem(entity.getId(), item));
             }
         }
     }
@@ -91,21 +82,16 @@ public class AnswerOptionRepositoryImpl implements AnswerOptionRepository {
         List<AnswerOption.OptionItem> newItems = answerOption.getItems();
         if (newItems != null) {
             for (AnswerOption.OptionItem item : newItems) {
-                if (item.getId() != null && currentMap.containsKey(item.getId())) {
+                if (item.getItemId() != null && currentMap.containsKey(item.getItemId())) {
                     // Update
-                    AnswerPatternItemEntity existing = currentMap.get(item.getId());
+                    AnswerPatternItemEntity existing = currentMap.get(item.getItemId());
                     existing.setItemText(item.getItemText());
                     existing.setItemOrder(item.getItemOrder());
                     this.answerPatternItemMapper.update(existing);
-                    currentMap.remove(item.getId());
+                    currentMap.remove(item.getItemId());
                 } else {
                     // Insert
-                    AnswerPatternItemEntity newItem = new AnswerPatternItemEntity();
-                    newItem.setAnswerPatternId(patternId);
-                    newItem.setItemText(item.getItemText());
-                    newItem.setItemOrder(item.getItemOrder());
-                    this.answerPatternItemMapper.insert(newItem);
-                    item.setId(newItem.getId());
+                    item.setItemId(insertItem(patternId, item));
                 }
             }
         }
@@ -124,11 +110,24 @@ public class AnswerOptionRepositoryImpl implements AnswerOptionRepository {
 
     private AnswerOption convertWithItems(AnswerPatternEntity entity) {
         AnswerOption answerOption = entity.toModel();
+        loadItems(answerOption);
+        return answerOption;
+    }
+
+    private void loadItems(AnswerOption answerOption) {
         this.answerPatternItemMapper
-                .selectByPatternId(entity.getId())
+                .selectByPatternId(answerOption.getAnswerOptionId())
                 .forEach(item -> {
                     answerOption.addItem(item.getId(), item.getItemText(), item.getItemOrder());
                 });
-        return answerOption;
+    }
+
+    private Integer insertItem(Integer patternId, OptionItem item) {
+        AnswerPatternItemEntity newItem = new AnswerPatternItemEntity();
+        BeanUtils.copyProperties(item, newItem);
+        newItem.setAnswerPatternId(patternId);
+        this.answerPatternItemMapper.insert(newItem);
+        // 自動採番IDをreturn
+        return newItem.getId();
     }
 }

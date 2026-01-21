@@ -1,4 +1,4 @@
-package com.github.rk_aiz.teamsurvey.application.service.impl;
+package com.github.rk_aiz.teamsurvey.domain.service.impl;
 
 import java.util.List;
 import java.util.Objects;
@@ -8,10 +8,10 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.github.rk_aiz.teamsurvey.application.service.QuestionService;
-import com.github.rk_aiz.teamsurvey.application.service.SurveyService;
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
 import com.github.rk_aiz.teamsurvey.domain.repository.SurveyRepository;
+import com.github.rk_aiz.teamsurvey.domain.service.QuestionService;
+import com.github.rk_aiz.teamsurvey.domain.service.SurveyService;
 import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
 
 import lombok.RequiredArgsConstructor;
@@ -40,9 +40,7 @@ public class SurveyServiceImpl implements SurveyService {
      * @throws IllegalArgumentException アンケートが存在しない場合
      */
     @Override
-    public Survey findSurveyById(Integer surveyId) {
-        // Serviceは「どうやってDBから取るか」や「Entityの変換」を知らなくていい
-        // ただ「Repositoryからドメインモデルが返ってくる」ことだけを知っている
+    public Survey findSurveyById(Integer surveyId) throws IllegalArgumentException {
         Survey survey = surveyRepository.findById(surveyId);
 
         if (survey == null) {
@@ -73,7 +71,7 @@ public class SurveyServiceImpl implements SurveyService {
         // DB上の現在の状態を取得
         Survey currentDbSurvey = this.findSurveyById(survey.getSurveyId());
 
-        // セキュリティ対策: DB上のステータスがDRAFT以外の場合、設問構成変更を許可しない
+        // DB上のステータスがDRAFT以外の場合、設問構成変更を許可しない
         if (currentDbSurvey.getStatus() != SurveyStatus.DRAFT) {
             // 変更を無視し、DBの値を強制的にセット
             survey.setQuestions(currentDbSurvey.getQuestions());
@@ -99,7 +97,7 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
-    public boolean tryChangeStatusById(Integer id, SurveyStatus status) {
+    public boolean tryChangeStatusById(Integer id, SurveyStatus status) throws IllegalArgumentException {
 
         Survey survey = this.findSurveyById(id);
 

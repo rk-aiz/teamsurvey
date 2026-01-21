@@ -13,12 +13,7 @@ import com.github.rk_aiz.teamsurvey.domain.model.question.Question;
 import com.github.rk_aiz.teamsurvey.domain.type.ResultVisibility;
 import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
 import com.github.rk_aiz.teamsurvey.presentation.validation.CriticalNotNull;
-import com.github.rk_aiz.teamsurvey.presentation.validation.OnClosedSurvey;
-import com.github.rk_aiz.teamsurvey.presentation.validation.OnDeletedSurvey;
-import com.github.rk_aiz.teamsurvey.presentation.validation.OnDraftSurvey;
 import com.github.rk_aiz.teamsurvey.presentation.validation.OnPublishedSurvey;
-import com.github.rk_aiz.teamsurvey.presentation.validation.OnSuspendedSurvey;
-import com.github.rk_aiz.teamsurvey.presentation.validation.SurveyValidationGroup;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Future;

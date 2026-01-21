@@ -7,32 +7,71 @@
     <title>トップ</title>
 </head>
 
-<body class="bg-light">
+<body>
+    <!-- ヘッダーのログインボタンを非表示にする -->
+    <div layout:fragment="header-buttons"></div>
 
     <!-- メインコンテンツ -->
-    <main layout:fragment="content" class="container d-flex justify-content-center align-items-center"
-        style="min-height: 80vh;">
-        <div class="card shadow p-4" style="width: 100%; max-width: 500px;">
-            <div class="text-center mb-4">
-                <h1 class="h3" th:text="${appName}">TeamSurvey</h1>
-                <p class="text-muted">配布されたトークンを入力してください</p>
-            </div>
+    <main layout:fragment="content" class="container py-5">
+        <div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+            <div class="col-xl-10">
+                <div class="card border-0 shadow-sm overflow-hidden">
+                    <div class="row g-0">
+                        <!-- 左側: ログインフォーム -->
+                        <div class="col-lg-6 p-5 bg-body">
+                            <div class="mb-4">
+                                <h2 class="h3 fw-bold" th:text="${appName}">TeamSurvey</h2>
+                                <p class="text-muted">Welcome to <span th:text="${appName}">TeamSurvey</span></p>
+                            </div>
 
-            <!-- エラーメッセージ -->
-            <div th:if="${errorMessage}" class="alert alert-danger" role="alert" th:text="${errorMessage}">
-                エラーメッセージ
-            </div>
+                            <!-- エラーメッセージ -->
+                            <div th:if="${errorMessage}" class="alert alert-danger" role="alert"
+                                th:text="${errorMessage}">
+                                エラーメッセージ
+                            </div>
+                            <div th:if="${param.error}" class="alert alert-danger" role="alert">
+                                ユーザー名またはパスワードが正しくありません。
+                            </div>
 
-            <form th:action="@{/enter}" method="post">
-                <div class="form-floating mb-3">
-                    <input type="text" name="token" class="form-control form-control-lg text-center" id="tokenInput"
-                        placeholder="例: abc-123-xyz" required>
-                    <label for="tokenInput">配布トークン</label>
+                            <form th:action="@{/login}" method="post">
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">ユーザー名 / メールアドレス</label>
+                                    <input type="text" name="username" id="username" class="form-control" required
+                                        autofocus>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="password" class="form-label">パスワード</label>
+                                    <input type="password" name="password" id="password" class="form-control" required>
+                                </div>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary btn-lg">ログイン</button>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- 右側: イメージ画像と概要 -->
+                        <div class="col-lg-6 d-none d-lg-flex flex-column justify-content-center text-white p-5"
+                            style="background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);">
+                            <h2 class="display-6 fw-bold mb-3">チームの声を可視化し、<br>改善を加速させる。</h2>
+                            <p class="lead opacity-75 mb-5">チーム専用のアンケートプラットフォーム</p>
+
+                            <ul class="list-unstyled">
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="bi bi-lightning-charge-fill fs-4 me-3"></i>
+                                    <span class="fw-bold">シンプルな操作感</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-3">
+                                    <i class="bi bi-sliders fs-4 me-3"></i>
+                                    <span class="fw-bold">柔軟なカスタマイズ</span>
+                                </li>
+                                <li class="d-flex align-items-center">
+                                    <i class="bi bi-people-fill fs-4 me-3"></i>
+                                    <span class="fw-bold">信頼の透明性</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-primary btn-lg">送信</button>
-                </div>
-            </form>
+            </div>
         </div>
     </main>
 </body>

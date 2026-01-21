@@ -33,8 +33,9 @@ public class ProxyConfig {
                 chain.doFilter(new HttpServletRequestWrapper(req) {
                     @Override
                     public String getHeader(String name) {
-                        // code-serverが送ってこないPrefixをここで補完
-                        if ("X-Forwarded-Prefix".equalsIgnoreCase(name) && proxyPrefix != null && !proxyPrefix.isEmpty()) {
+                        // Proxy Serverが送ってこないPrefixをここで補完
+                        if ("X-Forwarded-Prefix".equalsIgnoreCase(name) && proxyPrefix != null
+                                && !proxyPrefix.isEmpty()) {
                             return proxyPrefix;
                         }
                         return super.getHeader(name);

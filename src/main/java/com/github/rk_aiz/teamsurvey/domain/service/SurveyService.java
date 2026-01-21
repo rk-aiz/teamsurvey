@@ -1,4 +1,4 @@
-package com.github.rk_aiz.teamsurvey.application.service;
+package com.github.rk_aiz.teamsurvey.domain.service;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ public interface SurveyService {
      * @return アンケートドメインモデル
      * @throws IllegalArgumentException アンケートが存在しない場合
      */
-    Survey findSurveyById(Integer surveyId);
+    Survey findSurveyById(Integer surveyId) throws IllegalArgumentException;
 
     /**
      * ユースケース: 既存アンケートを流用して、新規登録用の雛形を取得する

@@ -34,7 +34,7 @@ public class AnswerOption {
 
     public void addItem(Integer id, String itemText, Integer itemOrder) {
         OptionItem item = OptionItem.builder()
-                .id(id)
+                .itemId(id)
                 .itemText(itemText)
                 .itemOrder(itemOrder)
                 .build();
@@ -51,7 +51,7 @@ public class AnswerOption {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class OptionItem {
-        private Integer id;
+        private Integer itemId;
         private String itemText;
         private Integer itemOrder;
     }

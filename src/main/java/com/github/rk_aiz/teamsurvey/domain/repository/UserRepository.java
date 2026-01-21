@@ -3,7 +3,6 @@ package com.github.rk_aiz.teamsurvey.domain.repository;
 import java.util.List;
 
 import com.github.rk_aiz.teamsurvey.domain.model.User;
-import com.github.rk_aiz.teamsurvey.domain.model.UserGroup;
 
 public interface UserRepository {
 
