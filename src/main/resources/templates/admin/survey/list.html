@@ -8,39 +8,129 @@
 
 <body>
     <main layout:fragment="content">
-        <h2>アンケート一覧</h2>
+        <div class="row g-4">
+            <!-- 左カラム: 操作・ナビゲーション (col-lg-2) -->
+            <div class="col-lg-2">
+                <div class="d-grid gap-2 mb-4">
+                    <a th:href="@{/admin/survey/new}" class="btn btn-primary shadow-sm">
+                        <i class="bi bi-plus-lg"></i> 新規作成
+                    </a>
+                </div>
+                <div class="list-group list-group-flush shadow-sm rounded">
+                    <a th:href="@{/admin/survey/list}" class="list-group-item list-group-item-action active">
+                        <i class="bi bi-list-ul me-2"></i> すべて
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="bi bi-pencil me-2"></i> 下書き
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="bi bi-send me-2"></i> 公開中
+                    </a>
+                </div>
+                <a th:href="@{/}" class="btn btn-link mt-3 text-decoration-none text-muted small">
+                    <i class="bi bi-arrow-left"></i> メニューへ戻る
+                </a>
+            </div>
 
-        <!-- Flashメッセージの表示 -->
-        <p th:if="${message}" th:text="${message}" style="color: blue;">
-            完了メッセージ
-        </p>
-        <p th:if="${errorMessage}" th:text="${errorMessage}" style="color:red;">
-            エラーメッセージ
-        </p>
+            <!-- 中央カラム: アンケート一覧 (col-lg-4) -->
+            <div class="col-lg-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-transparent py-3">
+                        <h5 class="card-title mb-0">アンケート一覧</h5>
+                    </div>
+                    <div class="list-group list-group-flush overflow-auto" style="max-height: 70vh;">
+                        <!-- メッセージ表示 -->
+                        <div th:if="${message}" class="alert alert-success m-2 py-2 small" th:text="${message}"></div>
+                        <div th:if="${errorMessage}" class="alert alert-danger m-2 py-2 small"
+                            th:text="${errorMessage}"></div>
 
-        <table class="table table-striped table-hover">
-            <thead>
-                <th>ID</th>
-                <th>タイトル</th>
-                <th>詳細</th>
-            </thead>
-            <tbody>
-                <tr th:each="survey : ${surveys}">
-                    <td th:text="${survey.surveyId}">ID</td>
-                    <td th:text="${survey.title}">タイトル</td>
-                    <td>
-                        <a th:href="@{/admin/survey/detail/{id}(id=${survey.surveyId})}">
-                            詳細
+                        <!-- 一覧ループ -->
+                        <a th:each="survey : ${surveys}" th:href="@{/admin/survey/list(id=${survey.surveyId})}"
+                            class="list-group-item list-group-item-action py-3"
+                            th:classappend="${selectedSurvey != null && selectedSurvey.surveyId == survey.surveyId} ? 'bg-light border-start border-primary border-4' : ''">
+                            <div class="d-flex w-100 justify-content-between align-items-center mb-1">
+                                <h6 class="mb-1 fw-bold text-truncate" th:text="${survey.title}">タイトル</h6>
+                                <small class="text-muted" th:text="'#' + ${survey.surveyId}">#1</small>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <!-- ステータスバッジ -->
+                                <span th:if="${survey.status.name() == 'DRAFT'}"
+                                    class="badge bg-secondary-subtle text-secondary border border-secondary small">下書き</span>
+                                <span th:if="${survey.status.name() == 'PUBLISHED'}"
+                                    class="badge bg-success-subtle text-success border border-success small">公開中</span>
+                                <span th:if="${survey.status.name() == 'CLOSED'}"
+                                    class="badge bg-danger-subtle text-danger border border-danger small">終了</span>
+
+                                <small class="text-muted">
+                                    <i class="bi bi-clock"></i>
+                                    <span th:text="${#temporals.format(survey.createdAt, 'MM/dd')}">01/01</span>
+                                </small>
+                            </div>
                         </a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <a th:href="@{/admin/survey/new}" class="btn btn-primary">新規登録</a>
-        <br>
-        <!-- メニュー画面へ -->
-        <a th:href="@{/}" class="btn btn-link mt-3">メニュー画面へ</a>
 
+                        <div th:if="${#lists.isEmpty(surveys)}" class="p-4 text-center text-muted">
+                            アンケートがありません
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右カラム: 選択項目の詳細プレビュー (col-lg-6) -->
+            <div class="col-lg-6">
+                <div th:if="${selectedSurvey != null}" class="card shadow-sm border-0">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-4">
+                            <div>
+                                <h3 class="fw-bold mb-1" th:text="${selectedSurvey.title}">アンケートタイトル</h3>
+                                <p class="text-muted mb-0">作成日: <span
+                                        th:text="${#temporals.format(selectedSurvey.createdAt, 'yyyy/MM/dd HH:mm')}"></span>
+                                </p>
+                            </div>
+                            <a th:href="@{/admin/survey/detail/{id}(id=${selectedSurvey.surveyId})}"
+                                class="btn btn-outline-primary">
+                                <i class="bi bi-eye"></i> 詳細画面を開く
+                            </a>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-6">
+                                <div class="p-3 border rounded bg-light">
+                                    <small class="text-muted d-block">ステータス</small>
+                                    <span class="fw-bold" th:text="${selectedSurvey.status}">DRAFT</span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 border rounded bg-light">
+                                    <small class="text-muted d-block">回答期限</small>
+                                    <span class="fw-bold"
+                                        th:text="${selectedSurvey.deadline != null ? #temporals.format(selectedSurvey.deadline, 'yyyy/MM/dd') : '無期限'}">無期限</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <a th:href="@{/admin/survey/edit/{id}(id=${selectedSurvey.surveyId})}"
+                                class="btn btn-primary px-4">
+                                <i class="bi bi-pencil"></i> 編集
+                            </a>
+                            <a th:href="@{/admin/survey/copy/{id}(id=${selectedSurvey.surveyId})}"
+                                class="btn btn-outline-secondary">
+                                <i class="bi bi-copy"></i> 複製
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 未選択時の表示 -->
+                <div th:if="${selectedSurvey == null}"
+                    class="card shadow-sm border-0 h-100 d-flex align-items-center justify-content-center bg-light">
+                    <div class="text-center p-5">
+                        <i class="bi bi-cursor fs-1 text-muted mb-3"></i>
+                        <p class="text-muted">一覧からアンケートを選択すると<br>ここに詳細が表示されます</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 </body>
 

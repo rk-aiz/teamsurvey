@@ -54,11 +54,23 @@ public class AdminSurveyController {
      * アンケートの一覧画面を表示します
      */
     @GetMapping("/survey/list")
-    public String list(Model model) {
+    public String list(@RequestParam(value = "id", required = false) Integer id, Model model) {
 
+        // 全件取得（中央カラム用）
         model.addAttribute("surveys",
                 surveyService
                         .findAllSurveys());
+
+        // IDが指定されている場合、詳細情報を取得（右カラム用）
+        if (id != null) {
+            try {
+                Survey selectedSurvey = surveyService.findSurveyById(id);
+                model.addAttribute("selectedSurvey", selectedSurvey);
+            } catch (IllegalArgumentException e) {
+                // 指定されたIDが見つからない場合は、詳細を表示せずに一覧のみ表示を継続
+                log.warn("指定されたアンケートIDが見つかりません: {}", id);
+            }
+        }
 
         return "admin/survey/list";
     }
