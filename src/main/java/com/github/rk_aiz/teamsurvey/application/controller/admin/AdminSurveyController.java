@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.github.rk_aiz.teamsurvey.application.form.QuestionForm;
+import com.github.rk_aiz.teamsurvey.application.form.SurveyForm;
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
 import com.github.rk_aiz.teamsurvey.domain.service.AnswerOptionService;
 import com.github.rk_aiz.teamsurvey.domain.service.SurveyService;
 import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
-import com.github.rk_aiz.teamsurvey.presentation.form.QuestionForm;
-import com.github.rk_aiz.teamsurvey.presentation.form.SurveyForm;
 import com.github.rk_aiz.teamsurvey.presentation.validation.SurveyValidationGroup;
 
 import lombok.RequiredArgsConstructor;

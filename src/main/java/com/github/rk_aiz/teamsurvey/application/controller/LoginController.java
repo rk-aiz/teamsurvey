@@ -6,17 +6,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class IndexController {
+public class LoginController {
 
     /**
      * トップページ（ログイン画面）を表示します。
      * すでにログインしている場合はメニュー画面へリダイレクトします。
      */
-    @GetMapping("/")
+    @GetMapping("/auth")
     public String index(Principal principal) {
         if (principal != null) {
-            return "redirect:/menu";
+            return "redirect:/home";
         }
-        return "index";
+        return "login";
     }
 }
