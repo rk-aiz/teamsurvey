@@ -20,7 +20,7 @@ public class Response {
     /** アンケートID */
     private Integer surveyId;
     /** 回答ユーザーID */
-    private User user;
+    private LoginUser user;
     /** 回答ステータス */
     @Builder.Default
     private ResponseStatus status = ResponseStatus.UNVERIFIED;

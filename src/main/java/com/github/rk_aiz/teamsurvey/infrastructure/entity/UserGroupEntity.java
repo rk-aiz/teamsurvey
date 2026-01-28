@@ -10,6 +10,7 @@ public class UserGroupEntity {
     private Integer id;
     private String groupName;
     private Authority authority;
+    private boolean isSystemGroup;
 
     public UserGroup toModel() {
         UserGroup model = new UserGroup();

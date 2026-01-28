@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
-import com.github.rk_aiz.teamsurvey.domain.repository.SurveyRepository;
 import com.github.rk_aiz.teamsurvey.domain.service.QuestionService;
 import com.github.rk_aiz.teamsurvey.domain.service.SurveyService;
 import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
+import com.github.rk_aiz.teamsurvey.infrastructure.repository.SurveyRepository;
 
 import lombok.RequiredArgsConstructor;
 

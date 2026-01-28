@@ -1,10 +1,13 @@
 package com.github.rk_aiz.teamsurvey.infrastructure.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.core.GrantedAuthority;
 
-import com.github.rk_aiz.teamsurvey.domain.model.User;
+import com.github.rk_aiz.teamsurvey.domain.model.LoginUser;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,21 +34,27 @@ public class AuthenticationEntity {
     /** 有効フラグ */
     private boolean enabled;
 
-
     /**
      * Entity -> Domain Model 変換
      */
-    public User toModel() {
-        
-        User user = new User();
-        BeanUtils.copyProperties(this, user);
+    public LoginUser toModel() {
+        LoginUser user = new LoginUser(
+                this.username,
+                this.password,
+                this.createdAt,
+                this.updatedAt,
+                this.enabled,
+                new ArrayList<>()
+        );
+        user.setEmail(this.email);
+        user.setDisplayName(this.displayName);
         return user;
     }
 
     /**
      * Domain Model -> Entity 変換
      */
-    public static AuthenticationEntity from(User model) {
+    public static AuthenticationEntity from(LoginUser model) {
         AuthenticationEntity entity = new AuthenticationEntity();
         BeanUtils.copyProperties(model, entity);
         return entity;

@@ -1,4 +1,4 @@
-package com.github.rk_aiz.teamsurvey.domain.repository;
+package com.github.rk_aiz.teamsurvey.infrastructure.repository;
 
 import java.util.List;
 

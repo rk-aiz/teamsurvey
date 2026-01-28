@@ -1,4 +1,4 @@
-package com.github.rk_aiz.teamsurvey;
+package com.github.rk_aiz.teamsurvey.config;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package com.github.rk_aiz.teamsurvey.infrastructure.repository_impl;
+package com.github.rk_aiz.teamsurvey.infrastructure.repository.impl;
 
 import java.util.List;
 import java.util.Map;
@@ -10,11 +10,11 @@ import org.springframework.stereotype.Repository;
 
 import com.github.rk_aiz.teamsurvey.domain.model.AnswerOption;
 import com.github.rk_aiz.teamsurvey.domain.model.AnswerOption.OptionItem;
-import com.github.rk_aiz.teamsurvey.domain.repository.AnswerOptionRepository;
 import com.github.rk_aiz.teamsurvey.infrastructure.entity.AnswerPatternEntity;
 import com.github.rk_aiz.teamsurvey.infrastructure.entity.AnswerPatternItemEntity;
 import com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.AnswerPatternItemMapper;
 import com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.AnswerPatternMapper;
+import com.github.rk_aiz.teamsurvey.infrastructure.repository.AnswerOptionRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

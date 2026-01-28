@@ -18,9 +18,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
 import com.github.rk_aiz.teamsurvey.domain.model.question.Question;
 import com.github.rk_aiz.teamsurvey.domain.model.question.SingleChoiceQuestion;
-import com.github.rk_aiz.teamsurvey.domain.repository.QuestionRepository;
 import com.github.rk_aiz.teamsurvey.infrastructure.entity.SurveyEntity;
 import com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.SurveyMapper;
+import com.github.rk_aiz.teamsurvey.infrastructure.repository.QuestionRepository;
+import com.github.rk_aiz.teamsurvey.infrastructure.repository.impl.SurveyRepositoryImpl;
 
 @ExtendWith(MockitoExtension.class)
 class SurveyRepositoryImplTest {

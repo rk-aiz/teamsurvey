@@ -19,7 +19,7 @@
 	<select id="selectByUsername"
 			resultType="com.github.rk_aiz.teamsurvey.infrastructure.entity.UserGroupEntity">
 		SELECT
-			ug.id, ug.group_name, ug.authority
+			ug.id, ug.group_name, ug.authority, ug.is_system_group
 		  FROM user_groups ug
 		  JOIN RIGHT user_group_mappings map ON ug.id = map.id
 		WHERE map.username = #{username}
@@ -29,10 +29,12 @@
     <insert id="insert">
         INSERT INTO user_groups (
             group_name,
-            authority
+            authority,
+			is_system_group
         ) VALUES (
 			#{groupName},
 			#{authority}::authority
+			#{isSystemGroup}
         )
     </insert>
 	

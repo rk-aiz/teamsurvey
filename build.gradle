@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '4.0.1'
+	id 'org.springframework.boot' version '4.0.2'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -10,9 +10,11 @@ description = 'Online Survey System'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
+		languageVersion = JavaLanguageVersion.of(17)
 	}
+	sourceCompatibility = '17'
 }
+
 
 configurations {
 	compileOnly {
@@ -36,13 +38,19 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-thymeleaf-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
-	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:4.0.1'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+	// Thymeleaf Layout
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 	
+	// Spring Security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+  	testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
+	// Spring Security と Thymeleafの連携用ライブラリ
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+
 	// MyBatisのテスト用ライブラリ
-    testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3' 
+    testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:4.0.1' 
     
     // H2データベース（テスト実行時のみ使用）
     testRuntimeOnly 'com.h2database:h2'

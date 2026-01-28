@@ -1,12 +1,12 @@
-package com.github.rk_aiz.teamsurvey.infrastructure.repository_impl;
+package com.github.rk_aiz.teamsurvey.infrastructure.repository.impl;
 
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
 import com.github.rk_aiz.teamsurvey.domain.model.UserGroup;
-import com.github.rk_aiz.teamsurvey.domain.repository.UserGroupRepository;
 import com.github.rk_aiz.teamsurvey.infrastructure.entity.UserGroupEntity;
 import com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.UserGroupMapper;
+import com.github.rk_aiz.teamsurvey.infrastructure.repository.UserGroupRepository;
 
 import lombok.RequiredArgsConstructor;
 

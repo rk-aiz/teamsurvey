@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.github.rk_aiz.teamsurvey.domain.model.question.Question;
-import com.github.rk_aiz.teamsurvey.domain.repository.QuestionRepository;
 import com.github.rk_aiz.teamsurvey.domain.service.QuestionService;
+import com.github.rk_aiz.teamsurvey.infrastructure.repository.QuestionRepository;
 
 import lombok.RequiredArgsConstructor;
 

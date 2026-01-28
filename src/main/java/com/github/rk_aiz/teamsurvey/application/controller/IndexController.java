@@ -1,4 +1,4 @@
-package com.github.rk_aiz.teamsurvey.presentation.controller;
+package com.github.rk_aiz.teamsurvey.application.controller;
 
 import java.security.Principal;
 

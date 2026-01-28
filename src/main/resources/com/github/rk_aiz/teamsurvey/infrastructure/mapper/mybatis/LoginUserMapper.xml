@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.LoginUserMapper">
+
+    <!-- 
+		マッピング定義 (ResultMap)
+    -->
+    <resultMap id="LoginUserResultMap" type="com.github.rk_aiz.teamsurvey.domain.model.LoginUser">
+        <id property="username" column="username" />
+        <result property="password" column="password" />
+        <result property="email" column="email" />
+        <result property="display_name" column="display_name" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+        <collection property="assignedGroups" ofType="com.github.rk_aiz.teamsurvey.domain.model.UserGroup">
+            <id property="groupId" column="group_id" />
+            <result property="groupName" column="group_name" />
+            <result property="authority" column="authority"/>
+            <result property="isSystemGroup" column="is_system_group" />
+        </collection>
+    </resultMap>
+
+    <!-- 全件取得: 直接ドメインモデルのリストを取得する -->
+    <select id="selectAll" resultMap="LoginUserResultMap">
+        SELECT 
+            username, 
+            password, 
+            email, 
+            display_name,
+            enabled,
+            created_at,
+            updated_at,
+            ug.id as group_id,
+            ug.group_name,
+            ug.authority,
+            ug.is_system_group
+        FROM authentications
+        LEFT JOIN user_group_mappings as map
+          ON username = username
+        LEFT JOIN user_groups as ug
+          ON map.group_id = ug.id
+        ORDER BY username
+    </select>
+
+</mapper>

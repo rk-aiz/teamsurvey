@@ -1,4 +1,4 @@
-package com.github.rk_aiz.teamsurvey.infrastructure.repository_impl;
+package com.github.rk_aiz.teamsurvey.infrastructure.repository.impl;
 
 import java.util.List;
 
@@ -6,10 +6,10 @@ import org.springframework.stereotype.Repository;
 
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
 import com.github.rk_aiz.teamsurvey.domain.model.question.Question;
-import com.github.rk_aiz.teamsurvey.domain.repository.QuestionRepository;
-import com.github.rk_aiz.teamsurvey.domain.repository.SurveyRepository;
 import com.github.rk_aiz.teamsurvey.infrastructure.entity.SurveyEntity;
 import com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.SurveyMapper;
+import com.github.rk_aiz.teamsurvey.infrastructure.repository.QuestionRepository;
+import com.github.rk_aiz.teamsurvey.infrastructure.repository.SurveyRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

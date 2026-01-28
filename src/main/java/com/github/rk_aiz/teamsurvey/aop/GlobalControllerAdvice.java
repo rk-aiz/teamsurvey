@@ -1,4 +1,4 @@
-package com.github.rk_aiz.teamsurvey;
+package com.github.rk_aiz.teamsurvey.aop;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.ControllerAdvice;

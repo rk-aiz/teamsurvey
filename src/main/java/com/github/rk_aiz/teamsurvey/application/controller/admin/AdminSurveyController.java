@@ -1,4 +1,4 @@
-package com.github.rk_aiz.teamsurvey.presentation.controller.admin;
+package com.github.rk_aiz.teamsurvey.application.controller.admin;
 
 import java.time.LocalDateTime;
 
