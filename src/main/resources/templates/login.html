@@ -32,18 +32,18 @@
                             ユーザー名またはパスワードが正しくありません。
                         </div>
 
-                        <form th:action="@{/login}" method="post">
+                        <form th:action="@{/authentication}" method="post">
                             <div class="mb-3">
                                 <label for="username" class="form-label small text-muted fw-bold"><i
                                         class="bi bi-person me-1"></i>Username</label>
                                 <input type="text" name="username" id="username" class="form-control"
-                                    placeholder="Username" required autofocus>
+                                    placeholder="Username" th:field="*{usernameInput}" required autofocus>
                             </div>
                             <div class="mb-4">
                                 <label for="password" class="form-label small text-muted fw-bold"><i
                                         class="bi bi-lock me-1"></i>Password</label>
                                 <input type="password" name="password" id="password" class="form-control"
-                                    placeholder="Password" required>
+                                    placeholder="Password" th:field="*{passwordInput}" required>
                             </div>
                             <div class="d-grid">
                                 <button type="submit" class="btn btn-primary">Login</button>
