@@ -13,6 +13,7 @@ import com.github.rk_aiz.teamsurvey.domain.service.QuestionService;
 import com.github.rk_aiz.teamsurvey.domain.service.SurveyService;
 import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
 import com.github.rk_aiz.teamsurvey.infrastructure.repository.SurveyRepository;
+import com.github.rk_aiz.teamsurvey.infrastructure.repository.SurveyTargetGroupRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class SurveyServiceImpl implements SurveyService {
 
     private final SurveyRepository surveyRepository;
+    private final SurveyTargetGroupRepository surveyTargetGroupRepository;
     private final QuestionService questionService;
 
     /**
@@ -110,5 +112,15 @@ public class SurveyServiceImpl implements SurveyService {
         surveyRepository.set(survey);
 
         return true;
+    }
+
+    @Override
+    public List<Survey> findSurveyByUsername(String username) {
+        return this.surveyRepository.findByUsername(username);
+    }
+
+    @Override
+    public boolean canResponseBySurveyid(Integer surveyId, String username) {
+        return this.surveyRepository.canResponse(surveyId, username);
     }
 }

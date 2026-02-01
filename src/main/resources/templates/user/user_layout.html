@@ -26,6 +26,12 @@
         <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom shadow-sm">
             <div class="container">
                 <a class="navbar-brand fw-bold" th:href="@{/}" th:text="${appName}">Mini Enquete</a>
+
+                <!-- 管理者レイアウト用の拡張ポイント（ロゴの右側に配置） -->
+                <div class="me-auto ms-3">
+                    <th:block layout:fragment="admin-menu"></th:block>
+                </div>
+
                 <div class="d-flex align-items-center">
                     <!-- テーマ切り替えボタン -->
                     <button class="btn btn-outline-secondary btn-sm me-3" id="themeToggle" type="button" title="テーマ切替">
@@ -33,8 +39,25 @@
                     </button>
 
                     <!-- ヘッダー右側のボタンエリア（ページごとに上書き可能） -->
-                    <div layout:fragment="header-buttons">
-                        <a th:href="@{/login}" class="btn btn-sm btn-outline-primary">ログイン</a>
+                    <div layout:fragment="header-buttons" class="d-flex align-items-center gap-2">
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle me-1"></i>
+                                <span th:text="${account != null ? account.displayName : 'アカウント'}">アカウント</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" th:href="@{/user/home}">アカウント設定</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <form th:action="@{/logout}" method="post" class="d-inline">
+                                        <button class="dropdown-item text-danger" type="submit">ログアウト</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>

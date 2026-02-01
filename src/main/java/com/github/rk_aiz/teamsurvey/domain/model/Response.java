@@ -19,8 +19,8 @@ public class Response {
     private Integer responseId;
     /** アンケートID */
     private Integer surveyId;
-    /** 回答ユーザーID */
-    private LoginUser user;
+    /** 回答ユーザー名 */
+    private String username;
     /** 回答ステータス */
     @Builder.Default
     private ResponseStatus status = ResponseStatus.UNVERIFIED;

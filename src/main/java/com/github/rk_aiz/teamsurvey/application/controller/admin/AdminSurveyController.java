@@ -18,11 +18,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.github.rk_aiz.teamsurvey.application.form.QuestionForm;
 import com.github.rk_aiz.teamsurvey.application.form.SurveyForm;
+import com.github.rk_aiz.teamsurvey.application.validation.SurveyValidationGroup;
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
 import com.github.rk_aiz.teamsurvey.domain.service.AnswerOptionService;
 import com.github.rk_aiz.teamsurvey.domain.service.SurveyService;
 import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
-import com.github.rk_aiz.teamsurvey.presentation.validation.SurveyValidationGroup;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,9 +46,17 @@ public class AdminSurveyController {
     private final AnswerOptionService answerOptionService;
     private final SmartValidator validator;
 
-    /** デフォルトの締め切り日数（application.propertiesから取得） */
+    /** デフォルトの締め切り日数（application.propertiesから取得）TODO サービスに移動 */
     @Value("${app.survey.default-deadline-days:30}")
     private int defaultDeadlineDays;
+
+    /**
+     * アンケートの一覧画面を表示します
+     */
+    @GetMapping("/survey")
+    public String survey() {
+        return "redirect:/admin/survey/list";
+    }
 
     /**
      * アンケートの一覧画面を表示します

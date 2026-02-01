@@ -17,6 +17,16 @@ public interface SurveyRepository {
     Survey findById(Integer id);
 
     /**
+     * 指定されたユーザー名に対する質問を取得します
+     */
+    List<Survey> findByUsername(String username);
+
+    /**
+     * 指定されたユーザーが、指定されたアンケートの対象化を確認します
+     */
+    boolean canResponse(Integer surveyId, String username);
+
+    /**
      * 新しい質問を登録します
      */
     void add(Survey survey);

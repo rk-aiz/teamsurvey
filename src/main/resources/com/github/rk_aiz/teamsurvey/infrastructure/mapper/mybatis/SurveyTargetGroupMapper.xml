@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.SurveyTargetGroupMapper">
+
+	<!--  「アンケートと対象グループの紐づけ情報」一覧を取得 -->
+	<select id="selectAll"
+			resultType="com.github.rk_aiz.teamsurvey.infrastructure.entity.SurveyTargetGroupEntity">
+		SELECT * FROM survey_target_groups
+	</select>
+
+	<!--  指定されたアンケートIDに対するグループIDを取得を取得 -->
+	<select id="selectGroupIdBySurveyId"
+			resultType="Integer">
+		SELECT group_id FROM survey_target_groups WHERE survey_id = #{surveyId}
+	</select>
+
+	<!--  指定されたグループIDに対するアンケートIDを取得 -->
+	<select id="selectByUsername"
+			resultType="Integer">
+        SELECT survey_id FROM survey_target_groups WHERE group_id = #{groupId}
+	</select>
+	
+	<!--  新しい「アンケートと対象グループの紐づけ情報」を登録 -->
+    <insert id="insert">
+        INSERT INTO survey_target_groups (survey_id, group_id)
+        VALUES (#{surveyId}, #{groupId})
+    </insert>
+
+	<!--  「アンケートと対象グループの紐づけ情報」を削除します -->
+    <delete id="delete">
+        DELETE FROM survey_target_groups
+        WHERE survey_id = #{surveyId} AND group_id = #{groupId}
+    </delete>
+
+</mapper>

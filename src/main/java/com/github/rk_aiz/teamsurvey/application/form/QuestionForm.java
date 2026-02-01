@@ -37,6 +37,7 @@ public class QuestionForm {
     private AnswerOption answerOption;
 
     private Integer displayOrder;
+
     /**
      * ThymeleafのFormBindingでNPEを防ぐためのGetter
      */

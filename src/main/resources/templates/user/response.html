@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xml:lang="ja"
-    layout:decorate="~{public_layout}">
+    layout:decorate="${#authorization.expression('hasAuthority(''ADMIN'')') ? 'admin/admin_layout' : 'user/user_layout'}">
 
 <head>
     <meta charset="UTF-8">
-    <title th:text="${enquete.title}">アンケート回答</title>
+    <title th:text="${survey.title}">アンケート回答</title>
 </head>
 
 <body>
@@ -13,59 +13,64 @@
         <!-- アンケートヘッダー -->
         <div class="card shadow-sm mb-4">
             <div class="card-body">
-                <h1 class="card-title h3" th:text="${enquete.title}">タイトル</h1>
+                <h1 class="card-title h3" th:text="${survey.title}">タイトル</h1>
                 <p class="card-text text-muted">
                     締め切り: <span
-                        th:text="${enquete.deadline != null ? #temporals.format(enquete.deadline, 'yyyy/MM/dd HH:mm') : '無期限'}"></span>
+                        th:text="${survey.deadline != null ? #temporals.format(survey.deadline, 'yyyy/MM/dd HH:mm') : '無期限'}"></span>
                 </p>
             </div>
         </div>
 
         <!-- 回答フォーム -->
-        <form th:action="@{/enquete/response/submit}" method="post" th:object="${responseForm}">
-            <input type="hidden" th:field="*{token}">
-            <input type="hidden" th:field="*{enqueteId}">
+        <form th:action="@{/survey/response/submit}" method="post" th:object="${responseForm}">
+            <input type="hidden" th:field="*{username}">
+            <input type="hidden" th:field="*{surveyId}">
 
             <!-- 質問ループ -->
-            <div th:each="question, stat : ${enquete.questions}" class="card mb-3 p-3">
-                <div style="font-weight: bold; margin-bottom: 10px;">
-                    <span th:text="'Q' + ${stat.count} + '.'">Q1.</span>
-                    <span th:text="${question.text}">質問文</span>
-                    <span th:if="${question.required}" class="badge bg-danger ms-2" style="font-size: 0.75em;">必須</span>
+            <div th:each="question, stat : ${survey.questions}" class="card mb-3 p-3">
+                <div class="d-flex align-items-start" style="font-weight: bold; margin-bottom: 10px;">
+                    <h5 class="me-2 mb-0" style="white-space: nowrap;" th:text="'Q' + ${stat.count} + '.'">Q1.</h5>
+                    <span th:if="${question.required}" class="badge bg-danger me-2"
+                        style="white-space: nowrap;">必須</span>
+                    <span th:text="${question.text}" style="white-space: pre-wrap;">設問文</span>
                 </div>
 
                 <div>
                     <!-- 質問ID (バインド用) -->
                     <input type="hidden" th:field="*{details[__${stat.index}__].questionId}">
 
-                    <!-- TEXT (自由記述) -->
-                    <div th:if="${question.textType}">
-                        <textarea class="form-control" rows="3" th:field="*{details[__${stat.index}__].responseText}"
-                            th:required="${question.required}"></textarea>
-                    </div>
-
-                    <!-- RADIO (単一選択) -->
-                    <div th:if="${question.radioType}">
-                        <div th:each="item, itemStat : ${question.answerPattern.items}" class="form-check">
-                            <input class="form-check-input" type="radio"
-                                th:id="${'radio_' + stat.index + '_' + item.id}"
-                                th:field="*{details[__${stat.index}__].radioOptionId}" th:value="${item.id}"
-                                th:required="${question.required}">
-                            <label class="form-check-label" th:for="${'radio_' + stat.index + '_' + item.id}"
-                                th:text="${item.itemText}"></label>
+                    <th:block th:switch="${question.type.name()}">
+                        <!-- TEXT (自由記述) -->
+                        <div th:case="'TEXT'">
+                            <textarea class="form-control" rows="3"
+                                th:field="*{details[__${stat.index}__].responseText}"
+                                th:required="${question.required}"></textarea>
                         </div>
-                    </div>
 
-                    <!-- CHECKBOX (複数選択) -->
-                    <div th:if="${question.checkboxType}">
-                        <div th:each="item, itemStat : ${question.answerPattern.items}" class="form-check">
-                            <input class="form-check-input" type="checkbox"
-                                th:id="${'check_' + stat.index + '_' + item.id}"
-                                th:field="*{details[__${stat.index}__].checkboxOptionIds}" th:value="${item.id}">
-                            <label class="form-check-label" th:for="${'check_' + stat.index + '_' + item.id}"
-                                th:text="${item.itemText}"></label>
+                        <!-- RADIO (単一選択) -->
+                        <div th:case="'RADIO'" class="ms-3 p-3">
+                            <div th:each="item, itemStat : ${question.answerOption.items}" class="form-check">
+                                <input class="form-check-input" type="radio"
+                                    th:id="${'radio_' + stat.index + '_' + item.itemId}"
+                                    th:field="*{details[__${stat.index}__].radioOptionId}" th:value="${item.itemId}"
+                                    th:required="${question.required}">
+                                <label class="form-check-label" th:for="${'radio_' + stat.index + '_' + item.itemId}"
+                                    th:text="${item.itemText}"></label>
+                            </div>
                         </div>
-                    </div>
+
+                        <!-- CHECKBOX (複数選択) -->
+                        <div th:case="'CHECKBOX'" class="ms-3 p-3">
+                            <div th:each="item, itemStat : ${question.answerOption.items}" class="form-check">
+                                <input class="form-check-input" type="checkbox"
+                                    th:id="${'check_' + stat.index + '_' + item.itemId}"
+                                    th:field="*{details[__${stat.index}__].checkboxOptionIds}"
+                                    th:value="${item.itemId}">
+                                <label class="form-check-label" th:for="${'check_' + stat.index + '_' + item.itemId}"
+                                    th:text="${item.itemText}"></label>
+                            </div>
+                        </div>
+                    </th:block>
                 </div>
             </div>
 

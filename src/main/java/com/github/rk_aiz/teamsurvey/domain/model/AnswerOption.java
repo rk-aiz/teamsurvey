@@ -38,7 +38,7 @@ public class AnswerOption {
                 .itemText(itemText)
                 .itemOrder(itemOrder)
                 .build();
-        
+
         this.items.add(item);
     }
 

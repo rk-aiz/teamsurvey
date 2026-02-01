@@ -1,15 +1,26 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xml:lang="ja"
-    layout:decorate="~{public_layout}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xml:lang="ja">
 
 <head>
-    <meta charset="UTF-8">
-    <title>トップ</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>[[${appName}]]</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script>
+        // テーマ初期化
+        const getStoredTheme = () => localStorage.getItem('theme');
+        const getPreferredTheme = () => {
+            const storedTheme = getStoredTheme();
+            return storedTheme ? storedTheme : 'light';
+        }
+        document.documentElement.setAttribute('data-bs-theme', getPreferredTheme());
+    </script>
 </head>
 
 <body>
-    <!-- ヘッダーのボタンを非表示にする -->
-    <div layout:fragment="header-buttons"></div>
 
     <!-- メインコンテンツ -->
     <main layout:fragment="content" class="container py-5">
@@ -32,7 +43,7 @@
                             ユーザー名またはパスワードが正しくありません。
                         </div>
 
-                        <form th:action="@{/authentication}" method="post">
+                        <form th:action="@{/authentication}" method="post" th:object="${loginForm}">
                             <div class="mb-3">
                                 <label for="username" class="form-label small text-muted fw-bold"><i
                                         class="bi bi-person me-1"></i>Username</label>

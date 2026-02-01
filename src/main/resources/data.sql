@@ -20,6 +20,112 @@ INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALU
 INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (3, '2', 4);
 INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (3, '1 (最低)', 5);
 
+-- パターン4: 同意の程度 (ID=4)
+INSERT INTO answer_patterns (id, pattern_name) VALUES (4, '同意の程度(5段階)');
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (4, '強く同意する', 1);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (4, '同意する', 2);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (4, 'どちらともいえない', 3);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (4, '同意しない', 4);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (4, '全く同意しない', 5);
+
+-- パターン5: 頻度 (ID=5)
+INSERT INTO answer_patterns (id, pattern_name) VALUES (5, '頻度(5段階)');
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (5, 'いつも', 1);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (5, 'よくある', 2);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (5, '時々', 3);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (5, 'あまりない', 4);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (5, '全くない', 5);
+
+-- パターン6: 推奨意向 (ID=6)
+INSERT INTO answer_patterns (id, pattern_name) VALUES (6, '推奨意向(5段階)');
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (6, '非常に勧めたい', 1);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (6, '勧めたい', 2);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (6, 'どちらともいえない', 3);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (6, 'あまり勧めたくない', 4);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (6, '全く勧めたくない', 5);
+
+-- パターン7: 利用意向 (ID=7)
+INSERT INTO answer_patterns (id, pattern_name) VALUES (7, '利用意向(5段階)');
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (7, 'ぜひ利用したい', 1);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (7, '利用したい', 2);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (7, 'どちらともいえない', 3);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (7, 'あまり利用したくない', 4);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (7, '全く利用したくない', 5);
+
+-- パターン8: 重要度 (ID=8)
+INSERT INTO answer_patterns (id, pattern_name) VALUES (8, '重要度(5段階)');
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (8, '非常に重要', 1);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (8, '重要', 2);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (8, 'どちらともいえない', 3);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (8, 'あまり重要ではない', 4);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (8, '全く重要ではない', 5);
+
+-- パターン9: 認知経路 (ID=9)
+INSERT INTO answer_patterns (id, pattern_name) VALUES (9, '認知経路');
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (9, 'Web検索（Google/Yahoo!など）', 1);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (9, 'SNS（X/Instagram/Facebookなど）', 2);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (9, '知人・友人の紹介', 3);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (9, 'テレビ・CM', 4);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (9, 'Web広告・バナー', 5);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (9, 'YouTube・動画サイト', 6);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (9, '店頭・ポスター', 7);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (9, 'その他', 8);
+
+-- パターン10: Yes/No/分からない (ID=10)
+INSERT INTO answer_patterns (id, pattern_name) VALUES (10, 'Yes/No/分からない');
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (10, 'はい', 1);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (10, 'いいえ', 2);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (10, '分からない', 3);
+
+-- パターン11: 期間 (ID=11)
+INSERT INTO answer_patterns (id, pattern_name) VALUES (11, '期間(年数)');
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (11, '1年未満', 1);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (11, '1年以上3年未満', 2);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (11, '3年以上5年未満', 3);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (11, '5年以上10年未満', 4);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (11, '10年以上', 5);
+
+-- パターン12: 選定理由 (ID=12)
+INSERT INTO answer_patterns (id, pattern_name) VALUES (12, '選定理由');
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (12, '価格が安いから', 1);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (12, '機能・性能が良いから', 2);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (12, 'デザインが気に入ったから', 3);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (12, '口コミ・評判が良いから', 4);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (12, '以前から知っていたから', 5);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (12, 'キャンペーンや特典があったから', 6);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (12, '他社製品より優れていたから', 7);
+
+-- パターン13: 利用シーン・環境 (ID=13)
+INSERT INTO answer_patterns (id, pattern_name) VALUES (13, '利用シーン・環境');
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (13, 'スマートフォン', 1);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (13, 'ノートPC', 2);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (13, 'デスクトップPC', 3);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (13, 'タブレット', 4);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (13, '職場・オフィス', 5);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (13, '自宅', 6);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (13, '移動中・外出先', 7);
+
+-- パターン14: 興味・関心 (ID=14)
+INSERT INTO answer_patterns (id, pattern_name) VALUES (14, '興味・関心');
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (14, 'プログラミング・開発', 1);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (14, 'デザイン・クリエイティブ', 2);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (14, 'ビジネス・マーケティング', 3);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (14, '語学・教育', 4);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (14, '健康・フィットネス', 5);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (14, '投資・金融', 6);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (14, '料理・グルメ', 7);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (14, '旅行・アウトドア', 8);
+
+-- パターン15: 困りごと・課題 (ID=15)
+INSERT INTO answer_patterns (id, pattern_name) VALUES (15, '困りごと・課題');
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (15, 'コストがかかりすぎている', 1);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (15, '人手が不足している', 2);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (15, '専門知識が不足している', 3);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (15, '時間がかかりすぎている', 4);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (15, '品質が安定しない', 5);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (15, 'ツールの使い方が難しい', 6);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (15, '特に課題はない', 7);
+
 -- 1件目のデータ登録
 -- 1件目: 複数の質問を持つアンケート (ID=1)
 INSERT INTO surveys (title, status, result_visibility, created_at, updated_at)
@@ -94,7 +200,65 @@ INSERT INTO user_group_mappings (username, group_id) VALUES ('admin', 99);
 -- アンケートの公開範囲設定 (ID=1のアンケートはエンジニアのみ)
 INSERT INTO survey_target_groups (survey_id, group_id) VALUES (1, 2);
 
--- 【重要】PostgreSQL特有の処理
+-- 追加データ: ユーザー(一般花子)が回答可能なアンケート
+-- 5件目: 新入社員研修の感想 (ID=5)
+INSERT INTO surveys (title, status, result_visibility, created_at, updated_at)
+VALUES ('新入社員研修の感想', 'PUBLISHED', 'ADMIN_ONLY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO questions (id, survey_id, question_text, question_type, is_required, answer_pattern_id, display_order)
+VALUES (7, 5, '研修全体の満足度を教えてください', 'RADIO', TRUE, 3, 1);
+
+INSERT INTO questions (id, survey_id, question_text, question_type, is_required, answer_pattern_id, display_order)
+VALUES (8, 5, '研修の内容は難しかったですか？', 'RADIO', TRUE, 1, 2);
+
+INSERT INTO questions (id, survey_id, question_text, question_type, is_required, answer_pattern_id, display_order)
+VALUES (9, 5, '研修で学んだことや感想を自由に記入してください', 'TEXT', FALSE, NULL, 3);
+
+INSERT INTO survey_target_groups (survey_id, group_id) VALUES (5, 1); -- 全社員
+
+-- 6件目: キャリア・昇進に関するアンケート (ID=6)
+INSERT INTO surveys (title, status, result_visibility, created_at, updated_at)
+VALUES ('キャリア・昇進に関するアンケート', 'PUBLISHED', 'ADMIN_ONLY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO questions (id, survey_id, question_text, question_type, is_required, answer_pattern_id, display_order)
+VALUES (10, 6, '将来、管理職（マネージャー）を目指したいですか？', 'RADIO', TRUE, 2, 1);
+
+INSERT INTO questions (id, survey_id, question_text, question_type, is_required, answer_pattern_id, display_order)
+VALUES (11, 6, '現在の評価制度やキャリアパスに満足していますか？', 'RADIO', TRUE, 3, 2);
+
+INSERT INTO survey_target_groups (survey_id, group_id) VALUES (6, 2); -- エンジニア
+
+-- 7件目: 春のお花見イベント参加確認 (ID=7)
+INSERT INTO surveys (title, status, result_visibility, created_at, updated_at)
+VALUES ('春のお花見イベント参加確認', 'PUBLISHED', 'ALL_USER', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO questions (id, survey_id, question_text, question_type, is_required, answer_pattern_id, display_order)
+VALUES (12, 7, '4/10(金)開催のお花見イベントに参加しますか？', 'RADIO', TRUE, 2, 1);
+
+INSERT INTO questions (id, survey_id, question_text, question_type, is_required, answer_pattern_id, display_order)
+VALUES (13, 7, 'アレルギーや食べたいものがあれば記入してください', 'TEXT', FALSE, NULL, 2);
+
+INSERT INTO survey_target_groups (survey_id, group_id) VALUES (7, 1); -- 全社員
+
+-- 8件目: 開発ツールと技術関心に関する調査 (ID=8)
+INSERT INTO surveys (title, status, result_visibility, created_at, updated_at)
+VALUES ('開発ツールと技術関心に関する調査', 'PUBLISHED', 'ADMIN_ONLY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO questions (id, survey_id, question_text, question_type, is_required, answer_pattern_id, display_order)
+VALUES (14, 8, '業務で主に使用しているデバイス・環境をすべて教えてください（複数選択可）', 'CHECKBOX', TRUE, 13, 1);
+
+INSERT INTO questions (id, survey_id, question_text, question_type, is_required, answer_pattern_id, display_order)
+VALUES (15, 8, '現在の業務で感じている課題を選択してください（複数選択可）', 'CHECKBOX', TRUE, 15, 2);
+
+INSERT INTO questions (id, survey_id, question_text, question_type, is_required, answer_pattern_id, display_order)
+VALUES (16, 8, '今後スキルアップしたい分野は？（複数選択可）', 'CHECKBOX', FALSE, 14, 3);
+
+INSERT INTO questions (id, survey_id, question_text, question_type, is_required, answer_pattern_id, display_order)
+VALUES (17, 8, '技術情報の主な入手元は？（複数選択可）', 'CHECKBOX', TRUE, 9, 4);
+
+INSERT INTO survey_target_groups (survey_id, group_id) VALUES (8, 2); -- エンジニア
+
+-- PostgreSQL特有の処理
 -- IDを指定してINSERTした場合、自動採番のシーケンスが進まないため、
 -- 次にアプリからINSERTすると「ID重複エラー」になる。
 -- 手動でシーケンス値を現在の最大IDに合わせておく。

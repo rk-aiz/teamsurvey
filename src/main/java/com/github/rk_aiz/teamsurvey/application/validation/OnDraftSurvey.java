@@ -1,4 +1,4 @@
-package com.github.rk_aiz.teamsurvey.presentation.validation;
+package com.github.rk_aiz.teamsurvey.application.validation;
 
 /*
  * Validationグループ用の空のインターフェース

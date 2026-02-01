@@ -17,6 +17,8 @@ public interface UserGroupRepository {
      */
     List<UserGroup> findByUsername(String username);
 
+    List<UserGroup> findBySurveyId(Integer surveyId);
+
     void add(UserGroup group);
 
     void set(UserGroup group);

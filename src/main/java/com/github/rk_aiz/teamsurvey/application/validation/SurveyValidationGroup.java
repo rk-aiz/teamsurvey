@@ -1,4 +1,4 @@
-package com.github.rk_aiz.teamsurvey.presentation.validation;
+package com.github.rk_aiz.teamsurvey.application.validation;
 
 import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
 
@@ -11,7 +11,7 @@ import jakarta.validation.groups.Default;
 public interface SurveyValidationGroup extends Default {
 
     public static Class<? extends SurveyValidationGroup> getValidationGroup(
-        SurveyStatus status) {
+            SurveyStatus status) {
         return switch (status) {
             case DRAFT -> OnDraftSurvey.class;
             case PUBLISHED -> OnPublishedSurvey.class;

@@ -1,77 +1,23 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xml:lang="ja">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xml:lang="ja"
+    layout:decorate="~{user/user_layout}">
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">[[${appName}]] Admin</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <script>
-        // テーマ初期化: ローカルストレージを確認し、なければ'light'（デフォルト）
-        const getStoredTheme = () => localStorage.getItem('theme');
-        const setStoredTheme = theme => localStorage.setItem('theme', theme);
-        const getPreferredTheme = () => {
-            const storedTheme = getStoredTheme();
-            return storedTheme ? storedTheme : 'light';
-        }
-        document.documentElement.setAttribute('data-bs-theme', getPreferredTheme());
-    </script>
 </head>
 
-<body class="d-flex flex-column min-vh-100">
-    <header>
-        <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom shadow-sm">
-            <div class="container">
-                <a class="navbar-brand fw-bold" th:href="@{/admin/survey/list}" th:text="${appName} + ' Admin'">mini
-                    Enquete
-                    Admin</a>
-                <div class="d-flex align-items-center">
-                    <!-- テーマ切り替えボタン -->
-                    <button class="btn btn-outline-secondary btn-sm me-3" id="themeToggle" type="button" title="テーマ切替">
-                        <i class="bi bi-sun-fill" id="themeIcon"></i>
-                    </button>
-                    <form th:action="@{/logout}" method="post">
-                        <button class="btn btn-sm btn-outline-danger">ログアウト</button>
-                    </form>
-                </div>
-            </div>
-        </nav>
-    </header>
-
-    <main layout:fragment="content" class="container py-4 flex-grow-1"></main>
-
-    <footer class="py-3 mt-auto bg-body-tertiary border-top">
-        <div class="container text-center">
-            <p class="mb-0 text-muted small">
-                &copy; 2025
-                <a href="https://github.com/rk-aiz/teamsurvey">github.com/rk-aiz/teamsurvey</a>
-            </p>
-        </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const toggleBtn = document.getElementById('themeToggle');
-            const icon = document.getElementById('themeIcon');
-
-            // アイコンの初期表示設定
-            if (document.documentElement.getAttribute('data-bs-theme') === 'dark') {
-                icon.className = 'bi bi-moon-fill';
-            }
-
-            toggleBtn.addEventListener('click', () => {
-                const currentTheme = document.documentElement.getAttribute('data-bs-theme');
-                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                document.documentElement.setAttribute('data-bs-theme', newTheme);
-                setStoredTheme(newTheme);
-                icon.className = newTheme === 'dark' ? 'bi bi-moon-fill' : 'bi bi-sun-fill';
-            });
-        });
-    </script>
+<body>
+    <div layout:fragment="admin-menu" class="d-flex gap-2">
+        <a th:href="@{/admin/survey}" class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-clipboard-data me-1"></i><span class="d-none d-md-inline">アンケート管理</span>
+        </a>
+        <a th:href="@{/admin/response}" class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-chat-left-text me-1"></i><span class="d-none d-md-inline">回答管理</span>
+        </a>
+        <a th:href="@{/admin/account}" class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-people-fill me-1"></i><span class="d-none d-md-inline">ユーザー管理</span>
+        </a>
+    </div>
 </body>
 
 </html>

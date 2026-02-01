@@ -2,56 +2,31 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.ResponseMapper">
 
-    <resultMap id="ResponseResultMap" type="com.github.rk_aiz.teamsurvey.infrastructure.entity.ResponseEntity">
-        <id property="id" column="id" />
-        <result property="surveyId" column="survey_id" />
-        <result property="userId" column="user_id" />
-        <result property="distributionTokenId" column="distribution_token_id" />
-        <result property="createdAt" column="created_at" />
-        <result property="updatedAt" column="updated_at" />
-        
-        <!-- ResponseDetailとの結合 -->
-        <collection property="responseDetails" ofType="com.github.rk_aiz.teamsurvey.infrastructure.entity.ResponseDetailEntity">
-            <id property="id" column="rd_id" />
-            <result property="responseId" column="response_id" />
-            <result property="questionId" column="question_id" />
-            <result property="answerPatternItemId" column="answer_pattern_item_id" />
-            <result property="answerText" column="answer_text" />
-        </collection>
-    </resultMap>
-
     <!-- 共通のSELECT句 -->
     <sql id="selectColumns">
         r.id,
         r.survey_id,
-        r.user_id,
-        r.distribution_token_id,
+        r.username,
+        r.trace_id,
         r.status,
         r.created_at,
-        r.updated_at,
-        rd.id as rd_id,
-        rd.question_id,
-        rd.answer_pattern_item_id,
-        rd.answer_text
+        r.updated_at
     </sql>
 
     <!-- 全件取得: ここでは回答リストは取得せず、軽量にする -->
     <select id="selectAll" resultType="com.github.rk_aiz.teamsurvey.infrastructure.entity.ResponseEntity">
-    	SELECT id, survey_id, user_id, 
-    		distribution_token_id, status,
-    		created_at, updated_at 
-    	FROM responses ORDER BY id
-    </select>
-
-    <select id="selectById" resultMap="ResponseResultMap">
         SELECT <include refid="selectColumns" />
         FROM responses r
-        LEFT JOIN response_details as rd 
-        ON r.id = rd.response_id
+        ORDER BY id
+    </select>
+
+    <select id="selectById" resultType="com.github.rk_aiz.teamsurvey.infrastructure.entity.ResponseEntity">
+        SELECT <include refid="selectColumns" />
+        FROM responses r
         WHERE r.id = #{id}
     </select>
 
-    <select id="selectByEnqueteId" resultMap="ResponseResultMap">
+    <select id="selectBySurveyId" resultType="com.github.rk_aiz.teamsurvey.infrastructure.entity.ResponseEntity">
         SELECT <include refid="selectColumns" />
         FROM responses r
         LEFT JOIN response_details as rd 
@@ -59,28 +34,46 @@
         WHERE r.survey_id = #{surveyId}
     </select>
 
+    <select id="selectByUsername" resultType="com.github.rk_aiz.teamsurvey.infrastructure.entity.ResponseEntity">
+        SELECT <include refid="selectColumns" />
+        FROM responses r
+        WHERE r.username = #{username}
+    </select>
+
+    <!-- 存在チェック: 特定のユーザーが特定のアンケートに回答済みかどうかをbooleanで返す -->
+    <select id="existsBySurveyIdAndUsername" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM responses
+            WHERE survey_id = #{surveyId} AND username = #{username}
+        )
+    </select>
+
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO responses (
-        	survey_id, 
-        	user_id, 
-        	distribution_code_id, 
-        	created_at, 
-        	updated_at
+            survey_id, 
+            username, 
+            trace_id, 
+            created_at, 
+            updated_at
         ) VALUES (
-        	#{surveyId}, 
-        	#{userId}, 
-        	#{distributionTokenId}, 
-        	#{createdAt}, 
-        	#{updatedAt})
+            #{surveyId}, 
+            #{userId},
+            #{traceId},
+            #{createdAt}, 
+            #{updatedAt})
     </insert>
 
     <update id="update">
         UPDATE responses
-           SET survey_id = #{surveyId}, 
-				question_text = #{text}, status = #{status}::response_status, updated_at = CURRENT_TIMESTAMP
+            SET survey_id = #{surveyId},
+            status = #{status}::response_status, 
+            updated_at = CURRENT_TIMESTAMP
 		WHERE id = #{id}
     </update>
 
-    <delete id="delete"> DELETE FROM responses WHERE id = #{id} </delete>
+    <delete id="delete">
+        DELETE FROM responses WHERE id = #{id}
+    </delete>
 
 </mapper>

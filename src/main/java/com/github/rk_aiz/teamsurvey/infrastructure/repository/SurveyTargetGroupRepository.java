@@ -1,0 +1,23 @@
+package com.github.rk_aiz.teamsurvey.infrastructure.repository;
+
+import java.util.List;
+
+/**
+ * 「アンケートとグループの紐づけ情報」永続化・検索を行うリポジトリのインターフェース。
+ */
+public interface SurveyTargetGroupRepository {
+
+    List<Integer> findByGroupId(Integer groupId);
+
+    List<Integer> findBySurveyId(Integer surveyId);
+
+    /**
+     * 新しい「アンケートとグループの紐づけ情報」を登録します
+     */
+    void add(Integer surveyId, Integer groupId);
+
+    /**
+     * 「アンケートとグループの紐づけ情報」を削除します
+     */
+    void remove(Integer surveyId, Integer groupId);
+}

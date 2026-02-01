@@ -7,13 +7,13 @@ import java.util.List;
 import org.springframework.beans.BeanUtils;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.github.rk_aiz.teamsurvey.application.validation.CriticalNotNull;
+import com.github.rk_aiz.teamsurvey.application.validation.OnPublishedSurvey;
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
 import com.github.rk_aiz.teamsurvey.domain.model.UserGroup;
 import com.github.rk_aiz.teamsurvey.domain.model.question.Question;
 import com.github.rk_aiz.teamsurvey.domain.type.ResultVisibility;
 import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
-import com.github.rk_aiz.teamsurvey.presentation.validation.CriticalNotNull;
-import com.github.rk_aiz.teamsurvey.presentation.validation.OnPublishedSurvey;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Future;
@@ -72,7 +72,7 @@ public class SurveyForm {
         BeanUtils.copyProperties(model, form, "questions");
 
         // 名前が異なるIDの詰め替え
-        //form.setSurveyId(model.getSurveyId());
+        // form.setSurveyId(model.getSurveyId());
         form.setNew(isNew);
 
         // 質問リストの手動マッピング

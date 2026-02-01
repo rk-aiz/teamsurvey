@@ -136,7 +136,10 @@ CREATE TABLE questions (
 CREATE TABLE responses (
 	id serial PRIMARY KEY,
 	survey_id INTEGER NOT NULL REFERENCES surveys(id) ON DELETE CASCADE,
-	user_id VARCHAR(50) NOT NULL REFERENCES authentications(username) ON DELETE CASCADE, -- ログインユーザー (必須)
+	-- ログインユーザー (任意: 外部キー制約を活用するため独立させる)
+	username VARCHAR(50) REFERENCES authentications(username) ON DELETE CASCADE,
+	-- 匿名回答時の識別子 (例: "ip:192.168.1.1", "session:xyz...", "cookie:abc...")
+	trace_id VARCHAR(255),
 	-- status : 回答の状態 (有効、無効、テストなど)
 	status response_status NOT NULL DEFAULT 'UNVERIFIED',
 	-- created_at (作成日)

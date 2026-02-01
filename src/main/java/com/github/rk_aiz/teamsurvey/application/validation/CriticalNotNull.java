@@ -1,4 +1,4 @@
-package com.github.rk_aiz.teamsurvey.presentation.validation;
+package com.github.rk_aiz.teamsurvey.application.validation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

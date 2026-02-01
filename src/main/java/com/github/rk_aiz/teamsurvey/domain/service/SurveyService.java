@@ -20,11 +20,18 @@ public interface SurveyService {
     Survey findSurveyById(Integer surveyId) throws IllegalArgumentException;
 
     /**
-     * ユースケース: 既存アンケートを流用して、新規登録用の雛形を取得する
+     * 既存アンケートを流用して、新規登録用の雛形を取得する
      */
-    Survey findSurveyAsDraftCopy(Integer id);
+    Survey findSurveyAsDraftCopy(Integer surveyId);
 
-    public Survey saveSurvey(Survey survey);
+    /**
+     * 対象ユーザーがアンケート対象かを確認します
+     */
+    boolean canResponseBySurveyid(Integer surveyId, String username);
 
-    public boolean tryChangeStatusById(Integer id, SurveyStatus status);
+    Survey saveSurvey(Survey survey);
+
+    boolean tryChangeStatusById(Integer id, SurveyStatus status);
+
+    List<Survey> findSurveyByUsername(String username);
 }

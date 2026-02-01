@@ -1,5 +1,7 @@
 package com.github.rk_aiz.teamsurvey.infrastructure.entity;
 
+import org.springframework.beans.BeanUtils;
+
 import com.github.rk_aiz.teamsurvey.domain.model.UserGroup;
 import com.github.rk_aiz.teamsurvey.domain.type.Authority;
 
@@ -15,14 +17,14 @@ public class UserGroupEntity {
     public UserGroup toModel() {
         UserGroup model = new UserGroup();
         model.setGroupId(this.id);
-        model.setGroupName(this.groupName);
+        BeanUtils.copyProperties(this, model);
         return model;
     }
 
     public static UserGroupEntity from(UserGroup model) {
         UserGroupEntity entity = new UserGroupEntity();
         entity.setId(model.getGroupId());
-        entity.setGroupName(model.getGroupName());
+        BeanUtils.copyProperties(model, entity);
         return entity;
     }
 }

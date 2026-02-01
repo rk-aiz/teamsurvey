@@ -10,6 +10,7 @@ import com.github.rk_aiz.teamsurvey.infrastructure.entity.SurveyEntity;
 import com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.SurveyMapper;
 import com.github.rk_aiz.teamsurvey.infrastructure.repository.QuestionRepository;
 import com.github.rk_aiz.teamsurvey.infrastructure.repository.SurveyRepository;
+import com.github.rk_aiz.teamsurvey.infrastructure.repository.UserGroupRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,32 +22,46 @@ public class SurveyRepositoryImpl implements SurveyRepository {
 
     private final SurveyMapper surveyMapper;
     private final QuestionRepository questionRepository;
+    private final UserGroupRepository userGroupRepository;
 
     @Override
     public List<Survey> findAll() {
-        return surveyMapper.selectAll().stream().map(SurveyEntity::toModel).toList();
+        return this.surveyMapper.selectAll().stream().map(SurveyEntity::toModel).toList();
     }
 
     @Override
     public Survey findById(Integer id) {
         // 1. Header取得
-        SurveyEntity entity = surveyMapper.selectById(id);
+        SurveyEntity entity = this.surveyMapper.selectById(id);
         if (entity == null)
             return null;
 
         Survey survey = entity.toModel();
 
         // 2. Questions取得
-        survey.setQuestions(questionRepository.findBySurveyId(id));
+        survey.setQuestions(this.questionRepository.findBySurveyId(id));
+
+        // 3. Groups取得
+        survey.setTargetGroups(this.userGroupRepository.findBySurveyId(id));
 
         return survey;
+    }
+
+    @Override
+    public List<Survey> findByUsername(String username) {
+        return this.surveyMapper.selectByUsername(username).stream().map(SurveyEntity::toModel).toList();
+    }
+
+    @Override
+    public boolean canResponse(Integer surveyId, String username) {
+        return this.surveyMapper.existsMappingByIdAndUsername(surveyId, username);
     }
 
     @Override
     public void add(Survey survey) {
         // 1. Header保存
         SurveyEntity entity = SurveyEntity.fromModel(survey);
-        surveyMapper.insert(entity);
+        this.surveyMapper.insert(entity);
 
         // 自動採番されたIDをドメインモデルに反映
         survey.setSurveyId(entity.getId());
@@ -61,7 +76,7 @@ public class SurveyRepositoryImpl implements SurveyRepository {
     public void set(Survey survey) {
         // 1. Headerの更新
         SurveyEntity entity = SurveyEntity.fromModel(survey);
-        surveyMapper.update(entity);
+        this.surveyMapper.update(entity);
 
         if (survey.getQuestions() != null) {
             saveQuestions(entity.getId(), survey.getQuestions());
@@ -75,9 +90,9 @@ public class SurveyRepositoryImpl implements SurveyRepository {
         for (Question q : questions) {
             q.setSurveyId(surveyId); // 親IDをセット
             if (q.getQuestionId() == null) {
-                questionRepository.add(q);
+                this.questionRepository.add(q);
             } else {
-                questionRepository.set(q);
+                this.questionRepository.set(q);
             }
         }
     }
@@ -85,7 +100,6 @@ public class SurveyRepositoryImpl implements SurveyRepository {
     @Override
     public void remove(Integer id) {
         // 子要素の削除はDBの外部キー制約(ON DELETE CASCADE)に任せる
-        surveyMapper.delete(id);
+        this.surveyMapper.delete(id);
     }
-
 }

@@ -39,7 +39,6 @@ public class AnswerOptionForm {
             BeanUtils.copyProperties(itemForm, optionItem);
             return optionItem;
         }).toList());
-        
 
         return answerOption;
     }
