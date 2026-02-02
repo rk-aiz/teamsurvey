@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -72,7 +73,7 @@ class SurveyRepositoryImplTest {
         assertNotNull(result);
         assertEquals(id, result.getSurveyId());
         assertEquals(1, result.getQuestions().size());
-        assertEquals(10, result.getQuestions().get(0).getQuestionId());
+        assertEquals(10, result.getQuestions().iterator().next().getQuestionId());
 
         verify(surveyMapper).selectById(id);
         verify(questionRepository).findBySurveyId(id);
@@ -94,7 +95,7 @@ class SurveyRepositoryImplTest {
     void add_SavesSurveyAndQuestions() {
         Survey newSurvey = Survey.builder()
                 .title("New Survey")
-                .questions(new ArrayList<>())
+                .questions(new HashMap<>())
                 .build();
 
         Question newQuestion = new SingleChoiceQuestion(); // ID is null
@@ -121,7 +122,7 @@ class SurveyRepositoryImplTest {
         Survey existingSurvey = Survey.builder()
                 .surveyId(1)
                 .title("Updated Survey")
-                .questions(new ArrayList<>())
+                .questions(new HashMap<>())
                 .build();
 
         Question existingQuestion = new SingleChoiceQuestion();

@@ -16,7 +16,7 @@ public interface ResponseService {
      */
     Response findResponseById(Integer responseId) throws IllegalArgumentException;
 
-    boolean saveResponse(Response survey);
+    boolean saveResponse(Survey survey, Response response);
 
     Response createNewResponseBySurvey(Survey survey, LoginUser loginUser);
 

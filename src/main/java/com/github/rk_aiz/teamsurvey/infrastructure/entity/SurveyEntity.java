@@ -1,7 +1,7 @@
 package com.github.rk_aiz.teamsurvey.infrastructure.entity;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.springframework.beans.BeanUtils;
 
@@ -52,7 +52,7 @@ public class SurveyEntity {
                 .deadline(deadline)
                 .status(status)
                 .resultVisibility(resultVisibility)
-                .questions(new ArrayList<>()) // Repositoryで後からsetする
+                .questions(new HashMap<>()) // Repositoryで後からsetする
                 .build();
     }
 

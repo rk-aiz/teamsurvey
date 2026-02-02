@@ -2,16 +2,23 @@ package com.github.rk_aiz.teamsurvey.application.form;
 
 import java.util.List;
 
+import org.springframework.beans.BeanUtils;
+
 import com.github.rk_aiz.teamsurvey.domain.model.LoginUser;
+import com.github.rk_aiz.teamsurvey.domain.model.Response;
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
 
 import lombok.Data;
 
 @Data
 public class ResponseForm {
-    private Integer surveyId;
-    private String username;
 
+    /** 回答ID */
+    private Integer responseId;
+    /** アンケートID */
+    private Integer surveyId;
+    /** ユーザー名 */
+    private String username;
     /** 各設問への回答詳細リスト */
     private List<ResponseDetailForm> details;
 
@@ -29,5 +36,19 @@ public class ResponseForm {
         form.setDetails(details);
 
         return form;
+    }
+
+    public Response toModel(Survey survey) {
+
+        Response response = new Response();
+        BeanUtils.copyProperties(this, response);
+
+        
+        response.setResponseDetails(this.getDetails()
+                .stream()
+                .map(detailForm -> detailForm.toModel(survey.getQuestionById(detailForm.getQuestionId())))
+                .toList());
+
+        return response;
     }
 }

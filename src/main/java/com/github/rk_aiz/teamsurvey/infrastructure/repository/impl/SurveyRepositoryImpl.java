@@ -1,5 +1,6 @@
 package com.github.rk_aiz.teamsurvey.infrastructure.repository.impl;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -67,8 +68,9 @@ public class SurveyRepositoryImpl implements SurveyRepository {
         survey.setSurveyId(entity.getId());
 
         // 2. Questions保存 (新規作成時も質問があれば保存する)
-        if (survey.getQuestions() != null) {
-            saveQuestions(entity.getId(), survey.getQuestions());
+        Collection<Question> questions = survey.getQuestions();
+        if (questions != null) {
+            saveQuestions(entity.getId(), questions);
         }
     }
 
@@ -86,7 +88,7 @@ public class SurveyRepositoryImpl implements SurveyRepository {
     /**
      * 質問リストを保存するヘルパーメソッド
      */
-    private void saveQuestions(Integer surveyId, List<Question> questions) {
+    private void saveQuestions(Integer surveyId, Collection<Question> questions) {
         for (Question q : questions) {
             q.setSurveyId(surveyId); // 親IDをセット
             if (q.getQuestionId() == null) {

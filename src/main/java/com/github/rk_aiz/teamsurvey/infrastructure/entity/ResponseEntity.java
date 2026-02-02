@@ -1,12 +1,10 @@
 package com.github.rk_aiz.teamsurvey.infrastructure.entity;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 
 import org.springframework.beans.BeanUtils;
 
 import com.github.rk_aiz.teamsurvey.domain.model.Response;
-import com.github.rk_aiz.teamsurvey.domain.type.ResultVisibility;
 import com.github.rk_aiz.teamsurvey.domain.type.ResponseStatus;
 
 import lombok.AllArgsConstructor;
@@ -50,7 +48,7 @@ public class ResponseEntity {
     /**
      * Domain Model -> Entity 変換
      */
-    public static ResponseEntity fromModel(Response model) {
+    public static ResponseEntity from(Response model) {
         ResponseEntity entity = new ResponseEntity();
         entity.setId(model.getResponseId());
         BeanUtils.copyProperties(model, entity);

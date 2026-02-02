@@ -2,11 +2,15 @@ package com.github.rk_aiz.teamsurvey.domain.model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
 import com.github.rk_aiz.teamsurvey.domain.model.question.Question;
 import com.github.rk_aiz.teamsurvey.domain.type.ResultVisibility;
+import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -46,7 +50,7 @@ public class Survey {
 
     /** アンケートに紐づく質問リスト */
     @Builder.Default
-    private List<Question> questions = new ArrayList<>();
+    private Map<Integer, Question> questions = new HashMap<>();
 
     /** 公開対象グループリスト */
     @Builder.Default
@@ -97,7 +101,7 @@ public class Survey {
      * @return true: 公開可能
      */
     public boolean canPublish() {
-        List<Question> qs = this.getQuestions();
+        Collection<Question> qs = this.getQuestions();
 
         if (qs.isEmpty()) {
             return false; // 質問がなければ公開不可
@@ -111,14 +115,46 @@ public class Survey {
         return true;
     }
 
+    public void setQuestions(Collection<Question> questions) {
+        if (questions == null) {
+            this.questions = new HashMap<>();
+            return;
+        }
+        // Mapに変換してセットする
+        this.questions = questions.stream()
+                .collect(HashMap::new, (m, q) -> m.put(q.getQuestionId(), q), Map::putAll);
+    }
+
+    public void setQuestions(Map<Integer, Question> questions) {
+        if (questions == null) {
+            this.questions = new HashMap<>();
+            return;
+        }
+        this.questions = questions;
+    }
+
     /**
      * 設問リストを返します。nullの場合は空のリストを作成して返します。
      */
-    public List<Question> getQuestions() {
+    public Collection<Question> getQuestions() {
         if (this.questions == null) {
-            this.setQuestions(new ArrayList<>());
+            this.setQuestions(new HashMap<>());
         }
-        return this.questions;
+        return this.questions.values()
+                .stream()
+                .sorted(Comparator.comparingInt(q -> q.getDisplayOrder()))
+                .toList();
+    }
+
+    /**
+     * 設問リストを返します。nullの場合は空のリストを作成して返します。
+     */
+    public Question getQuestionById(Integer questionId) {
+        if (this.questions == null) {
+            return null;
+        }
+
+        return this.questions.get(questionId);
     }
 
     /**

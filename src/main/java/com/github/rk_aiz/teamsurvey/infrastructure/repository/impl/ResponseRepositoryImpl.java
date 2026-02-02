@@ -5,7 +5,10 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.github.rk_aiz.teamsurvey.domain.model.Response;
+import com.github.rk_aiz.teamsurvey.domain.model.ResponseDetail;
+import com.github.rk_aiz.teamsurvey.infrastructure.entity.ResponseDetailEntity;
 import com.github.rk_aiz.teamsurvey.infrastructure.entity.ResponseEntity;
+import com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.ResponseDetailMapper;
 import com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.ResponseMapper;
 import com.github.rk_aiz.teamsurvey.infrastructure.repository.ResponseRepository;
 
@@ -16,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 public class ResponseRepositoryImpl implements ResponseRepository {
 
     private final ResponseMapper responseMapper;
+    private final ResponseDetailMapper responseDetailMapper;
+
 
     @Override
     public List<Response> findAll() {
@@ -45,13 +50,22 @@ public class ResponseRepositoryImpl implements ResponseRepository {
 
     @Override
     public void add(Response response) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'add'");
+        responseMapper.insert(ResponseEntity.from(response));
+        addAllResponseDetails(response);
     }
 
     @Override
     public void set(Response response) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'set'");
+        responseMapper.update(ResponseEntity.from(response));
+        
+        responseDetailMapper.deleteByResponseId(response.getResponseId());
+        addAllResponseDetails(response);
     }
+
+    private void addAllResponseDetails(Response response) {
+        response.getResponseDetails().stream()
+                .flatMap(detail -> ResponseDetailEntity.from(detail).stream())
+                .forEach(responseDetailMapper::insert);
+    }
+
 }

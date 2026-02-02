@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.ResponseDetailMapper">
+
+    <!-- 共通のSELECT句 -->
+    <sql id="selectColumns">
+        rd.id,
+        rd.response_id,
+        rd.question_id,
+        rd.answer_pattern_item_id,
+        rd.answer_text
+    </sql>
+
+    <!-- 全件取得 -->
+    <select id="selectAll" resultType="com.github.rk_aiz.teamsurvey.infrastructure.entity.ResponseDetailEntity">
+        SELECT <include refid="selectColumns" />
+        FROM response_details rd
+        ORDER BY id
+    </select>
+
+    <select id="selectById" resultType="com.github.rk_aiz.teamsurvey.infrastructure.entity.ResponseDetailEntity">
+        SELECT <include refid="selectColumns" />
+        FROM response_details rd
+        WHERE rd.id = #{id}
+    </select>
+
+    <select id="selectByResponseId" resultType="com.github.rk_aiz.teamsurvey.infrastructure.entity.ResponseDetailEntity">
+        SELECT <include refid="selectColumns" />
+        FROM response_details rd
+        WHERE rd.response_id = #{responseId}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO response_details (
+            response_id, 
+            question_id, 
+            answer_pattern_item_id, 
+            answer_text
+        ) VALUES (
+            #{responseId}, 
+            #{questionId},
+            #{answerPatternItemId},
+            #{answerText})
+    </insert>
+
+    <update id="update">
+        UPDATE response_details
+        SET response_id = #{responseId},
+            question_id = #{questionId},
+            answer_pattern_item_id = #{answerPatternItemId},
+            answer_text = #{answerText}
+		WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM response_details WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteByResponseId">
+        DELETE FROM response_details
+        WHERE response_id = #{responseId}
+    </delete>
+</mapper>

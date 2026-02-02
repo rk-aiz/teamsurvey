@@ -46,7 +46,7 @@ public class ResponseDetail {
     /**
      * 複数選択の回答をIDリストとして取得します。
      */
-    public List<Integer> getMultipleChoiceResponse() {
+    public List<Integer> getMultiChoiceResponses() {
         if (!StringUtils.hasText(this.getRawData())) {
             return Collections.emptyList();
         }
