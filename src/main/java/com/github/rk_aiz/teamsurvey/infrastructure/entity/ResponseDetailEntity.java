@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.github.rk_aiz.teamsurvey.domain.model.ResponseDetail;
+import com.github.rk_aiz.teamsurvey.domain.model.Response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,14 +27,15 @@ public class ResponseDetailEntity {
     /** 回答テキスト (自由記述の場合) */
     private String answerText;
 
-    public static List<ResponseDetailEntity> from(ResponseDetail detail) {
+    public static List<ResponseDetailEntity> from(
+    		Response response, ResponseDetail detail) {
         List<ResponseDetailEntity> entities = new ArrayList<>();
         switch (detail.getQuestion().getType()) {
             case TEXT -> {
                 entities.add(
                     new ResponseDetailEntity(
                         detail.getResponseDetailId(),
-                        detail.getResponseId(),
+                        response.getResponseId(),
                         detail.getQuestion().getQuestionId(),
                         null,
                         detail.getRawData()
@@ -43,7 +45,7 @@ public class ResponseDetailEntity {
                 entities.add(
                     new ResponseDetailEntity(
                         detail.getResponseDetailId(),
-                        detail.getResponseId(),
+                        response.getResponseId(),
                         detail.getQuestion().getQuestionId(),
                         detail.getSingleChoiceResponse(),
                         null
@@ -55,7 +57,7 @@ public class ResponseDetailEntity {
                     entities.add(
                         new ResponseDetailEntity(
                             detail.getResponseDetailId(),
-                            detail.getResponseId(),
+                            response.getResponseId(),
                             detail.getQuestion().getQuestionId(),
                             optionId,
                             null

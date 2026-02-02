@@ -2,11 +2,13 @@ package com.github.rk_aiz.teamsurvey.application.form;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 
 import com.github.rk_aiz.teamsurvey.domain.model.ResponseDetail;
 import com.github.rk_aiz.teamsurvey.domain.model.question.Question;
+import com.github.rk_aiz.teamsurvey.domain.type.QuestionType;
 
 import lombok.Data;
 
@@ -34,13 +36,18 @@ public class ResponseDetailForm {
     public ResponseDetail toModel(Question question) {
         ResponseDetail detail = new ResponseDetail();
         BeanUtils.copyProperties(this, detail);
-        switch(question.getType()) {
-            case TEXT -> detail.setRawData(this.getResponseText());
-            case RADIO -> detail.setRawData(this.getRadioOptionId().toString());
-            case CHECKBOX -> detail.setRawData(this.getCheckboxOptionIds().toString()); // [1, 2, 3] のような形式で保存される
-        }
+        detail.setQuestion(question);
+        detail.setRawData(this.getRawData(question.getType()));
         
         return detail;
+    }
+    
+    private String getRawData(QuestionType questionType) {
+        return switch(questionType) {
+        	case TEXT -> this.getResponseText();
+            case RADIO -> this.getRadioOptionId().toString();
+            case CHECKBOX -> this.getCheckboxOptionIds().stream().map(String::valueOf).collect(Collectors.joining(","));
+        };
     }
 
 }

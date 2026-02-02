@@ -58,10 +58,10 @@
             updated_at
         ) VALUES (
             #{surveyId}, 
-            #{userId},
+            #{username},
             #{traceId},
-            #{createdAt}, 
-            #{updatedAt})
+            CURRENT_TIMESTAMP, 
+            CURRENT_TIMESTAMP)
     </insert>
 
     <update id="update">

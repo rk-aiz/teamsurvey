@@ -1,9 +1,6 @@
 package com.github.rk_aiz.teamsurvey.domain.service.impl;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -67,4 +64,9 @@ public class ResponseServiceImpl implements ResponseService {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findResponseBySurveyId'");
     }
+
+	@Override
+	public List<Response> findResponseByUsername(String username) {
+		return responseRepository.findByUsername(username);
+	}
 }

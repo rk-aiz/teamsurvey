@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.github.rk_aiz.teamsurvey.domain.model.Response;
-import com.github.rk_aiz.teamsurvey.domain.model.ResponseDetail;
 import com.github.rk_aiz.teamsurvey.infrastructure.entity.ResponseDetailEntity;
 import com.github.rk_aiz.teamsurvey.infrastructure.entity.ResponseEntity;
 import com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.ResponseDetailMapper;
@@ -20,7 +19,6 @@ public class ResponseRepositoryImpl implements ResponseRepository {
 
     private final ResponseMapper responseMapper;
     private final ResponseDetailMapper responseDetailMapper;
-
 
     @Override
     public List<Response> findAll() {
@@ -50,7 +48,9 @@ public class ResponseRepositoryImpl implements ResponseRepository {
 
     @Override
     public void add(Response response) {
-        responseMapper.insert(ResponseEntity.from(response));
+    	ResponseEntity entity = ResponseEntity.from(response);
+        responseMapper.insert(entity);
+        response.setResponseId(entity.getId());
         addAllResponseDetails(response);
     }
 
@@ -64,7 +64,7 @@ public class ResponseRepositoryImpl implements ResponseRepository {
 
     private void addAllResponseDetails(Response response) {
         response.getResponseDetails().stream()
-                .flatMap(detail -> ResponseDetailEntity.from(detail).stream())
+                .flatMap(detail -> ResponseDetailEntity.from(response, detail).stream())
                 .forEach(responseDetailMapper::insert);
     }
 

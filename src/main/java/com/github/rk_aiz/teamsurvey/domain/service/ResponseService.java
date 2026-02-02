@@ -11,14 +11,16 @@ public interface ResponseService {
     /** 全ての回答を取得します */
     List<Response> findAllResponses();
 
+    List<Response> findResponseByUsername(String username);
+    
+    List<Response> findResponseBySurveyId(Integer surveyId);
+
     /**
      * 回答詳細を取得します。
      */
-    Response findResponseById(Integer responseId) throws IllegalArgumentException;
-
+    Response findResponseById(Integer responseId);
+    
     boolean saveResponse(Survey survey, Response response);
 
     Response createNewResponseBySurvey(Survey survey, LoginUser loginUser);
-
-    List<Response> findResponseBySurveyId(Integer surveyId);
 }

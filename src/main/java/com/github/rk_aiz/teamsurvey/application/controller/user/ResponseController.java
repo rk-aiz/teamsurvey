@@ -14,7 +14,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.github.rk_aiz.teamsurvey.application.form.ResponseForm;
 import com.github.rk_aiz.teamsurvey.domain.model.LoginUser;
-import com.github.rk_aiz.teamsurvey.domain.model.Response;
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
 import com.github.rk_aiz.teamsurvey.domain.service.ResponseService;
 import com.github.rk_aiz.teamsurvey.domain.service.SurveyService;
@@ -59,8 +58,8 @@ public class ResponseController {
     /**
      * アンケートに対する回答の登録処理を行います
      */
-    @PostMapping("/register")
-    public String registerResponse(
+    @PostMapping("/submit")
+    public String submitResponse(
             @Validated @ModelAttribute ResponseForm responseForm,
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {

@@ -22,7 +22,7 @@
         </div>
 
         <!-- 回答フォーム -->
-        <form th:action="@{/survey/response/submit}" method="post" th:object="${responseForm}">
+        <form th:action="@{/response/submit}" method="post" th:object="${responseForm}">
             <input type="hidden" th:field="*{username}">
             <input type="hidden" th:field="*{surveyId}">
 
