@@ -26,7 +26,7 @@ public class SecurityConfig {
                 // ★HTTPリクエストに対するセキュリティ設定
                 .authorizeHttpRequests(authz -> authz
                         // 「/login」へのアクセスは認証を必要としない
-                        .requestMatchers("/auth").permitAll()
+                        .requestMatchers("/auth", "/favicon.ico").permitAll()
                         // 静的リソース（css, js, images等）へのアクセスを許可
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                         .permitAll()
@@ -46,7 +46,7 @@ public class SecurityConfig {
                         // パスワードのname属性を指定
                         .passwordParameter("passwordInput")
                         // ログイン成功時のURLを指定
-                        .defaultSuccessUrl("/")
+                        .defaultSuccessUrl("/", true)
                         // ログイン失敗時のURLを指定
                         .failureUrl("/auth?error"))
 

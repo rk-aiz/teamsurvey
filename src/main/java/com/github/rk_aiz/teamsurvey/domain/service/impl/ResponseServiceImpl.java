@@ -9,7 +9,6 @@ import com.github.rk_aiz.teamsurvey.domain.model.Response;
 import com.github.rk_aiz.teamsurvey.domain.model.Response.ResponseBuilder;
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
 import com.github.rk_aiz.teamsurvey.domain.service.ResponseService;
-import com.github.rk_aiz.teamsurvey.domain.service.SurveyService;
 import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
 import com.github.rk_aiz.teamsurvey.infrastructure.repository.ResponseRepository;
 
@@ -19,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ResponseServiceImpl implements ResponseService {
 
-    private final SurveyService surveyService;
     private final ResponseRepository responseRepository;
 
     @Override
@@ -36,7 +34,8 @@ public class ResponseServiceImpl implements ResponseService {
     @Override
     public boolean saveResponse(Survey survey, Response response) {
         // DB上のステータスがPUBLISHED以外の場合、回答登録を許可しない
-        if (survey.getStatus() != SurveyStatus.PUBLISHED) return false;
+        if (survey.getStatus() != SurveyStatus.PUBLISHED)
+            return false;
 
         if (response.getResponseId() == null) {
             // 新規登録
@@ -65,8 +64,8 @@ public class ResponseServiceImpl implements ResponseService {
         throw new UnsupportedOperationException("Unimplemented method 'findResponseBySurveyId'");
     }
 
-	@Override
-	public List<Response> findResponseByUsername(String username) {
-		return responseRepository.findByUsername(username);
-	}
+    @Override
+    public List<Response> findResponseByUsername(String username) {
+        return responseRepository.findByUsername(username);
+    }
 }

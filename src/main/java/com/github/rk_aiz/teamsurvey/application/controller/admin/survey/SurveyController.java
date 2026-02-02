@@ -1,4 +1,4 @@
-package com.github.rk_aiz.teamsurvey.application.controller.admin;
+package com.github.rk_aiz.teamsurvey.application.controller.admin.survey;
 
 import java.time.LocalDateTime;
 
@@ -35,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequestMapping("/admin")
 @RequiredArgsConstructor
-public class AdminSurveyController {
+public class SurveyController {
 
     /** 定数 */
     private static final String MESSAGE = "message";

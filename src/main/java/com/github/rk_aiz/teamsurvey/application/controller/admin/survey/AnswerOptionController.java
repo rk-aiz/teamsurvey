@@ -1,4 +1,4 @@
-package com.github.rk_aiz.teamsurvey.application.controller.admin;
+package com.github.rk_aiz.teamsurvey.application.controller.admin.survey;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequestMapping("/admin")
 @RequiredArgsConstructor
-public class AdminAnswerOptionController {
+public class AnswerOptionController {
 
     /** 定数 */
     private static final String MESSAGE = "message";

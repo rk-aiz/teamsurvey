@@ -138,4 +138,12 @@ public class SurveyServiceImpl implements SurveyService {
     public boolean canResponseBySurveyid(Integer surveyId, String username) {
         return this.surveyRepository.canResponse(surveyId, username);
     }
+
+    @Override
+    public List<Survey> findAvailableSurveys() {
+        return this.surveyRepository.findAll()
+                .stream()
+                .filter(survey -> survey.getStatus() != SurveyStatus.DRAFT)
+                .toList();
+    }
 }

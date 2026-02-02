@@ -35,5 +35,7 @@ public interface SurveyService {
 
     List<Survey> findSurveysByUsername(String username);
 
+    List<Survey> findAvailableSurveys();
+
     List<Survey> findAvailableSurveysByUsername(String username);
 }
