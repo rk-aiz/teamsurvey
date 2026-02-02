@@ -8,8 +8,10 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.github.rk_aiz.teamsurvey.domain.model.Response;
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
 import com.github.rk_aiz.teamsurvey.domain.service.QuestionService;
+import com.github.rk_aiz.teamsurvey.domain.service.ResponseService;
 import com.github.rk_aiz.teamsurvey.domain.service.SurveyService;
 import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
 import com.github.rk_aiz.teamsurvey.infrastructure.repository.SurveyRepository;
@@ -23,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class SurveyServiceImpl implements SurveyService {
 
     private final SurveyRepository surveyRepository;
-    private final SurveyTargetGroupRepository surveyTargetGroupRepository;
+    private final ResponseService responseService;
     private final QuestionService questionService;
 
     /**
@@ -115,8 +117,21 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
-    public List<Survey> findSurveyByUsername(String username) {
+    public List<Survey> findSurveysByUsername(String username) {
         return this.surveyRepository.findByUsername(username);
+    }
+
+    @Override
+    public List<Survey> findAvailableSurveysByUsername(String username) {
+        Set<Integer> answeredSurveyIds = this.responseService.findResponseByUsername(username)
+                .stream()
+                .map(Response::getSurveyId)
+                .collect(Collectors.toSet());
+
+        return this.findSurveysByUsername(username)
+                .stream()
+                .filter(survey -> !answeredSurveyIds.contains(survey.getSurveyId()))
+                .toList();
     }
 
     @Override

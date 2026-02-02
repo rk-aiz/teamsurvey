@@ -195,6 +195,7 @@ INSERT INTO user_groups (id, group_name, authority, is_system_group) VALUES (99,
 INSERT INTO user_group_mappings (username, group_id) VALUES ('user', 1);
 INSERT INTO user_group_mappings (username, group_id) VALUES ('user', 2);
 -- adminユーザーを管理者グループに所属させる
+INSERT INTO user_group_mappings (username, group_id) VALUES ('admin', 1);
 INSERT INTO user_group_mappings (username, group_id) VALUES ('admin', 99);
 
 -- アンケートの公開範囲設定 (ID=1のアンケートはエンジニアのみ)

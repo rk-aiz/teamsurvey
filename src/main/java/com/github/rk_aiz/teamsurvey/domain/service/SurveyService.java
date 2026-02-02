@@ -33,5 +33,7 @@ public interface SurveyService {
 
     boolean tryChangeStatusById(Integer id, SurveyStatus status);
 
-    List<Survey> findSurveyByUsername(String username);
+    List<Survey> findSurveysByUsername(String username);
+
+    List<Survey> findAvailableSurveysByUsername(String username);
 }

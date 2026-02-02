@@ -13,6 +13,11 @@
         <div class="card shadow-sm p-4">
             <h2 class="h4 mb-3">マイページ</h2>
 
+            <div th:if="${message}" class="alert alert-info alert-dismissible fade show" role="alert">
+                <span th:text="${message}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
             <h3 class="h5 text-secondary border-bottom pb-2 mb-3">回答可能なアンケート</h3>
 
             <div th:if="${surveys == null or surveys.isEmpty()}" class="alert alert-info" role="alert">
