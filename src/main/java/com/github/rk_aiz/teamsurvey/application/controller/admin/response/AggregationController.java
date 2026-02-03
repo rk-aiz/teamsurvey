@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.github.rk_aiz.teamsurvey.domain.model.result.SurveyAggregation;
@@ -58,6 +59,19 @@ public class AggregationController {
         		lists);
 
         return "admin/result/list";
+    }
+
+    /**
+     * 詳細画面を表示します（設問一覧も含む）
+     */
+    @GetMapping("/result/detail/{id}")
+    public String detail(@PathVariable("id") Integer id, Model model) {
+
+        // アンケート情報の取得
+        SurveyAggregation aggregation = surveyResultService.findSurveyAggregationById(id);
+        model.addAttribute("aggregation", aggregation);
+
+        return "admin/result/detail";
     }
 
 }

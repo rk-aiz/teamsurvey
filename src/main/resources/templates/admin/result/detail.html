@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xml:lang="ja"
+    layout:decorate="~{admin/admin_layout}">
+
+<head>
+    <title>集計結果詳細</title>
+</head>
+
+<body>
+    <main layout:fragment="content">
+        <div class="container">
+            <!-- ヘッダーエリア: アンケート基本情報 -->
+            <div class="d-flex justify-content-between align-items-start mb-4">
+                <div>
+                    <h2 class="h3 fw-bold mb-2" th:text="${aggregation.survey.title}">アンケートタイトル</h2>
+                    <div class="text-muted small">
+                        <span class="me-3">
+                            <i class="bi bi-calendar"></i>
+                            作成日: <span th:text="${#temporals.format(aggregation.survey.createdAt, 'yyyy/MM/dd')}"></span>
+                        </span>
+                        <span>
+                            <i class="bi bi-clock"></i>
+                            回答期限: <span th:text="${aggregation.survey.deadline != null ? #temporals.format(aggregation.survey.deadline, 'yyyy/MM/dd HH:mm') : '無期限'}"></span>
+                        </span>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <div class="card bg-light border-0 mb-2">
+                        <div class="card-body py-2 px-4">
+                            <div class="small text-muted mb-1">総回答数</div>
+                            <div class="h2 fw-bold text-primary mb-0" th:text="${aggregation.totalResponseCount}">0</div>
+                        </div>
+                    </div>
+                    <a th:href="@{/admin/result/download/{id}(id=${aggregation.survey.surveyId})}" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-download"></i> CSVダウンロード
+                    </a>
+                </div>
+            </div>
+
+            <hr class="mb-5">
+
+            <!-- 設問ごとの集計結果ループ -->
+            <div th:each="qa, stat : ${aggregation.questionAggregations}" class="card shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-secondary me-2" th:text="'Q' + ${stat.count}">Q1</span>
+                        <h5 class="mb-0 fw-bold" th:text="${qa.question.text}">設問文</h5>
+                        <span th:if="${qa.question.required}" class="badge bg-danger ms-2" style="font-size: 0.7em;">必須</span>
+                    </div>
+                    <div class="mt-2 small text-muted">
+                        タイプ: <span th:text="${qa.question.type}">RADIO</span> | 
+                        回答あり: <span th:text="${qa.answerCount}">0</span>件
+                    </div>
+                </div>
+                <div class="card-body">
+                    
+                    <!-- 選択式 (RADIO / CHECKBOX) の場合 -->
+                    <div th:if="${qa.question.type.name() == 'RADIO' || qa.question.type.name() == 'CHECKBOX'}">
+                        <div th:if="${#lists.isEmpty(qa.optionStats)}" class="text-muted text-center py-3">
+                            データがありません
+                        </div>
+                        <div th:unless="${#lists.isEmpty(qa.optionStats)}">
+                            <div class="row align-items-center">
+                                <div class="col-md-7">
+                                    <div th:each="opt : ${qa.optionStats}" class="mb-3">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <span class="fw-bold" th:text="${opt.label}">選択肢ラベル</span>
+                                            <span>
+                                                <span class="fw-bold" th:text="${opt.count}">10</span> 件 
+                                                <span class="text-muted small" th:text="'(' + ${#numbers.formatDecimal(opt.percentage, 1, 1)} + '%)'"></span>
+                                            </span>
+                                        </div>
+                                        <div class="progress" style="height: 10px;">
+                                            <div class="progress-bar" role="progressbar" 
+                                                 th:style="'width: ' + ${opt.percentage} + '%'"
+                                                 th:aria-valuenow="${opt.percentage}" aria-valuemin="0" aria-valuemax="100">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div style="max-width: 300px; margin: 0 auto;">
+                                        <canvas th:id="'chart-q-' + ${stat.index}"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Chart.js描画スクリプト -->
+                            <script th:inline="javascript">
+                                /*<![CDATA[*/
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    const ctx = document.getElementById('chart-q-' + /*[[${stat.index}]]*/ '0');
+                                    const labels = /*[[${qa.optionStats.![label]}]]*/ [];
+                                    const data = /*[[${qa.optionStats.![count]}]]*/ [];
+                                    const colors = ['#0d6efd', '#198754', '#ffc107', '#dc3545', '#0dcaf0', '#6610f2', '#d63384', '#fd7e14', '#20c997', '#6c757d'];
+
+                                    new Chart(ctx, {
+                                        type: 'pie',
+                                        data: {
+                                            labels: labels,
+                                            datasets: [{
+                                                data: data,
+                                                backgroundColor: colors,
+                                                borderWidth: 1
+                                            }]
+                                        },
+                                        options: {
+                                            responsive: true,
+                                            plugins: {
+                                                legend: { position: 'bottom' }
+                                            }
+                                        }
+                                    });
+                                });
+                                /*]]>*/
+                            </script>
+                        </div>
+                    </div>
+
+                    <!-- 自由記述 (TEXT) の場合 -->
+                    <div th:if="${qa.question.type.name() == 'TEXT'}">
+                        <div th:if="${#lists.isEmpty(qa.textAnswers)}" class="text-muted text-center py-3">
+                            回答がありません
+                        </div>
+                        <div th:unless="${#lists.isEmpty(qa.textAnswers)}" class="list-group list-group-flush border rounded overflow-auto" style="max-height: 300px;">
+                            <div th:each="ans : ${qa.textAnswers}" class="list-group-item">
+                                <i class="bi bi-chat-left-text text-muted me-2"></i>
+                                <span th:text="${ans}">回答テキスト</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="mt-4 mb-5">
+                <a th:href="@{/admin/result/list}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> 一覧に戻る
+                </a>
+            </div>
+        </div>
+
+        <!-- Chart.js CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </main>
+</body>
+
+</html>
