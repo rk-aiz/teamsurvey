@@ -12,9 +12,6 @@ import com.github.rk_aiz.teamsurvey.domain.model.result.SurveyAggregation;
 @Mapper
 public interface SurveyResultMapper {
 
-    /**
-     * 全ての集計結果を取得します
-     */
     List<SurveyAggregation> selectAll();
 
     SurveyAggregation selectById(@Param("id") Integer id);

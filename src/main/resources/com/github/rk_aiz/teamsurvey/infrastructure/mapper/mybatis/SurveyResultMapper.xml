@@ -4,9 +4,10 @@
 
     <!-- SurveyAggregation ResultMap -->
     <resultMap id="SurveyAggregationMap" type="com.github.rk_aiz.teamsurvey.domain.model.result.SurveyAggregation">
+        <id property="survey.surveyId" column="survey_id" />
         <result property="totalResponseCount" column="total_response_count" />
         <association property="survey" javaType="com.github.rk_aiz.teamsurvey.domain.model.Survey">
-            <id property="id" column="survey_id" />
+            <id property="surveyId" column="survey_id" />
             <result property="title" column="title" />
             <result property="status" column="status" />
             <result property="resultVisibility" column="result_visibility" />
@@ -19,9 +20,10 @@
 
     <!-- SurveySummary ResultMap (一覧用：詳細な設問集計を含まないマップ) -->
     <resultMap id="SurveySummaryMap" type="com.github.rk_aiz.teamsurvey.domain.model.result.SurveyAggregation">
+        <id property="survey.surveyId" column="survey_id" />
         <result property="totalResponseCount" column="total_response_count" />
         <association property="survey" javaType="com.github.rk_aiz.teamsurvey.domain.model.Survey">
-            <id property="id" column="survey_id" />
+            <id property="surveyId" column="survey_id" />
             <result property="title" column="title" />
             <result property="status" column="status" />
             <result property="resultVisibility" column="result_visibility" />

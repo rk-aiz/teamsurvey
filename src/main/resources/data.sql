@@ -227,7 +227,7 @@ VALUES (10, 6, '将来、管理職（マネージャー）を目指したいで�
 INSERT INTO questions (id, survey_id, question_text, question_type, is_required, answer_pattern_id, display_order)
 VALUES (11, 6, '現在の評価制度やキャリアパスに満足していますか？', 'RADIO', TRUE, 3, 2);
 
-INSERT INTO survey_target_groups (survey_id, group_id) VALUES (6, 2); -- エンジニア
+INSERT INTO survey_target_groups (survey_id, group_id) VALUES (6, 1); -- 全社員
 
 -- 7件目: 春のお花見イベント参加確認 (ID=7)
 INSERT INTO surveys (title, status, result_visibility, created_at, updated_at)
@@ -316,7 +316,7 @@ INSERT INTO response_details (response_id, question_id, answer_pattern_item_id) 
 INSERT INTO response_details (response_id, question_id, answer_text) VALUES (5, 9, '大変勉強になりました。');
 
 -- 6. Survey ID=6 (キャリア・昇進に関するアンケート) by user
-INSERT INTO responses (id, survey_id, username, status, created_at, updated_at) VALUES (6, 6, 'user', 'VALID', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO responses (id, survey_id, username, status, created_at, updated_at) VALUES (6, 6, 'admin', 'VALID', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 -- Q10: はい(6)
 INSERT INTO response_details (response_id, question_id, answer_pattern_item_id) VALUES (6, 10, 6);
 -- Q11: 3(10)
