@@ -9,6 +9,7 @@ import org.springframework.beans.BeanUtils;
 import com.github.rk_aiz.teamsurvey.domain.model.ResponseDetail;
 import com.github.rk_aiz.teamsurvey.domain.model.question.Question;
 import com.github.rk_aiz.teamsurvey.domain.type.QuestionType;
+import com.github.rk_aiz.teamsurvey.domain.util.StringUtils;
 
 import lombok.Data;
 
@@ -38,16 +39,15 @@ public class ResponseDetailForm {
         BeanUtils.copyProperties(this, detail);
         detail.setQuestion(question);
         detail.setRawData(this.getRawData(question.getType()));
-        
+
         return detail;
     }
-    
+
     private String getRawData(QuestionType questionType) {
-        return switch(questionType) {
-        	case TEXT -> this.getResponseText();
+        return switch (questionType) {
+            case TEXT -> StringUtils.trim(this.getResponseText());
             case RADIO -> this.getRadioOptionId().toString();
             case CHECKBOX -> this.getCheckboxOptionIds().stream().map(String::valueOf).collect(Collectors.joining(","));
         };
     }
-
 }

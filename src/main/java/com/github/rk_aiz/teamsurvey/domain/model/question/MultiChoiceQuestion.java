@@ -13,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class MultipleChoiceQuestion extends SingleChoiceQuestion {
+public class MultiChoiceQuestion extends SingleChoiceQuestion {
 
     @Override
     public QuestionType getType() {
@@ -22,7 +22,7 @@ public class MultipleChoiceQuestion extends SingleChoiceQuestion {
 
     @Override
     public Question createCopy() {
-        return MultipleChoiceQuestion.builder()
+        return MultiChoiceQuestion.builder()
                 .text(this.getText())
                 .required(this.isRequired())
                 .answerOption(this.getAnswerOption())

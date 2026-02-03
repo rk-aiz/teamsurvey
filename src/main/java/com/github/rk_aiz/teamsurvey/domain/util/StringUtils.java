@@ -15,4 +15,17 @@ public class StringUtils {
     public static boolean hasText(String str) {
         return str != null && !str.isBlank();
     }
+
+    /**
+     * 空白のトリムを行います。
+     * トリム後、空の文字列の場合はnullを返します。
+     */
+    public static String trim(String str) {
+        String trimmed = str.trim();
+        if (trimmed.isEmpty()) {
+            return null;
+        } else {
+            return trimmed;
+        }
+    }
 }

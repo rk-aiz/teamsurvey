@@ -2,21 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.SurveyResultMapper">
 
-    <!-- SurveyAggregation ResultMap -->
-    <resultMap id="SurveyAggregationMap" type="com.github.rk_aiz.teamsurvey.domain.model.result.SurveyAggregation">
-        <id property="survey.surveyId" column="survey_id" />
-        <result property="totalResponseCount" column="total_response_count" />
-        <association property="survey" javaType="com.github.rk_aiz.teamsurvey.domain.model.Survey">
-            <id property="surveyId" column="survey_id" />
-            <result property="title" column="title" />
-            <result property="status" column="status" />
-            <result property="resultVisibility" column="result_visibility" />
-            <result property="deadline" column="deadline" />
-            <result property="createdAt" column="created_at" />
-            <result property="updatedAt" column="updated_at" />
-        </association>
-        <collection property="questionAggregations" column="survey_id" select="selectQuestionAggregations" />
-    </resultMap>
 
     <!-- SurveySummary ResultMap (一覧用：詳細な設問集計を含まないマップ) -->
     <resultMap id="SurveySummaryMap" type="com.github.rk_aiz.teamsurvey.domain.model.result.SurveyAggregation">
@@ -33,17 +18,56 @@
         </association>
     </resultMap>
 
+    <!-- SurveyAggregation ResultMap -->
+    <resultMap id="SurveyAggregationMap" type="com.github.rk_aiz.teamsurvey.domain.model.result.SurveyAggregation">
+        <id property="survey.surveyId" column="survey_id" />
+        <result property="totalResponseCount" column="total_response_count" />
+        <association property="survey" javaType="com.github.rk_aiz.teamsurvey.domain.model.Survey">
+            <id property="surveyId" column="survey_id" />
+            <result property="title" column="title" />
+            <result property="status" column="status" />
+            <result property="resultVisibility" column="result_visibility" />
+            <result property="deadline" column="deadline" />
+            <result property="createdAt" column="created_at" />
+            <result property="updatedAt" column="updated_at" />
+        </association>
+        <collection property="questionAggregations" column="survey_id" select="selectQuestionAggregations" />
+    </resultMap>
+
     <!-- QuestionAggregation ResultMap -->
     <resultMap id="QuestionAggregationMap" type="com.github.rk_aiz.teamsurvey.domain.model.result.QuestionAggregation">
+        <id property="questionId" column="id" />
         <result property="answerCount" column="answer_count" />
         <association property="question" javaType="com.github.rk_aiz.teamsurvey.domain.model.question.Question">
-            <id property="id" column="id" />
+            <id property="questionId" column="id" />
             <result property="surveyId" column="survey_id" />
             <result property="text" column="question_text" />
-            <result property="type" column="question_type" />
             <result property="required" column="is_required" />
             <result property="displayOrder" column="display_order" />
-            <result property="answerPatternId" column="answer_pattern_id" />
+            <result property="createdAt" column="created_at" />
+            <result property="updatedAt" column="updated_at" />
+            <!-- 
+                Questionが抽象クラスの場合、MyBatisは直接インスタンス化できません。
+                以下のようにdiscriminatorを使用して、question_typeに基づいて適切な具象クラスに振り分ける必要があります。
+                valueにはDBの値、resultTypeには対応するJavaクラスの完全修飾名を指定してください。
+            -->
+            <discriminator javaType="string" column="question_type">
+                <case value="TEXT" resultType="com.github.rk_aiz.teamsurvey.domain.model.question.FreeResponseQuestion"/>
+                <case value="RADIO" resultType="com.github.rk_aiz.teamsurvey.domain.model.question.SingleChoiceQuestion">
+                    <association property="answerOption" javaType="com.github.rk_aiz.teamsurvey.domain.model.AnswerOption">
+                        <id property="answerOptionId" column="answer_pattern_id"/>
+                        <result property="name" column="pattern_name"/>
+                        <collection property="items" column="answer_pattern_id" select="selectAnswerPatternItems" />
+                    </association>
+                </case>
+                <case value="CHECKBOX" resultType="com.github.rk_aiz.teamsurvey.domain.model.question.MultiChoiceQuestion">
+                    <association property="answerOption" javaType="com.github.rk_aiz.teamsurvey.domain.model.AnswerOption">
+                        <id property="answerOptionId" column="answer_pattern_id"/>
+                        <result property="name" column="pattern_name"/>
+                        <collection property="items" column="answer_pattern_id" select="selectAnswerPatternItems" />
+                    </association>
+                </case>
+            </discriminator>
         </association>
         <!-- 
             選択肢統計を取得するためのパラメータ渡し
@@ -58,7 +82,7 @@
 
     <!-- OptionStat ResultMap -->
     <resultMap id="OptionStatMap" type="com.github.rk_aiz.teamsurvey.domain.model.result.QuestionAggregation$OptionStat">
-        <result property="optionId" column="option_id" />
+        <id property="optionId" column="option_id" />
         <result property="label" column="label" />
         <result property="count" column="count" />
         <result property="percentage" column="percentage" />
@@ -87,8 +111,17 @@
     <select id="selectQuestionAggregations" resultMap="QuestionAggregationMap">
         SELECT 
             q.id, q.survey_id, q.question_text, q.question_type, q.is_required, q.display_order, q.answer_pattern_id,
-            (SELECT COUNT(DISTINCT rd.response_id) FROM response_details rd WHERE rd.question_id = q.id) AS answer_count
+            ap.pattern_name,
+            (SELECT COUNT(DISTINCT rd.response_id) 
+                FROM response_details rd 
+                WHERE rd.question_id = q.id
+                AND (
+                    (rd.answer_text IS NOT NULL AND rd.answer_text != '')
+                    OR 
+                    rd.answer_pattern_item_id IS NOT NULL
+                )) AS answer_count
         FROM questions q
+        LEFT JOIN answer_patterns ap ON q.answer_pattern_id = ap.id
         WHERE q.survey_id = #{surveyId}
         ORDER BY q.display_order
     </select>
@@ -97,7 +130,7 @@
     <select id="selectOptionStats" resultMap="OptionStatMap">
         SELECT 
             api.id AS option_id,
-            api.item_text,
+            api.item_text AS label,
             COUNT(rd.id) AS count,
             CASE 
                 WHEN #{answerCount} > 0 THEN (COUNT(rd.id) * 100.0 / #{answerCount})
@@ -114,11 +147,49 @@
 
     <!-- 4. 自由記述回答を取得 -->
     <select id="selectTextAnswers" resultType="string">
-        SELECT answer_text
+        SELECT answer_text, id
         FROM response_details
-        WHERE question_id = #{questionId}
-          AND answer_text IS NOT NULL AND answer_text != ''
+        WHERE question_id = #{id}
+        AND answer_text IS NOT NULL AND answer_text != ''
         ORDER BY id
+    </select>
+
+    <!-- 5. 回答パターンの選択肢一覧を取得 -->
+    <select id="selectAnswerPatternItems" resultType="com.github.rk_aiz.teamsurvey.domain.model.AnswerOption$OptionItem">
+        SELECT 
+            id AS itemId,
+            item_text AS itemText,
+            item_order AS itemOrder
+        FROM answer_pattern_items
+        WHERE answer_pattern_id = #{answerPatternId}
+        ORDER BY item_order
+    </select>
+
+    <!-- 6. CSV出力用: 回答一覧取得 -->
+    <resultMap id="CsvResponseMap" type="com.github.rk_aiz.teamsurvey.domain.model.Response">
+        <id property="responseId" column="response_id" />
+        <result property="surveyId" column="survey_id" />
+        <result property="username" column="username" />
+        <result property="createdAt" column="created_at" />
+        <collection property="responseDetails" ofType="com.github.rk_aiz.teamsurvey.domain.model.ResponseDetail">
+            <id property="responseDetailId" column="detail_id" />
+            <result property="rawData" column="answer_value" />
+            <!-- IDだけ保持できれば良いので、便宜的にFreeResponseQuestionとしてマッピング -->
+            <association property="question" javaType="com.github.rk_aiz.teamsurvey.domain.model.question.FreeResponseQuestion">
+                <id property="questionId" column="question_id"/>
+            </association>
+        </collection>
+    </resultMap>
+
+    <select id="selectResponsesForCsv" resultMap="CsvResponseMap">
+        SELECT 
+            r.id AS response_id, r.survey_id, r.username, r.created_at,
+            rd.id AS detail_id, rd.question_id,
+            COALESCE(rd.answer_text, CAST(rd.answer_pattern_item_id AS VARCHAR)) AS answer_value
+        FROM responses r
+        LEFT JOIN response_details rd ON r.id = rd.response_id
+        WHERE r.survey_id = #{surveyId}
+        ORDER BY r.id, rd.question_id
     </select>
 
 </mapper>

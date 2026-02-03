@@ -25,9 +25,8 @@ public class SecurityConfig {
         http
                 // ★HTTPリクエストに対するセキュリティ設定
                 .authorizeHttpRequests(authz -> authz
-                        // 「/login」へのアクセスは認証を必要としない
-                        .requestMatchers("/auth", "/favicon.ico").permitAll()
-                        // 静的リソース（css, js, images等）へのアクセスを許可
+                        // 「/auth(ログイン画面), favicon.svg」へのアクセスは認証を必要としない
+                        .requestMatchers("/auth", "/favicon.svg").permitAll()
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                         .permitAll()
                         // 【管理者権限設定】 url : /admin/**は管理者しかアクセスできない

@@ -19,20 +19,21 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class QuestionAggregation {
 
+    private Integer questionId;
     /** 設問情報 */
     private Question question;
 
     /** この設問への有効回答数 */
     private int answerCount;
 
-    /** 
-     * 選択式回答の集計結果リスト 
+    /**
+     * 選択式回答の集計結果リスト
      * (ラジオボタン、チェックボックス用)
      */
     private List<OptionStat> optionStats;
 
-    /** 
-     * 自由記述回答のリスト 
+    /**
+     * 自由記述回答のリスト
      * (テキストボックス用)
      */
     private List<String> textAnswers;

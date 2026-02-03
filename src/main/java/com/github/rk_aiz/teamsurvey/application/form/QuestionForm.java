@@ -4,7 +4,7 @@ import org.springframework.beans.BeanUtils;
 
 import com.github.rk_aiz.teamsurvey.domain.model.AnswerOption;
 import com.github.rk_aiz.teamsurvey.domain.model.question.FreeResponseQuestion;
-import com.github.rk_aiz.teamsurvey.domain.model.question.MultipleChoiceQuestion;
+import com.github.rk_aiz.teamsurvey.domain.model.question.MultiChoiceQuestion;
 import com.github.rk_aiz.teamsurvey.domain.model.question.Question;
 import com.github.rk_aiz.teamsurvey.domain.model.question.SingleChoiceQuestion;
 import com.github.rk_aiz.teamsurvey.domain.type.QuestionType;
@@ -66,7 +66,7 @@ public class QuestionForm {
         Question question = switch (this.getType()) {
             case TEXT -> new FreeResponseQuestion();
             case RADIO -> new SingleChoiceQuestion();
-            case CHECKBOX -> new MultipleChoiceQuestion();
+            case CHECKBOX -> new MultiChoiceQuestion();
         };
         BeanUtils.copyProperties(this, question);
         question.setQuestionId(id);

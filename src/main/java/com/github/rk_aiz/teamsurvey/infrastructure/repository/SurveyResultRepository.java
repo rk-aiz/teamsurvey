@@ -2,8 +2,8 @@ package com.github.rk_aiz.teamsurvey.infrastructure.repository;
 
 import java.util.List;
 
-import com.github.rk_aiz.teamsurvey.domain.model.Survey;
 import com.github.rk_aiz.teamsurvey.domain.model.result.SurveyAggregation;
+import com.github.rk_aiz.teamsurvey.domain.model.Response;
 
 /**
  * アンケート情報の永続化・検索を行うリポジトリのインターフェース。
@@ -14,4 +14,6 @@ public interface SurveyResultRepository {
     List<SurveyAggregation> findAll();
 
     SurveyAggregation findBySurveyId(Integer surveyId);
+
+    List<Response> findResponsesForCsv(Integer surveyId);
 }

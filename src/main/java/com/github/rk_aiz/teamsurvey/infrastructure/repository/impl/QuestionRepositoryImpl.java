@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.github.rk_aiz.teamsurvey.domain.model.question.MultipleChoiceQuestion;
+import com.github.rk_aiz.teamsurvey.domain.model.question.MultiChoiceQuestion;
 import com.github.rk_aiz.teamsurvey.domain.model.question.Question;
 import com.github.rk_aiz.teamsurvey.domain.model.question.SingleChoiceQuestion;
 import com.github.rk_aiz.teamsurvey.infrastructure.entity.QuestionEntity;
@@ -21,7 +21,6 @@ public class QuestionRepositoryImpl implements QuestionRepository {
     private final QuestionMapper questionMapper;
     private final AnswerOptionRepository answerOptionRepository;
 
-
     @Override
     public List<Question> findAll() {
         return this.questionMapper.selectAll()
@@ -31,8 +30,9 @@ public class QuestionRepositoryImpl implements QuestionRepository {
     @Override
     public Question findById(Integer id) {
         QuestionEntity entity = questionMapper.selectById(id);
-        if (entity == null) return null;
-        
+        if (entity == null)
+            return null;
+
         return convertWithAnswerOption(entity);
     }
 
@@ -63,19 +63,19 @@ public class QuestionRepositoryImpl implements QuestionRepository {
 
     private Question convertWithAnswerOption(QuestionEntity entity) {
         Question question = entity.toModel();
-            switch (question.getType()) {
-                case RADIO -> {
-                    ((SingleChoiceQuestion)question).setAnswerOption(
-                            answerOptionRepository.findById(entity.getAnswerPatternId()));
-                }
-                case CHECKBOX -> {
-                    ((MultipleChoiceQuestion)question).setAnswerOption(
-                            answerOptionRepository.findById(entity.getAnswerPatternId()));
-                }
-                default -> {}
+        switch (question.getType()) {
+            case RADIO -> {
+                ((SingleChoiceQuestion) question).setAnswerOption(
+                        answerOptionRepository.findById(entity.getAnswerPatternId()));
             }
+            case CHECKBOX -> {
+                ((MultiChoiceQuestion) question).setAnswerOption(
+                        answerOptionRepository.findById(entity.getAnswerPatternId()));
+            }
+            default -> {
+            }
+        }
         return question;
     }
-        
 
 }

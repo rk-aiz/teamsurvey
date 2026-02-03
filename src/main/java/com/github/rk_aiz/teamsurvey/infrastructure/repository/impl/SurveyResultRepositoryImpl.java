@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.github.rk_aiz.teamsurvey.domain.model.Response;
 import com.github.rk_aiz.teamsurvey.domain.model.result.SurveyAggregation;
 import com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.SurveyResultMapper;
 import com.github.rk_aiz.teamsurvey.infrastructure.repository.SurveyResultRepository;
@@ -24,5 +25,10 @@ public class SurveyResultRepositoryImpl implements SurveyResultRepository {
     @Override
     public SurveyAggregation findBySurveyId(Integer surveyId) {
         return this.surveyResultMapper.selectById(surveyId);
+    }
+
+    @Override
+    public List<Response> findResponsesForCsv(Integer surveyId) {
+        return this.surveyResultMapper.selectResponsesForCsv(surveyId);
     }
 }

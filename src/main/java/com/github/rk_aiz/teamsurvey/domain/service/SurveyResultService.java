@@ -11,8 +11,14 @@ public interface SurveyResultService {
 
     /**
      * アンケート集計を取得します。
+     * 
      * @throws IllegalArgumentException アンケートが存在しない場合
      */
     SurveyAggregation findSurveyAggregationById(Integer surveyId) throws IllegalArgumentException;
+
+    /**
+     * 指定されたアンケートの回答データをCSV形式で生成します。
+     */
+    String generateCsv(Integer surveyId);
 
 }

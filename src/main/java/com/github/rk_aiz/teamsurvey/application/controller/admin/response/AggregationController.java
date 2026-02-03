@@ -1,5 +1,9 @@
 package com.github.rk_aiz.teamsurvey.application.controller.admin.response;
 
+import java.nio.charset.StandardCharsets;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.SmartValidator;
@@ -45,11 +49,11 @@ public class AggregationController {
      */
     @GetMapping("/list")
     public String list(
-    		Model model) {
+            Model model) {
 
-    	// 全件取得
-        model.addAttribute("aggregations", 
-        		surveyResultService.findAllSurveyAggregations());
+        // 全件取得
+        model.addAttribute("aggregations",
+                surveyResultService.findAllSurveyAggregations());
 
         return "admin/result/list";
     }
@@ -62,11 +66,33 @@ public class AggregationController {
 
         // アンケート情報の取得
         SurveyAggregation aggregation = surveyResultService.findSurveyAggregationById(id);
-        
+
         System.out.println(aggregation.getQuestionAggregations());
         model.addAttribute("aggregation", aggregation);
 
         return "admin/result/detail";
+    }
+
+    /**
+     * CSVダウンロード
+     */
+    @GetMapping("/download/{id}")
+    public ResponseEntity<byte[]> downloadCsv(@PathVariable("id") Integer id) {
+        String csvData = surveyResultService.generateCsv(id);
+        byte[] csvBytes = csvData.getBytes(StandardCharsets.UTF_8);
+        // BOM付与 (Excelで文字化けしないように)
+        byte[] csvBytesWithBom = new byte[csvBytes.length + 3];
+        csvBytesWithBom[0] = (byte) 0xEF;
+        csvBytesWithBom[1] = (byte) 0xBB;
+        csvBytesWithBom[2] = (byte) 0xBF;
+        System.arraycopy(csvBytes, 0, csvBytesWithBom, 3, csvBytes.length);
+
+        String filename = "survey_result_" + id + ".csv";
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, "text/csv; charset=UTF-8")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .body(csvBytesWithBom);
     }
 
 }

@@ -46,8 +46,7 @@
         FROM surveys s
         INNER JOIN survey_target_groups stg ON s.id = stg.survey_id
         INNER JOIN user_group_mappings ugm ON stg.group_id = ugm.group_id
-        WHERE
-            ugm.username = #{username}
+        WHERE ugm.username = #{username}
         ORDER BY 
             s.deadline DESC
     </select>

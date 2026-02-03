@@ -129,7 +129,8 @@ public class SurveyServiceImpl implements SurveyService {
 
         return this.findSurveysByUsername(username)
                 .stream()
-                .filter(survey -> !answeredSurveyIds.contains(survey.getSurveyId()))
+                .filter(survey -> survey.getStatus() == SurveyStatus.PUBLISHED
+                        && !answeredSurveyIds.contains(survey.getSurveyId()))
                 .toList();
     }
 

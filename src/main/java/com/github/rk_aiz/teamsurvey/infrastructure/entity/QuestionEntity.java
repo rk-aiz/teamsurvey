@@ -3,7 +3,7 @@ package com.github.rk_aiz.teamsurvey.infrastructure.entity;
 import org.springframework.beans.BeanUtils;
 
 import com.github.rk_aiz.teamsurvey.domain.model.question.FreeResponseQuestion;
-import com.github.rk_aiz.teamsurvey.domain.model.question.MultipleChoiceQuestion;
+import com.github.rk_aiz.teamsurvey.domain.model.question.MultiChoiceQuestion;
 import com.github.rk_aiz.teamsurvey.domain.model.question.Question;
 import com.github.rk_aiz.teamsurvey.domain.model.question.SingleChoiceQuestion;
 import com.github.rk_aiz.teamsurvey.domain.type.QuestionType;
@@ -40,10 +40,10 @@ public class QuestionEntity {
      * Entity -> Domain Model 変換
      */
     public Question toModel() {
-        
+
         Question question = switch (this.type) {
             case RADIO -> new SingleChoiceQuestion();
-            case CHECKBOX -> new MultipleChoiceQuestion();
+            case CHECKBOX -> new MultiChoiceQuestion();
             case TEXT -> new FreeResponseQuestion();
         };
 
@@ -59,17 +59,18 @@ public class QuestionEntity {
         QuestionEntity entity = new QuestionEntity();
         BeanUtils.copyProperties(model, entity);
         entity.setId(model.getQuestionId());
-        
-        switch(model.getType()) {
-            case RADIO, CHECKBOX -> { 
+
+        switch (model.getType()) {
+            case RADIO, CHECKBOX -> {
                 entity.setAnswerPatternId(
-                    ((SingleChoiceQuestion)model)
-                            .getAnswerOption()
-                            .getAnswerOptionId());
+                        ((SingleChoiceQuestion) model)
+                                .getAnswerOption()
+                                .getAnswerOptionId());
             }
-            default -> {}
+            default -> {
+            }
         }
-        
+
         return entity;
     }
 }
