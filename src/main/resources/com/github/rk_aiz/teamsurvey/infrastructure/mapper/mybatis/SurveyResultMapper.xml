@@ -15,7 +15,7 @@
             <result property="createdAt" column="created_at" />
             <result property="updatedAt" column="updated_at" />
         </association>
-        <collection property="questionAggregations" column="id" select="selectQuestionAggregations" />
+        <collection property="questionAggregations" column="survey_id" select="selectQuestionAggregations" />
     </resultMap>
 
     <!-- SurveySummary ResultMap (一覧用：詳細な設問集計を含まないマップ) -->
@@ -97,7 +97,7 @@
     <select id="selectOptionStats" resultMap="OptionStatMap">
         SELECT 
             api.id AS option_id,
-            api.label,
+            api.item_text,
             COUNT(rd.id) AS count,
             CASE 
                 WHEN #{answerCount} > 0 THEN (COUNT(rd.id) * 100.0 / #{answerCount})
@@ -108,8 +108,8 @@
             ON rd.answer_pattern_item_id = api.id 
             AND rd.question_id = #{questionId}
         WHERE api.answer_pattern_id = #{answerPatternId}
-        GROUP BY api.id, api.label, api.display_order
-        ORDER BY api.display_order
+        GROUP BY api.id, api.item_text, api.item_order
+        ORDER BY api.item_order
     </select>
 
     <!-- 4. 自由記述回答を取得 -->

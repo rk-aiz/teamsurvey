@@ -23,7 +23,6 @@ public class SurveyResultRepositoryImpl implements SurveyResultRepository {
 
     @Override
     public SurveyAggregation findBySurveyId(Integer surveyId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findBySurveyId'");
+        return this.surveyResultMapper.selectById(surveyId);
     }
 }

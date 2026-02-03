@@ -25,8 +25,7 @@ public class SurveyResultServiceImpl implements SurveyResultService {
 
     @Override
     public SurveyAggregation findSurveyAggregationById(Integer surveyId) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findSurveyAggregationById'");
+        return surveyResultRepository.findBySurveyId(surveyId);
     }
 
 }

@@ -1,7 +1,5 @@
 package com.github.rk_aiz.teamsurvey.application.controller.admin.response;
 
-import java.util.List;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.SmartValidator;
@@ -49,14 +47,9 @@ public class AggregationController {
     public String list(
     		Model model) {
 
-    	List<SurveyAggregation> lists = surveyResultService.findAllSurveyAggregations();
-        
-    	for (SurveyAggregation sa : lists) {
-    		System.out.println(sa.toString());
-    	}
     	// 全件取得
         model.addAttribute("aggregations", 
-        		lists);
+        		surveyResultService.findAllSurveyAggregations());
 
         return "admin/result/list";
     }
@@ -64,11 +57,13 @@ public class AggregationController {
     /**
      * 詳細画面を表示します（設問一覧も含む）
      */
-    @GetMapping("/result/detail/{id}")
+    @GetMapping("/detail/{id}")
     public String detail(@PathVariable("id") Integer id, Model model) {
 
         // アンケート情報の取得
         SurveyAggregation aggregation = surveyResultService.findSurveyAggregationById(id);
+        
+        System.out.println(aggregation.getQuestionAggregations());
         model.addAttribute("aggregation", aggregation);
 
         return "admin/result/detail";
