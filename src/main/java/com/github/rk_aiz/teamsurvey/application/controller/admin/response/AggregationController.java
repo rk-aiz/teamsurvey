@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
+import com.github.rk_aiz.teamsurvey.domain.service.SurveyResultService;
 import com.github.rk_aiz.teamsurvey.domain.service.SurveyService;
 
 import lombok.RequiredArgsConstructor;
@@ -18,9 +19,9 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Controller
-@RequestMapping("/admin")
+@RequestMapping("/admin/result")
 @RequiredArgsConstructor
-public class AdminResponseController {
+public class AggregationController {
 
     /** 定数 */
     private static final String MESSAGE = "message";
@@ -28,38 +29,27 @@ public class AdminResponseController {
 
     /** DI */
     private final SurveyService surveyService;
+    private final SurveyResultService surveyResultService;
     private final SmartValidator validator;
 
     /**
-     * アンケートごとの回答数一覧画面を表示します
+     * 集計一覧画面を表示します
      */
-    @GetMapping("/response")
+    @GetMapping
     public String survey() {
-        return "redirect:/admin/response/survey";
+        return "redirect:/admin/result/list";
     }
 
     /**
-     * アンケートごとの回答数一覧画面を表示します
+     * 集計一覧画面を表示します
      */
-    @GetMapping("/response/survey")
+    @GetMapping("/list")
     public String list(@RequestParam(value = "id", required = false) Integer id, Model model) {
 
         // 全件取得（中央カラム用）
-        model.addAttribute("surveys",
-                surveyService.findAvailableSurveys());
+        model.addAttribute("results", surveyResultService.findAllSurveyAggregations());
 
-        // IDが指定されている場合、詳細情報を取得（右カラム用）
-        if (id != null) {
-            try {
-                Survey selectedSurvey = surveyService.findSurveyById(id);
-                model.addAttribute("selectedSurvey", selectedSurvey);
-            } catch (IllegalArgumentException e) {
-                // 指定されたIDが見つからない場合は、詳細を表示せずに一覧のみ表示を継続
-                log.warn("指定されたアンケートIDが見つかりません: {}", id);
-            }
-        }
-
-        return "admin/survey/list";
+        return "admin/result/list";
     }
 
 }

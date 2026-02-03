@@ -81,17 +81,4 @@
 
     <delete id="delete"> DELETE FROM surveys WHERE id = #{id} </delete>
 
-    <!-- ID指定取得: 単純なSELECT -->
-    <select id="selectAsSummary" resultType="com.github.rk_aiz.teamsurvey.domain.model.SurveySummary">
-        SELECT  id, 
-                title,
-                status,
-                result_visibility,
-                deadline,
-                created_at,
-                updated_at
-        FROM    surveys
-        WHERE id = #{id}
-    </select>
-
 </mapper>

@@ -3,6 +3,7 @@ package com.github.rk_aiz.teamsurvey.domain.service.impl;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.github.rk_aiz.teamsurvey.domain.model.LoginUser;
 import com.github.rk_aiz.teamsurvey.domain.model.Response;
@@ -15,6 +16,7 @@ import com.github.rk_aiz.teamsurvey.infrastructure.repository.ResponseRepository
 import lombok.RequiredArgsConstructor;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ResponseServiceImpl implements ResponseService {
 

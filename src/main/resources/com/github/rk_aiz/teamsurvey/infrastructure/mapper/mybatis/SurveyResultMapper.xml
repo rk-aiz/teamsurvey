@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.SurveyResultMapper">
+
+    <!-- SurveyAggregation ResultMap -->
+    <resultMap id="SurveyAggregationMap" type="com.github.rk_aiz.teamsurvey.domain.model.result.SurveyAggregation">
+        <result property="totalResponseCount" column="total_response_count" />
+        <association property="survey" javaType="com.github.rk_aiz.teamsurvey.domain.model.Survey">
+            <id property="id" column="survey_id" />
+            <result property="title" column="title" />
+            <result property="status" column="status" />
+            <result property="resultVisibility" column="result_visibility" />
+            <result property="deadline" column="deadline" />
+            <result property="createdAt" column="created_at" />
+            <result property="updatedAt" column="updated_at" />
+        </association>
+        <collection property="questionAggregations" column="id" select="selectQuestionAggregations" />
+    </resultMap>
+
+    <!-- SurveySummary ResultMap (一覧用：詳細な設問集計を含まないマップ) -->
+    <resultMap id="SurveySummaryMap" type="com.github.rk_aiz.teamsurvey.domain.model.result.SurveyAggregation">
+        <result property="totalResponseCount" column="total_response_count" />
+        <association property="survey" javaType="com.github.rk_aiz.teamsurvey.domain.model.Survey">
+            <id property="id" column="survey_id" />
+            <result property="title" column="title" />
+            <result property="status" column="status" />
+            <result property="resultVisibility" column="result_visibility" />
+            <result property="deadline" column="deadline" />
+            <result property="createdAt" column="created_at" />
+            <result property="updatedAt" column="updated_at" />
+        </association>
+    </resultMap>
+
+    <!-- QuestionAggregation ResultMap -->
+    <resultMap id="QuestionAggregationMap" type="com.github.rk_aiz.teamsurvey.domain.model.result.QuestionAggregation">
+        <result property="answerCount" column="answer_count" />
+        <association property="question" javaType="com.github.rk_aiz.teamsurvey.domain.model.question.Question">
+            <id property="id" column="id" />
+            <result property="surveyId" column="survey_id" />
+            <result property="text" column="question_text" />
+            <result property="type" column="question_type" />
+            <result property="required" column="is_required" />
+            <result property="displayOrder" column="display_order" />
+            <result property="answerPatternId" column="answer_pattern_id" />
+        </association>
+        <!-- 
+            選択肢統計を取得するためのパラメータ渡し
+            column="{...}" 構文で、親クエリのカラムをパラメータとして渡します。
+            answerCountは割合計算のために渡します。
+        -->
+        <collection property="optionStats" 
+                    column="{questionId=id, answerPatternId=answer_pattern_id, answerCount=answer_count}" 
+                    select="selectOptionStats" />
+        <collection property="textAnswers" column="id" select="selectTextAnswers" />
+    </resultMap>
+
+    <!-- OptionStat ResultMap -->
+    <resultMap id="OptionStatMap" type="com.github.rk_aiz.teamsurvey.domain.model.result.QuestionAggregation$OptionStat">
+        <result property="optionId" column="option_id" />
+        <result property="label" column="label" />
+        <result property="count" column="count" />
+        <result property="percentage" column="percentage" />
+    </resultMap>
+
+    <!-- 1. アンケート全体の集計情報を取得 -->
+    <select id="selectById" resultMap="SurveyAggregationMap">
+        SELECT 
+            s.id AS survey_id, s.title, s.status, s.result_visibility, s.deadline, s.created_at, s.updated_at,
+            (SELECT COUNT(*) FROM responses r WHERE r.survey_id = s.id) AS total_response_count
+        FROM surveys s
+        WHERE s.id = #{id}
+    </select>
+
+    <!-- 全アンケートの集計ヘッダー情報を取得 -->
+    <select id="selectAll" resultMap="SurveySummaryMap">
+        SELECT 
+            s.id AS survey_id,
+            s.title, s.status, s.result_visibility, s.deadline, s.created_at, s.updated_at,
+            (SELECT COUNT(*) FROM responses r WHERE r.survey_id = s.id) AS total_response_count
+        FROM surveys s
+        ORDER BY s.created_at DESC
+    </select>
+
+    <!-- 2. 設問ごとの集計情報を取得 -->
+    <select id="selectQuestionAggregations" resultMap="QuestionAggregationMap">
+        SELECT 
+            q.id, q.survey_id, q.question_text, q.question_type, q.is_required, q.display_order, q.answer_pattern_id,
+            (SELECT COUNT(DISTINCT rd.response_id) FROM response_details rd WHERE rd.question_id = q.id) AS answer_count
+        FROM questions q
+        WHERE q.survey_id = #{surveyId}
+        ORDER BY q.display_order
+    </select>
+
+    <!-- 3. 選択肢ごとの統計を取得 (件数と割合) -->
+    <select id="selectOptionStats" resultMap="OptionStatMap">
+        SELECT 
+            api.id AS option_id,
+            api.label,
+            COUNT(rd.id) AS count,
+            CASE 
+                WHEN #{answerCount} > 0 THEN (COUNT(rd.id) * 100.0 / #{answerCount})
+                ELSE 0 
+            END AS percentage
+        FROM answer_pattern_items api
+        LEFT JOIN response_details rd 
+            ON rd.answer_pattern_item_id = api.id 
+            AND rd.question_id = #{questionId}
+        WHERE api.answer_pattern_id = #{answerPatternId}
+        GROUP BY api.id, api.label, api.display_order
+        ORDER BY api.display_order
+    </select>
+
+    <!-- 4. 自由記述回答を取得 -->
+    <select id="selectTextAnswers" resultType="string">
+        SELECT answer_text
+        FROM response_details
+        WHERE question_id = #{questionId}
+          AND answer_text IS NOT NULL AND answer_text != ''
+        ORDER BY id
+    </select>
+
+</mapper>

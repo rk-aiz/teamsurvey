@@ -15,7 +15,6 @@ import com.github.rk_aiz.teamsurvey.domain.service.ResponseService;
 import com.github.rk_aiz.teamsurvey.domain.service.SurveyService;
 import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
 import com.github.rk_aiz.teamsurvey.infrastructure.repository.SurveyRepository;
-import com.github.rk_aiz.teamsurvey.infrastructure.repository.SurveyTargetGroupRepository;
 
 import lombok.RequiredArgsConstructor;
 

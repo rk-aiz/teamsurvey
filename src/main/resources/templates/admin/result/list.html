@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xml:lang="ja"
+    layout:decorate="~{admin/admin_layout}">
+
+<head>
+    <title>集計結果一覧</title>
+</head>
+
+<body>
+    <main layout:fragment="content">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="h3 mb-0">集計結果一覧</h2>
+                    </div>
+
+                    <!-- メッセージ表示 -->
+                    <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+                    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+                    <div class="card shadow-sm">
+                        <div class="list-group list-group-flush">
+                            <!-- ヘッダー行 -->
+                            <div class="list-group-item bg-light text-muted small py-2 d-none d-md-block">
+                                <div class="row align-items-center">
+                                    <div class="col-md-7">アンケート情報</div>
+                                    <div class="col-md-3 text-center">ステータス</div>
+                                    <div class="col-md-2 text-end">回答数</div>
+                                </div>
+                            </div>
+
+                            <!-- データがない場合 -->
+                            <div th:if="${#lists.isEmpty(aggregations)}" class="p-5 text-center text-muted">
+                                <i class="bi bi-bar-chart fs-1 mb-3"></i>
+                                <p>表示できる集計結果がありません</p>
+                            </div>
+
+                            <!-- リストループ -->
+                            <a th:each="agg : ${aggregations}" 
+                               th:href="@{/admin/result/detail/{id}(id=${agg.survey.surveyId})}"
+                               class="list-group-item list-group-item-action py-3">
+                                <div class="row align-items-center">
+                                    <!-- アンケート情報 -->
+                                    <div class="col-md-7 mb-2 mb-md-0">
+                                        <div class="d-flex align-items-center mb-1">
+                                            <h5 class="mb-0 fw-bold text-truncate" th:text="${agg.survey.title}">タイトル</h5>
+                                        </div>
+                                        <div class="text-muted small">
+                                            <span class="me-3">
+                                                <i class="bi bi-calendar"></i>
+                                                作成: <span th:text="${#temporals.format(agg.survey.createdAt, 'yyyy/MM/dd')}"></span>
+                                            </span>
+                                            <span>
+                                                <i class="bi bi-clock"></i>
+                                                期限: <span th:text="${agg.survey.deadline != null ? #temporals.format(agg.survey.deadline, 'yyyy/MM/dd HH:mm') : '無期限'}"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <!-- ステータス -->
+                                    <div class="col-md-3 text-md-center mb-2 mb-md-0">
+                                        <span th:if="${agg.survey.status.name() == 'DRAFT'}"
+                                            class="badge bg-secondary-subtle text-secondary border border-secondary">下書き</span>
+                                        <span th:if="${agg.survey.status.name() == 'PUBLISHED'}"
+                                            class="badge bg-success-subtle text-success border border-success">公開中</span>
+                                        <span th:if="${agg.survey.status.name() == 'CLOSED'}"
+                                            class="badge bg-danger-subtle text-danger border border-danger">終了</span>
+                                    </div>
+
+                                    <!-- 回答数 -->
+                                    <div class="col-md-2 text-end">
+                                        <span class="h4 fw-bold text-primary mb-0" th:text="${agg.answerCount}">0</span>
+                                        <span class="small text-muted">件</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>
