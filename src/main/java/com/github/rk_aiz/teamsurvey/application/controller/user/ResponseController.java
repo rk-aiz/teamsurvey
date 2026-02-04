@@ -16,7 +16,7 @@ import com.github.rk_aiz.teamsurvey.application.form.ResponseForm;
 import com.github.rk_aiz.teamsurvey.domain.model.LoginUser;
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
 import com.github.rk_aiz.teamsurvey.domain.service.ResponseService;
-import com.github.rk_aiz.teamsurvey.domain.service.SurveyService;
+import com.github.rk_aiz.teamsurvey.domain.service.AccountService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ResponseController {
 
-    private final SurveyService surveyService;
+    private final AccountService surveyService;
     private final ResponseService responseService;
 
     private static final String MESSAGE = "message";

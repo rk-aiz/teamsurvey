@@ -39,7 +39,6 @@ public class SurveyServiceImpl implements SurveyService {
      * アンケート詳細を取得します。
      * 
      * @param surveyId アンケートID
-     * @return アンケートドメインモデル
      * @throws IllegalArgumentException アンケートが存在しない場合
      */
     @Override

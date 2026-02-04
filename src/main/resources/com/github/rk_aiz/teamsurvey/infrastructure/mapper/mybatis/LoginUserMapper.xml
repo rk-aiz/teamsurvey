@@ -42,4 +42,33 @@
         ORDER BY username
     </select>
 
+    <!-- ページネーション付き取得: 1対多の結合があるためサブクエリで絞り込む -->
+    <select id="findWithPaging" resultMap="LoginUserResultMap">
+        SELECT 
+            t1.username, 
+            t1.password, 
+            t1.email, 
+            t1.display_name,
+            t1.enabled,
+            t1.created_at,
+            t1.updated_at,
+            ug.id as group_id,
+            ug.group_name,
+            ug.authority,
+            ug.is_system_group
+        FROM (
+            SELECT * FROM authentications
+            ORDER BY username
+            LIMIT #{limit} OFFSET #{offset}
+        ) as t1
+        LEFT JOIN user_group_mappings as map
+          ON t1.username = map.username
+        LEFT JOIN user_groups as ug
+          ON map.group_id = ug.id
+        ORDER BY t1.username
+    </select>
+
+    <select id="count" resultType="long">
+        SELECT count(*) FROM authentications
+    </select>
 </mapper>

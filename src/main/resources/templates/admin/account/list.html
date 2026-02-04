@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xml:lang="ja"
+    layout:decorate="~{admin/admin_layout}">
+
+<head>
+    <title>ユーザーアカウント一覧</title>
+</head>
+
+<body>
+    <main layout:fragment="content">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="h3 mb-0">ユーザーアカウント一覧</h2>
+                        <a th:href="@{/admin/account/new}" class="btn btn-primary">
+                            <i class="bi bi-person-plus"></i> 新規登録
+                        </a>
+                    </div>
+
+                    <!-- メッセージ表示 -->
+                    <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+                    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+                    <div class="card shadow-sm">
+                        <div class="list-group list-group-flush">
+                            <!-- ヘッダー行 -->
+                            <div class="list-group-item bg-light text-muted small py-2 d-none d-md-block">
+                                <div class="row align-items-center">
+                                    <div class="col-md-5">ユーザー情報</div>
+                                    <div class="col-md-3">所属グループ</div>
+                                    <div class="col-md-2 text-center">ステータス</div>
+                                    <div class="col-md-2 text-end">操作</div>
+                                </div>
+                            </div>
+
+                            <!-- データがない場合 -->
+                            <div th:if="${users == null || users.totalElements == 0}" class="p-5 text-center text-muted">
+                                <i class="bi bi-people fs-1 mb-3"></i>
+                                <p>ユーザーが見つかりません</p>
+                            </div>
+
+                            <!-- リストループ -->
+                            <div th:each="user : ${users}" class="list-group-item py-3">
+                                <div class="row align-items-center">
+                                    <!-- ユーザー情報 -->
+                                    <div class="col-md-5 mb-2 mb-md-0">
+                                        <div class="d-flex align-items-center mb-1">
+                                            <h5 class="mb-0 fw-bold text-truncate" th:text="${user.displayName}">ユーザー名</h5>
+                                            <span class="ms-2 badge bg-light text-dark border font-monospace" th:text="${user.username}">ID</span>
+                                        </div>
+                                        <div class="text-muted small">
+                                            <i class="bi bi-envelope me-1"></i>
+                                            <span th:text="${user.email}">user@example.com</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- 所属グループ -->
+                                    <div class="col-md-3 mb-2 mb-md-0">
+                                        <div th:if="${#lists.isEmpty(user.assignedGroups)}" class="text-muted small">-</div>
+                                        <div th:unless="${#lists.isEmpty(user.assignedGroups)}">
+                                            <span th:each="group : ${user.assignedGroups}" 
+                                                  class="badge bg-secondary-subtle text-secondary border border-secondary me-1 mb-1" 
+                                                  th:text="${group.name}">Group</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- ステータス -->
+                                    <div class="col-md-2 text-center mb-2 mb-md-0">
+                                        <span th:if="${user.enabled}" class="badge bg-success-subtle text-success border border-success">有効</span>
+                                        <span th:unless="${user.enabled}" class="badge bg-secondary-subtle text-secondary border border-secondary">無効</span>
+                                        <div class="mt-1 text-muted small" style="font-size: 0.75rem;">
+                                            登録: <span th:text="${#temporals.format(user.createdAt, 'yyyy/MM/dd')}"></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- 操作 -->
+                                    <div class="col-md-2 text-end">
+                                        <a th:href="@{/admin/account/edit/{username}(username=${user.username})}" class="btn btn-sm btn-outline-primary">
+                                            編集
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ページネーション -->
+                        <div class="card-footer bg-white" th:if="${users != null && users.totalPages > 1}">
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination justify-content-center mb-0">
+                                    <li class="page-item" th:classappend="${users.first} ? 'disabled'">
+                                        <a class="page-link" th:href="@{/admin/account/list(page=${users.number - 1})}" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item" th:each="i : ${#numbers.sequence(0, users.totalPages - 1)}"
+                                        th:classappend="${i == users.number} ? 'active'">
+                                        <a class="page-link" th:href="@{/admin/account/list(page=${i})}" th:text="${i + 1}">1</a>
+                                    </li>
+                                    <li class="page-item" th:classappend="${users.last} ? 'disabled'">
+                                        <a class="page-link" th:href="@{/admin/account/list(page=${users.number + 1})}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

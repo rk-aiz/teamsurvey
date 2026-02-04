@@ -1,4 +1,4 @@
-package com.github.rk_aiz.teamsurvey.application.controller.admin.response;
+package com.github.rk_aiz.teamsurvey.application.controller.admin.result;
 
 import java.nio.charset.StandardCharsets;
 
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.github.rk_aiz.teamsurvey.domain.model.result.SurveyAggregation;
 import com.github.rk_aiz.teamsurvey.domain.service.SurveyResultService;
-import com.github.rk_aiz.teamsurvey.domain.service.SurveyService;
+import com.github.rk_aiz.teamsurvey.domain.service.AccountService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,7 @@ public class AggregationController {
     private static final String REDIRECT_TO_LIST = "redirect:/admin/response/list";
 
     /** DI */
-    private final SurveyService surveyService;
+    private final AccountService surveyService;
     private final SurveyResultService surveyResultService;
     private final SmartValidator validator;
 
