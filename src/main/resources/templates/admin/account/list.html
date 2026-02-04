@@ -13,7 +13,7 @@
                 <div class="col-lg-10">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2 class="h3 mb-0">ユーザーアカウント一覧</h2>
-                        <a th:href="@{/admin/account/new}" class="btn btn-primary">
+                        <a th:href="@{/admin/account/list(action='new')}" class="btn btn-primary">
                             <i class="bi bi-person-plus"></i> 新規登録
                         </a>
                     </div>
@@ -76,7 +76,7 @@
 
                                     <!-- 操作 -->
                                     <div class="col-md-2 text-end">
-                                        <a th:href="@{/admin/account/edit/{username}(username=${user.username})}" class="btn btn-sm btn-outline-primary">
+                                        <a th:href="@{/admin/account/list(action='edit', username=${user.username})}" class="btn btn-sm btn-outline-primary">
                                             編集
                                         </a>
                                     </div>
@@ -109,6 +109,70 @@
                 </div>
             </div>
         </div>
+
+        <!-- 編集・新規作成モーダル -->
+        <!-- showModalフラグがある場合のみレンダリングされるが、BootstrapのJSで表示制御するため常にHTMLは出力しても良い -->
+        <div class="modal fade" id="accountModal" tabindex="-1" aria-labelledby="accountModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="accountModalLabel" th:text="${accountForm != null && accountForm.new} ? 'アカウント新規登録' : 'アカウント編集'">編集</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" th:if="${accountForm != null}">
+                        <form th:action="@{/admin/account/save}" method="post" th:object="${accountForm}">
+                            <input type="hidden" th:field="*{new}" />
+                            <!-- 編集時はIDを変更不可にするなどの制御が必要 -->
+                            <div class="mb-3">
+                                <label for="username" class="form-label">ユーザーID</label>
+                                <input type="text" class="form-control" th:field="*{username}" th:readonly="${!accountForm.new}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="displayName" class="form-label">表示名</label>
+                                <input type="text" class="form-control" th:field="*{displayName}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">メールアドレス</label>
+                                <input type="email" class="form-control" th:field="*{email}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">パスワード</label>
+                                <input type="password" class="form-control" th:field="*{password}" placeholder="変更する場合のみ入力" th:if="${!accountForm.new}">
+                                <input type="password" class="form-control" th:field="*{password}" th:if="${accountForm.new}" required>
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" th:field="*{enabled}">
+                                <label class="form-check-label" for="enabled">有効アカウント</label>
+                            </div>
+                            
+                            <!-- 所属グループの選択UIは別途グループ一覧を取得して表示する必要があります -->
+                            
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">保存</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- モーダル表示制御用スクリプト -->
+        <script th:if="${showModal}">
+            window.addEventListener('DOMContentLoaded', (event) => {
+                var myModal = new bootstrap.Modal(document.getElementById('accountModal'));
+                myModal.show();
+                
+                // モーダルが閉じられた時にURLのパラメータをクリアして一覧に戻る（オプション）
+                document.getElementById('accountModal').addEventListener('hidden.bs.modal', function () {
+                    window.location.href = '/admin/account/list';
+                });
+            });
+        </script>
+        <!-- モーダルがない場合（通常表示時）のスクリプト -->
+        <script th:unless="${showModal}">
+             // 閉じるボタンなどで戻ってきた場合の処理があればここに記述
+        </script>
+
     </main>
 </body>
 

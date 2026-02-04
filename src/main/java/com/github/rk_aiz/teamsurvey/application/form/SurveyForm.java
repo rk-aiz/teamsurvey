@@ -65,14 +65,12 @@ public class SurveyForm {
     private boolean isNew;
 
     /**
-     * Modelを受け取って、Formを返す静的メソッド
+     * Model -> Form
      */
     public static SurveyForm from(Survey model, boolean isNew) {
         SurveyForm form = new SurveyForm();
         BeanUtils.copyProperties(model, form, "questions");
 
-        // 名前が異なるIDの詰め替え
-        // form.setSurveyId(model.getSurveyId());
         form.setNew(isNew);
 
         // 質問リストの手動マッピング
@@ -92,6 +90,9 @@ public class SurveyForm {
         return form;
     }
 
+    /*
+     * Form -> Model
+     */
     public Survey toModel() {
         Survey survey = new Survey();
         // questionsは型が違うため除外してコピー
