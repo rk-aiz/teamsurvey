@@ -21,7 +21,7 @@ import com.github.rk_aiz.teamsurvey.application.form.SurveyForm;
 import com.github.rk_aiz.teamsurvey.application.validation.SurveyValidationGroup;
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
 import com.github.rk_aiz.teamsurvey.domain.service.AnswerOptionService;
-import com.github.rk_aiz.teamsurvey.domain.service.AccountService;
+import com.github.rk_aiz.teamsurvey.domain.service.SurveyService;
 import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
 
 import lombok.RequiredArgsConstructor;
@@ -42,7 +42,7 @@ public class SurveyController {
     private static final String REDIRECT_TO_LIST = "redirect:/admin/survey/list";
 
     /** DI */
-    private final AccountService surveyService;
+    private final SurveyService surveyService;
     private final AnswerOptionService answerOptionService;
     private final SmartValidator validator;
 

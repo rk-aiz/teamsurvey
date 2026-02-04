@@ -47,7 +47,7 @@ public class AccountController {
     public String list(@PageableDefault(size = 20) Pageable pageable, Model model) {
 
         // ページネーション付きで取得
-        Page<LoginUser> users = accountService.findAllAccounts(pageable);
+        Page<LoginUser> users = accountService.findWithPaging(pageable);
         model.addAttribute("users", users);
 
         return "admin/account/list";

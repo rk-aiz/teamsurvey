@@ -10,6 +10,10 @@ public interface LoginUserRepository {
 
     LoginUser findByUsername(String username);
 
+    List<LoginUser> findWithPaging(long offset, int pageSize);
+    
+    long count();
+    
     void add(LoginUser user);
 
     void set(LoginUser user);

@@ -24,13 +24,13 @@ public class AccountServiceImpl implements AccountService {
     private final LoginUserRepository loginUserRepository;
 
     @Override
-    public Page<LoginUser> findAllAccounts(Pageable pageable) {
+    public Page<LoginUser> findWithPaging(Pageable pageable) {
         // 総件数の取得
         long total = loginUserRepository.count();
         List<LoginUser> users;
 
         if (total > 0) {
-            // ページング指定で取得 (Repository/Mapperにメソッドを追加する必要があります)
+            // ページング指定で取得
             users = loginUserRepository.findWithPaging(pageable.getOffset(), pageable.getPageSize());
         } else {
             users = Collections.emptyList();

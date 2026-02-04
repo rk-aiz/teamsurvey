@@ -3,16 +3,87 @@
 <mapper
 	namespace="com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.AuthenticationMapper">
 
+    <!-- マッピング定義 (ResultMap) -->
+    <resultMap id="AuthenticationResultMap" type="com.github.rk_aiz.teamsurvey.infrastructure.entity.AuthenticationEntity">
+        <id property="username" column="username" />
+        <result property="password" column="password" />
+        <result property="email" column="email" />
+        <result property="displayName" column="display_name" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+        <result property="enabled" column="enabled" />
+    </resultMap>
+
+    <resultMap id="AuthenticationWithUserGroupResultMap" type="com.github.rk_aiz.teamsurvey.infrastructure.entity.AuthenticationEntity">
+        <id property="username" column="username" />
+        <result property="password" column="password" />
+        <result property="email" column="email" />
+        <result property="displayName" column="display_name" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+        <result property="enabled" column="enabled" />
+        <collection property="assignedGroups" ofType="com.github.rk_aiz.teamsurvey.domain.model.UserGroup">
+            <id property="groupId" column="group_id" />
+            <result property="groupName" column="group_name" />
+            <result property="authority" column="authority"/>
+            <result property="isSystemGroup" column="is_system_group" />
+        </collection>
+    </resultMap>
+
+    <!-- ページネーション付き取得: 1対多の結合があるためサブクエリで絞り込む -->
+    <select id="findWithPaging" resultMap="AuthenticationWithUserGroupResultMap">
+        SELECT 
+            t1.username, 
+            t1.password, 
+            t1.email, 
+            t1.display_name,
+            t1.enabled,
+            t1.created_at,
+            t1.updated_at,
+            ug.id as group_id,
+            ug.group_name,
+            ug.authority,
+            ug.is_system_group
+        FROM (
+            SELECT * FROM authentications
+            ORDER BY username
+            LIMIT #{limit} OFFSET #{offset}
+        ) as t1
+        LEFT JOIN user_group_mappings as map
+          ON t1.username = map.username
+        LEFT JOIN user_groups as ug
+          ON map.group_id = ug.id
+        ORDER BY t1.username, map.group_id
+    </select>
+
+    <select id="count" resultType="long">
+        SELECT count(*) FROM authentications
+    </select>
+
 	<!--  認証情報一覧を取得 -->
-	<select id="selectAll"
-			resultType="com.github.rk_aiz.teamsurvey.infrastructure.entity.AuthenticationEntity">
-		SELECT * FROM authentications
+	<select id="selectAll" resultMap="AuthenticationResultMap">
+        SELECT 
+            username, 
+            password, 
+            email, 
+            display_name,
+            enabled,
+            created_at,
+            updated_at
+        FROM authentications
+        ORDER BY username
 	</select>
 
 	<!--  ユーザー名で認証情報を検索 -->
-	<select id="selectByUsername"
-			resultType="com.github.rk_aiz.teamsurvey.infrastructure.entity.AuthenticationEntity">
-		SELECT *
+	<select id="selectByUsername" resultMap="AuthenticationResultMap">
+		SELECT
+		    username, 
+            password, 
+            email, 
+            display_name,
+            enabled,
+            created_at,
+            updated_at
 		  FROM authentications
 		WHERE username = #{username}
 	</select>
@@ -42,7 +113,8 @@
             SET password = #{password}, 
                 email = #{email}, 
                 displayname = #{displayname}, 
-                updated_at = #{updatedAt}
+                updated_at = #{updatedAt},
+                enabled = #{enabled}
         WHERE username = #{username}
     </update>
 

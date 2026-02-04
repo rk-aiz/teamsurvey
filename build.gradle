@@ -39,6 +39,10 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	
+	// Source: https://mvnrepository.com/artifact/org.springframework.data/spring-data-commons
+	// Page, Pagable
+	implementation("org.springframework.data:spring-data-commons")
 
 	// Thymeleaf Layout
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'

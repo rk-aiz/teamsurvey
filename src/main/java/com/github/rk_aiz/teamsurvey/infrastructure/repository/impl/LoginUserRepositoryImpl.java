@@ -10,9 +10,8 @@ import com.github.rk_aiz.teamsurvey.domain.model.LoginUser;
 import com.github.rk_aiz.teamsurvey.domain.model.UserGroup;
 import com.github.rk_aiz.teamsurvey.infrastructure.entity.AuthenticationEntity;
 import com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.AuthenticationMapper;
-import com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.LoginUserMapper;
-import com.github.rk_aiz.teamsurvey.infrastructure.repository.UserGroupRepository;
 import com.github.rk_aiz.teamsurvey.infrastructure.repository.LoginUserRepository;
+import com.github.rk_aiz.teamsurvey.infrastructure.repository.UserGroupRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,11 +21,13 @@ public class LoginUserRepositoryImpl implements LoginUserRepository {
     
     private final AuthenticationMapper authenticationMapper;
     private final UserGroupRepository userGroupRepository;
-    private final LoginUserMapper loginUserMapper;
 
     @Override
     public List<LoginUser> findAll() {
-        return loginUserMapper.selectAll();
+        return authenticationMapper.selectAll()
+        		.stream()
+        		.map(AuthenticationEntity::toModel)
+        		.toList();
     }
     
     @Override
@@ -59,6 +60,23 @@ public class LoginUserRepositoryImpl implements LoginUserRepository {
         return user;
     }
 
+	@Override
+	public List<LoginUser> findWithPaging(long offset, int pageSize) {
+		List<AuthenticationEntity> entities = 
+				this.authenticationMapper.findWithPaging(offset, pageSize);
+		
+		return entities.stream().map(entity -> {
+			LoginUser loginUser = entity.toModel();
+			loginUser.setAssignedGroups(entity.getAssignedGroups());
+			return loginUser;
+		}).toList();
+	}
+
+	@Override
+	public long count() {
+		return this.authenticationMapper.count();
+	}
+
     @Override
     public void add(LoginUser user) {
         authenticationMapper.insert(AuthenticationEntity.from(user));
@@ -73,7 +91,4 @@ public class LoginUserRepositoryImpl implements LoginUserRepository {
     public void remove(String username) {
         authenticationMapper.delete(username);
     }
-
-
-
 }

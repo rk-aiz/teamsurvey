@@ -61,7 +61,7 @@
                                         <div th:unless="${#lists.isEmpty(user.assignedGroups)}">
                                             <span th:each="group : ${user.assignedGroups}" 
                                                   class="badge bg-secondary-subtle text-secondary border border-secondary me-1 mb-1" 
-                                                  th:text="${group.name}">Group</span>
+                                                  th:text="${group.groupName}">Group</span>
                                         </div>
                                     </div>
 

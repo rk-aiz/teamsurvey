@@ -17,7 +17,7 @@ public class LoginUser extends User {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    /** 所属グループリスト */
+	/** 所属グループリスト */
     //@Builder.Default
     private List<UserGroup> assignedGroups = new ArrayList<>();
 

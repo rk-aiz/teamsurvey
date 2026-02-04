@@ -2,12 +2,12 @@ package com.github.rk_aiz.teamsurvey.infrastructure.entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.security.core.GrantedAuthority;
 
 import com.github.rk_aiz.teamsurvey.domain.model.LoginUser;
+import com.github.rk_aiz.teamsurvey.domain.model.UserGroup;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,6 +33,9 @@ public class AuthenticationEntity {
     private LocalDateTime updatedAt;
     /** 有効フラグ */
     private boolean enabled;
+    
+    private List<UserGroup> assignedGroups;
+    
 
     /**
      * Entity -> Domain Model 変換

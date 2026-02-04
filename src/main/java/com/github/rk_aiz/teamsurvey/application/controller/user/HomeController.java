@@ -10,8 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.github.rk_aiz.teamsurvey.domain.model.LoginUser;
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
-import com.github.rk_aiz.teamsurvey.domain.service.ResponseService;
-import com.github.rk_aiz.teamsurvey.domain.service.AccountService;
+import com.github.rk_aiz.teamsurvey.domain.service.SurveyService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class HomeController {
 
-    private final AccountService surveyService;
+    private final SurveyService surveyService;
 
     @GetMapping
     public String showHome(

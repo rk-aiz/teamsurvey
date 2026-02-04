@@ -1,15 +1,14 @@
 package com.github.rk_aiz.teamsurvey.domain.service;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
 import com.github.rk_aiz.teamsurvey.domain.model.LoginUser;
 
 public interface AccountService {
 
     /** 全てのアカウントを取得します */
-    Page<LoginUser> findAllAccounts(Pageable pageable);
+    Page<LoginUser> findWithPaging(Pageable pageable);
 
     /**
      * アカウント詳細を取得します。
