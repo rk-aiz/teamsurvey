@@ -5,8 +5,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import lombok.RequiredArgsConstructor;
@@ -16,11 +14,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final UserDetailsService userDetailsService;
-    private final PasswordEncoder passwordEncoder;
-
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http) {
 
         http
                 // ★HTTPリクエストに対するセキュリティ設定
@@ -31,7 +26,9 @@ public class SecurityConfig {
                         .permitAll()
                         // 【管理者権限設定】 url : /admin/**は管理者しかアクセスできない
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
-                        // その他のリクエストは認証が必要
+                        // ★ここが重要：その他のリクエストはすべて認証が必要
+                        // これにより、/setting や /response などのコントローラーは
+                        // ログイン済みでないとアクセスできなくなるため、loginUserがnullになることはありません。
                         .anyRequest().authenticated())
 
                 // ★フォームによるログイン設定

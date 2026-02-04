@@ -20,8 +20,8 @@
 			resultType="com.github.rk_aiz.teamsurvey.infrastructure.entity.UserGroupEntity">
 		SELECT
 			ug.id, ug.group_name, ug.authority, ug.is_system_group
-		  FROM user_groups ug
-		  RIGHT JOIN user_group_mappings map ON ug.id = map.group_id
+		FROM user_groups ug
+		RIGHT JOIN user_group_mappings map ON ug.id = map.group_id
 		WHERE map.username = #{username}
 	</select>
 	

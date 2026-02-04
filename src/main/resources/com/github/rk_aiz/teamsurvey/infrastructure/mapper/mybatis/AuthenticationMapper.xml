@@ -31,15 +31,15 @@
     </resultMap>
 
     <!-- ページネーション付き取得: 1対多の結合があるためサブクエリで絞り込む -->
-    <select id="findWithPaging" resultMap="AuthenticationWithUserGroupResultMap">
+    <select id="selectWithPaging" resultMap="AuthenticationWithUserGroupResultMap">
         SELECT 
-            t1.username, 
-            t1.password, 
-            t1.email, 
-            t1.display_name,
-            t1.enabled,
-            t1.created_at,
-            t1.updated_at,
+            auth.username, 
+            auth.password, 
+            auth.email, 
+            auth.display_name,
+            auth.enabled,
+            auth.created_at,
+            auth.updated_at,
             ug.id as group_id,
             ug.group_name,
             ug.authority,
@@ -48,16 +48,31 @@
             SELECT * FROM authentications
             ORDER BY username
             LIMIT #{limit} OFFSET #{offset}
-        ) as t1
+        ) as auth
         LEFT JOIN user_group_mappings as map
-          ON t1.username = map.username
+        ON auth.username = map.username
         LEFT JOIN user_groups as ug
-          ON map.group_id = ug.id
-        ORDER BY t1.username, map.group_id
+        ON map.group_id = ug.id
+        ORDER BY auth.username, map.group_id
     </select>
 
     <select id="count" resultType="long">
         SELECT count(*) FROM authentications
+    </select>
+
+    <!-- ユーザーの存在チェック -->
+    <select id="countByUsername" resultType="int">
+        SELECT count(*) FROM authentications WHERE username = #{username}
+    </select>
+
+    <!-- 有効な管理者数をカウント -->
+    <select id="countEnabledAdmins" resultType="long">
+        SELECT COUNT(DISTINCT auth.username)
+        FROM authentications auth
+        INNER JOIN user_group_mappings map ON auth.username = map.username
+        INNER JOIN user_groups ug ON map.group_id = ug.id
+        WHERE auth.enabled = true
+        AND ug.authority = 'ADMIN'
     </select>
 
 	<!--  認証情報一覧を取得 -->
@@ -75,17 +90,26 @@
 	</select>
 
 	<!--  ユーザー名で認証情報を検索 -->
-	<select id="selectByUsername" resultMap="AuthenticationResultMap">
-		SELECT
-		    username, 
-            password, 
-            email, 
-            display_name,
-            enabled,
-            created_at,
-            updated_at
-		  FROM authentications
-		WHERE username = #{username}
+	<select id="selectByUsername" resultMap="AuthenticationWithUserGroupResultMap">
+        SELECT 
+            auth.username, 
+            auth.password, 
+            auth.email, 
+            auth.display_name,
+            auth.enabled,
+            auth.created_at,
+            auth.updated_at,
+            ug.id as group_id,
+            ug.group_name,
+            ug.authority,
+            ug.is_system_group
+        FROM  authentications auth
+        LEFT JOIN user_group_mappings map
+        ON auth.username = map.username
+        LEFT JOIN user_groups ug
+        ON map.group_id = ug.id
+        WHERE auth.username = #{username}
+        ORDER BY map.group_id
 	</select>
 	
 	<!--  新規ユーザーを登録 -->
@@ -94,26 +118,26 @@
             username,
             password,
 			email,
-            displayname,
+            display_name,
 			created_at,
 			updated_at
         ) VALUES (
             #{username},
             #{password},
 			#{email},
-			#{displayname},
-			#{createdAt},
-			#{updatedAt}
+			#{displayName},
+			CURRENT_TIMESTAMP,
+			CURRENT_TIMESTAMP
         )
     </insert>
 	
 	<!--  ユーザー情報を更新 -->
     <update id="update">
         UPDATE authentications 
-            SET password = #{password}, 
+        SET password = #{password}, 
                 email = #{email}, 
-                displayname = #{displayname}, 
-                updated_at = #{updatedAt},
+                display_name = #{displayName}, 
+                updated_at = CURRENT_TIMESTAMP,
                 enabled = #{enabled}
         WHERE username = #{username}
     </update>

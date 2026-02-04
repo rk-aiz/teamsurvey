@@ -1,6 +1,7 @@
 package com.github.rk_aiz.teamsurvey.application.form;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
@@ -8,6 +9,7 @@ import org.springframework.beans.BeanUtils;
 import com.github.rk_aiz.teamsurvey.domain.model.LoginUser;
 import com.github.rk_aiz.teamsurvey.domain.model.UserGroup;
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -18,33 +20,35 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AccountForm {
-	
-	/** ユーザー名 */
+
+    /** ユーザー名 */
     @Size(max = 50, message = "ユーザー名は{max}文字以内で入力してください")
     @NotBlank(message = "ユーザー名は必須です")
-	private String username;
-	
-	/** パスワード */
-    @Size(max = 255, message = "パスワードは{max}文字以内で入力してください")
-    @NotBlank(message = "パスワードは必須です")
-	private String password;
+    private String username;
 
-	/** 表示名 */
+    /** パスワード */
+    @Size(max = 255, message = "パスワードは{max}文字以内で入力してください")
+    private String password;
+
+    /** パスワード（確認） */
+    private String passwordConfirmation;
+
+    /** 表示名 */
     @Size(max = 50, message = "表示名は{max}文字以内で入力してください")
     @NotBlank(message = "表示名は必須です")
-	private String displayName;
+    private String displayName;
 
-	/** メールアドレス */
+    /** メールアドレス */
     @Size(max = 255, message = "メールアドレスは{max}文字以内で入力してください")
     @NotBlank(message = "メールアドレスは必須です")
-	private String email;
+    private String email;
 
-	/** 有効フラグ */
-	private boolean enabled;
+    /** 有効フラグ */
+    private boolean enabled;
 
     private LocalDateTime createdAt;
 
-    private List<UserGroup> assignedGroups;
+    private List<UserGroup> assignedGroups = new ArrayList<>();
 
     private boolean isNew;
 
@@ -56,6 +60,8 @@ public class AccountForm {
         BeanUtils.copyProperties(model, form);
         form.setNew(isNew);
 
+        // ハッシュ化されたパスワードを誤ってThymeleafで使用しないようにクリア
+        form.setPassword(null);
         return form;
     }
 
@@ -63,13 +69,39 @@ public class AccountForm {
      * Form -> Model
      */
     public LoginUser toModel() {
-        return new LoginUser(
-            this.getUsername(),
-            this.getPassword(),
-            this.isNew ? LocalDateTime.now() : this.getCreatedAt(),
-            null,
-            this.isEnabled(),
-            this.getAssignedGroups().stream().flatMap(group -> group.getAuthorityList().stream()).toList()
-        );
+        LoginUser loginUser = new LoginUser(
+                getUsername(),
+                "", // パスワードはService層でハッシュ化・設定するため、ここではダミー(空文字)を渡す
+                isNew ? LocalDateTime.now() : getCreatedAt(),
+                null,
+                isEnabled(),
+                getAssignedGroups().stream().flatMap(group -> group.getAuthorityList().stream()).toList());
+
+        loginUser.setDisplayName(displayName);
+        loginUser.setEmail(email);
+        loginUser.setAssignedGroups(assignedGroups);
+
+        return loginUser;
+    }
+
+    /**
+     * パスワードの必須チェック（新規登録時のみ必須）
+     */
+    @AssertTrue(message = "パスワードは必須です")
+    public boolean isPasswordRequired() {
+        if (isNew && (password == null || password.isBlank())) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * パスワードの一致チェック
+     */
+    @AssertTrue(message = "パスワード（確認）が一致しません")
+    public boolean isPasswordMatching() {
+        if (password == null || password.isBlank())
+            return true;
+        return password.equals(passwordConfirmation);
     }
 }

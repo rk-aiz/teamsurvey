@@ -12,13 +12,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.github.rk_aiz.teamsurvey.domain.model.LoginUser;
-import com.github.rk_aiz.teamsurvey.infrastructure.repository.LoginUserRepository;
+import com.github.rk_aiz.teamsurvey.infrastructure.repository.AccountRepository;
 
 @ExtendWith(MockitoExtension.class)
 class LoginUserDatailsServiceImplTest {
 
     @Mock
-    private LoginUserRepository loginUserRepository;
+    private AccountRepository loginUserRepository;
 
     @InjectMocks
     private LoginUserDatailsServiceImpl loginUserDatailsService;

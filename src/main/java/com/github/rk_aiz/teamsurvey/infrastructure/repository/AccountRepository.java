@@ -4,19 +4,23 @@ import java.util.List;
 
 import com.github.rk_aiz.teamsurvey.domain.model.LoginUser;
 
-public interface LoginUserRepository {
+public interface AccountRepository {
 
     List<LoginUser> findAll();
 
     LoginUser findByUsername(String username);
 
     List<LoginUser> findWithPaging(long offset, int pageSize);
-    
+
     long count();
-    
-    void add(LoginUser user);
 
-    void set(LoginUser user);
+    boolean add(LoginUser user);
 
-    void remove(String username);
+    boolean set(LoginUser user);
+
+    boolean remove(String username);
+
+    long countEnabledAdmins();
+
+    boolean exists(String username);
 }

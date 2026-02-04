@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.github.rk_aiz.teamsurvey.domain.model.LoginUser;
-import com.github.rk_aiz.teamsurvey.infrastructure.repository.LoginUserRepository;
+import com.github.rk_aiz.teamsurvey.infrastructure.repository.AccountRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,23 +16,21 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class LoginUserDatailsServiceImpl implements UserDetailsService {
 
-	/** DI */
-	private final LoginUserRepository loginUserRepository;
-	
-	@Override
-	public UserDetails loadUserByUsername(String username)
-			throws UsernameNotFoundException {
-		
-		LoginUser loginUser =
-				loginUserRepository.findByUsername(username);
-		
-		if (loginUser == null) {
-			throw new UsernameNotFoundException(
-					username + " => 指定しているユーザー名は存在しません"
-				);
-		}
-		
-		//対象データがあれば、UserDetailsの実装クラスを返す
-		return loginUser;
-	}
+    /** DI */
+    private final AccountRepository accountRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(String username)
+            throws UsernameNotFoundException {
+
+        LoginUser loginUser = accountRepository.findByUsername(username);
+
+        if (loginUser == null) {
+            throw new UsernameNotFoundException(
+                    username + " => 指定しているユーザー名は存在しません");
+        }
+
+        // 対象データがあれば、UserDetailsの実装クラスを返す
+        return loginUser;
+    }
 }

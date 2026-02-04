@@ -10,14 +10,24 @@ public interface AccountService {
     /** 全てのアカウントを取得します */
     Page<LoginUser> findWithPaging(Pageable pageable);
 
-    /**
-     * アカウント詳細を取得します。
-     * @param username アカウントID
-     * @throws IllegalArgumentException アカウントが存在しない場合
-     */
-    LoginUser findAccountByUsername(String username) throws IllegalArgumentException;
+    public boolean isLastAdmin(String username);
 
-    LoginUser saveAccount(LoginUser loginUser);
+    LoginUser findAccountByUsername(String username);
+
+    boolean saveAccount(LoginUser loginUser);
+
+    /**
+     * アカウント情報を保存します。（パスワードのハッシュ化や既存情報のマージを行います）
+     * 
+     * @param rawPassword 入力された生のパスワード（変更がない場合はnullまたは空文字）
+     */
+    boolean saveAccount(LoginUser inputUser, String rawPassword, boolean isNew);
 
     boolean deleteAccountByUsername(String username);
+
+    /**
+     * ユーザー自身のプロフィール（表示名、メール、パスワード）を更新します。
+     * パスワードは入力がある場合（null/空文字以外）のみ更新されます。
+     */
+    boolean updateProfile(String username, String displayName, String email, String rawPassword);
 }

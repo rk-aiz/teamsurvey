@@ -44,7 +44,7 @@
                         <i class="bi bi-sun-fill" id="themeIcon"></i>
                     </button>
 
-                    <!-- ヘッダー右側のボタンエリア（ページごとに上書き可能） -->
+                    <!-- ヘッダー右側のボタンエリア -->
                     <div layout:fragment="header-buttons" class="d-flex align-items-center gap-2">
                         <div class="dropdown">
                             <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button"
@@ -53,7 +53,7 @@
                                 <span th:text="${account != null ? account.displayName : 'アカウント'}">アカウント</span>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" th:href="@{/user/home}">アカウント設定</a></li>
+                                <li><a class="dropdown-item" th:href="@{/setting}">アカウント設定</a></li>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>

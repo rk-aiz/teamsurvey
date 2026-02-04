@@ -26,14 +26,9 @@ public class HomeController {
             @AuthenticationPrincipal LoginUser loginUser,
             Model model) {
 
-        if (loginUser == null) {
-        	//TODO : エラーメッセージ
-        	return "/";
-        }
-        
         List<Survey> surveys = this.surveyService.findAvailableSurveysByUsername(loginUser.getUsername());
         model.addAttribute("surveys", surveys);
-        
+
         return "user/home";
     }
 

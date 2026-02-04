@@ -12,15 +12,19 @@ public interface AuthenticationMapper {
 
     List<AuthenticationEntity> selectAll();
 
-    List<AuthenticationEntity> findWithPaging(long offset, int limit);
-    
+    List<AuthenticationEntity> selectWithPaging(@Param("offset") long offset, @Param("limit") int limit);
+
     AuthenticationEntity selectByUsername(@Param("username") String username);
-    
-    void insert(AuthenticationEntity authentication);
 
-    void update(AuthenticationEntity anthentication);
+    int insert(AuthenticationEntity authentication);
 
-    void delete(@Param("username")String username);
-    
+    int update(AuthenticationEntity authentication);
+
+    int delete(@Param("username") String username);
+
     long count();
+
+    long countEnabledAdmins();
+
+    int countByUsername(@Param("username") String username);
 }
