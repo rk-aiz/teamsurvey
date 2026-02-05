@@ -63,23 +63,11 @@ public class SurveyController {
     @GetMapping("/list")
     public String list(
             @RequestParam(value = "id", required = false) Integer id,
-            @RequestParam(value = "status", required = false) SurveyStatus status,
             Model model) {
 
         // 全件取得
         List<Survey> allSurveys = surveyService.findAllSurveys();
-        List<Survey> displayedSurveys;
-
-        if (status != null) {
-            displayedSurveys = allSurveys.stream()
-                    .filter(s -> s.getStatus() == status)
-                    .collect(Collectors.toList());
-        } else {
-            displayedSurveys = allSurveys;
-        }
-
-        model.addAttribute("surveys", displayedSurveys);
-        model.addAttribute("currentStatus", status);
+        model.addAttribute("surveys", allSurveys);
 
         // IDが指定されている場合、詳細情報を取得（右カラム用）
         if (id != null) {

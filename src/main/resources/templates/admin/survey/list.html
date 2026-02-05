@@ -17,20 +17,16 @@
                     </a>
                 </div>
                 <div class="list-group list-group-flush shadow-sm rounded">
-                    <a th:href="@{/admin/survey/list}" class="list-group-item list-group-item-action"
-                        th:classappend="${currentStatus == null} ? 'active'">
+                    <a href="#" class="list-group-item list-group-item-action" data-filter-type="ALL">
                         <i class="bi bi-list-ul me-2"></i> すべて
                     </a>
-                    <a th:href="@{/admin/survey/list(status='DRAFT')}" class="list-group-item list-group-item-action"
-                        th:classappend="${currentStatus != null and currentStatus.name() == 'DRAFT'} ? 'active'">
+                    <a href="#" class="list-group-item list-group-item-action" data-filter-type="DRAFT">
                         <i class="bi bi-pencil me-2"></i> 下書き
                     </a>
-                    <a th:href="@{/admin/survey/list(status='PUBLISHED')}" class="list-group-item list-group-item-action"
-                        th:classappend="${currentStatus != null and currentStatus.name() == 'PUBLISHED'} ? 'active'">
+                    <a href="#" class="list-group-item list-group-item-action" data-filter-type="PUBLISHED">
                         <i class="bi bi-send me-2"></i> 公開中
                     </a>
-                    <a th:href="@{/admin/survey/list(status='CLOSED')}" class="list-group-item list-group-item-action"
-                        th:classappend="${currentStatus != null and currentStatus.name() == 'CLOSED'} ? 'active'">
+                    <a href="#" class="list-group-item list-group-item-action" data-filter-type="CLOSED">
                         <i class="bi bi-check-circle me-2"></i> 終了
                     </a>
                 </div>
@@ -52,9 +48,10 @@
                             th:text="${errorMessage}"></div>
 
                         <!-- 一覧ループ -->
-                        <a th:each="survey : ${surveys}" th:href="@{/admin/survey/list(id=${survey.surveyId}, status=${currentStatus})}"
-                            class="list-group-item list-group-item-action py-3"
-                            th:classappend="${selectedSurvey != null && selectedSurvey.surveyId == survey.surveyId} ? 'bg-light border-start border-primary border-4' : ''">
+                        <a th:each="survey : ${surveys}" th:href="@{/admin/survey/list(id=${survey.surveyId})}"
+                            class="list-group-item list-group-item-action py-3 survey-item"
+                            th:data-survey-status="${survey.status}"
+                            th:classappend="${selectedSurvey != null && selectedSurvey.surveyId == survey.surveyId} ? 'list-group-item-primary' : ''">
                             <div class="d-flex w-100 justify-content-between align-items-center mb-1">
                                 <h6 class="mb-1 fw-bold text-truncate" th:text="${survey.title}">タイトル</h6>
                                 <small class="text-muted" th:text="'#' + ${survey.surveyId}">#1</small>
@@ -75,8 +72,13 @@
                             </div>
                         </a>
 
+                        <!-- データ0件時のメッセージ -->
                         <div th:if="${#lists.isEmpty(surveys)}" class="p-4 text-center text-muted">
                             アンケートがありません
+                        </div>
+                        <!-- フィルタ結果0件時のメッセージ (JSで制御) -->
+                        <div id="no-surveys-message" class="p-4 text-center text-muted" style="display: none;">
+                            条件に一致するアンケートはありません
                         </div>
                     </div>
                 </div>
@@ -117,7 +119,7 @@
 							    <i class="bi bi-eye"></i> 詳細画面を開く
 							</a>
                             <a th:href="@{/admin/survey/edit/{id}(id=${selectedSurvey.surveyId})}"
-                                class="btn btn-primary px-4">
+                                class="btn btn-outline-primary">
                                 <i class="bi bi-pencil"></i> 編集
                             </a>
                             <a th:href="@{/admin/survey/copy/{id}(id=${selectedSurvey.surveyId})}"
@@ -138,6 +140,8 @@
                 </div>
             </div>
         </div>
+        <!-- 一覧画面用スクリプト -->
+        <script th:src="@{/js/admin/survey-list.js}"></script>
     </main>
 </body>
 

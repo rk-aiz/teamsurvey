@@ -7,15 +7,20 @@
 </head>
 
 <body>
-    <main layout:fragment="content">
+    <main layout:fragment="content" th:data-show-modal="${showModal}">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-10">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2 class="h3 mb-0">ユーザーアカウント一覧</h2>
-                        <a th:href="@{/admin/account/list(action='new')}" class="btn btn-primary">
-                            <i class="bi bi-person-plus"></i> 新規登録
-                        </a>
+                        <div>
+                            <a th:href="@{/admin/group/list}" class="btn btn-outline-secondary me-2">
+                                <i class="bi bi-people"></i> グループ管理
+                            </a>
+                            <a th:href="@{/admin/account/list(action='new')}" class="btn btn-primary">
+                                <i class="bi bi-person-plus"></i> 新規登録
+                            </a>
+                        </div>
                     </div>
 
                     <!-- メッセージ表示 -->
@@ -174,7 +179,19 @@
                                 </div>
                             </div>
 
-                            <!-- 所属グループの選択UIは別途グループ一覧を取得して表示する必要があります -->
+                            <!-- 所属グループ選択 -->
+                            <div class="mb-3">
+                                <label class="form-label">所属グループ</label>
+                                <div class="card p-2 bg-light" style="max-height: 150px; overflow-y: auto;">
+                                    <div th:if="${#lists.isEmpty(userGroups)}" class="text-muted small">
+                                        グループが登録されていません
+                                    </div>
+                                    <div th:each="group : ${userGroups}" class="form-check">
+                                        <input class="form-check-input" type="checkbox" th:field="*{groupIds}" th:value="${group.groupId}" th:id="${'group_' + group.groupId}">
+                                        <label class="form-check-label" th:for="${'group_' + group.groupId}" th:text="${group.groupName}">Group Name</label>
+                                    </div>
+                                </div>
+                            </div>
 
                             <div class="d-flex gap-2">
                                 <button type="submit" class="btn btn-primary flex-grow-1">保存</button>
@@ -190,22 +207,8 @@
             </div>
         </div>
 
-        <!-- モーダル表示制御用スクリプト -->
-        <script th:if="${showModal}">
-            window.addEventListener('DOMContentLoaded', (event) => {
-                var myModal = new bootstrap.Modal(document.getElementById('accountModal'));
-                myModal.show();
-
-                // モーダルが閉じられた時にURLのパラメータをクリアして一覧に戻る（オプション）
-                document.getElementById('accountModal').addEventListener('hidden.bs.modal', function () {
-                    window.location.href = '/admin/account/list';
-                });
-            });
-        </script>
-        <!-- モーダルがない場合（通常表示時）のスクリプト -->
-        <script th:unless="${showModal}">
-            // 閉じるボタンなどで戻ってきた場合の処理があればここに記述
-        </script>
+        <!-- アカウント一覧用スクリプト -->
+        <script th:src="@{/js/admin/account-list.js}"></script>
 
     </main>
 </body>

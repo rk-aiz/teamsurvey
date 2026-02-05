@@ -2,6 +2,41 @@
  * アンケート編集画面用スクリプト
  */
 
+// 回答パターンのキャッシュデータ
+let answerOptionCache = [];
+
+// 回答パターンデータを取得してキャッシュする
+function fetchAnswerOptions() {
+    return fetch('/admin/pattern/fragment/list-json')
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
+        .then(data => {
+            answerOptionCache = data;
+            return data;
+        })
+        .catch(error => console.error('Error fetching answer options:', error));
+}
+
+// 選択された回答パターンのプレビューを更新する
+function updatePatternPreview(selectElement) {
+    const container = selectElement.closest('.pattern-container');
+    if (!container) return;
+    const previewDiv = container.querySelector('.pattern-preview');
+    if (!previewDiv) return;
+
+    const selectedId = parseInt(selectElement.value);
+    const option = answerOptionCache.find(opt => opt.answerOptionId === selectedId);
+
+    if (option && option.items && option.items.length > 0) {
+        const itemsText = option.items.map(item => item.itemText).join(' / ');
+        previewDiv.textContent = '選択肢: ' + itemsText;
+    } else {
+        previewDiv.textContent = '';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     // --- 対象グループ設定関連 ---
     const groupCheckboxes = document.querySelectorAll('#groupSelectionModal input[type="checkbox"]');
@@ -38,6 +73,14 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // --- 回答パターンデータのロードと初期表示 ---
+    fetchAnswerOptions().then(() => {
+        // ロード完了後、全てのプレビューを初期更新
+        document.querySelectorAll('select[name*=".answerOption.answerOptionId"]').forEach(select => {
+            updatePatternPreview(select);
+        });
+    });
+
     // --- 設問タイプと回答パターンの連動 ---
     const questionItems = document.querySelectorAll('.question-item');
     questionItems.forEach(function (item) {
@@ -61,6 +104,11 @@ document.addEventListener('DOMContentLoaded', function () {
             typeSelect.addEventListener('change', updatePatternState);
             // 初期表示時にも適用
             updatePatternState();
+
+            // 回答パターン変更時にプレビューを更新
+            patternSelect.addEventListener('change', function() {
+                updatePatternPreview(this);
+            });
         }
     });
 
@@ -142,12 +190,9 @@ function submitPatternForm(event) {
 
 // メイン画面のセレクトボックスを更新する（ページリロードなしで反映）
 function refreshMainSelectBoxes() {
-    fetch('/admin/pattern/fragment/list-json')
-        .then(response => {
-            if (!response.ok) throw new Error('Network response was not ok');
-            return response.json();
-        })
+    fetchAnswerOptions()
         .then(data => {
+            if (!data) return;
             const selects = document.querySelectorAll('select[name*=".answerOption.answerOptionId"]');
             selects.forEach(select => {
                 const currentVal = select.value;
@@ -161,9 +206,11 @@ function refreshMainSelectBoxes() {
                 });
                 
                 if (currentVal) select.value = currentVal;
+                
+                // プレビューも更新
+                updatePatternPreview(select);
             });
-        })
-        .catch(error => console.error('Error updating select boxes:', error));
+        });
 }
 
 // --- SortableJS 初期化 ---
