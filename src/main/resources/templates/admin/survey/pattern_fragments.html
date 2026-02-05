@@ -43,9 +43,24 @@
                 <div class="text-danger small" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
             </div>
 
-            <!-- 選択肢の編集UIはここに実装 (今回は省略) -->
-            <div class="alert alert-info small">
-                <i class="bi bi-info-circle"></i> 選択肢の編集機能は実装中です。
+            <!-- 選択肢の編集UI -->
+            <div class="mb-3">
+                <label class="form-label">選択肢</label>
+                <div id="pattern-items-container">
+                    <div th:each="item, stat : *{items}" class="input-group mb-2 pattern-item-row">
+                        <span class="input-group-text"><i class="bi bi-list"></i></span>
+                        <input type="text" class="form-control" 
+                               th:field="*{items[__${stat.index}__].itemText}" 
+                               placeholder="選択肢を入力" required>
+                        <button type="button" class="btn btn-outline-danger" onclick="removePatternItem(this)">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <button type="button" class="btn btn-sm btn-outline-primary" onclick="addPatternItem()">
+                    <i class="bi bi-plus"></i> 選択肢を追加
+                </button>
             </div>
 
             <div class="d-grid">
@@ -53,6 +68,17 @@
             </div>
         </form>
     </div>
+
+    <!-- 新規追加用のテンプレート (JavaScriptで使用) -->
+    <template id="pattern-item-template">
+        <div class="input-group mb-2 pattern-item-row">
+            <span class="input-group-text"><i class="bi bi-list"></i></span>
+            <input type="text" class="form-control" name="items[].itemText" placeholder="選択肢を入力" required>
+            <button type="button" class="btn btn-outline-danger" onclick="removePatternItem(this)">
+                <i class="bi bi-trash"></i>
+            </button>
+        </div>
+    </template>
 
 </body>
 </html>

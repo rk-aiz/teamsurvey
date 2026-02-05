@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.AnswerPatternMapper">
+
+    <resultMap id="AnswerPatternMap" type="com.github.rk_aiz.teamsurvey.infrastructure.entity.AnswerPatternEntity">
+        <id property="id" column="id" />
+        <result property="patternName" column="pattern_name" />
+        <result property="deleted" column="is_deleted" />
+        <collection property="items" ofType="com.github.rk_aiz.teamsurvey.infrastructure.entity.AnswerPatternItemEntity">
+            <id property="id" column="item_id" />
+            <result property="answerPatternId" column="answer_pattern_id" />
+            <result property="itemText" column="item_text" />
+            <result property="itemOrder" column="item_order" />
+        </collection>
+    </resultMap>
+
+    <select id="selectAll" resultMap="AnswerPatternMap">
+        SELECT 
+            ap.id, ap.pattern_name, ap.is_deleted,
+            api.id AS item_id, api.answer_pattern_id, api.item_text, api.item_order
+        FROM answer_patterns ap
+        LEFT JOIN answer_pattern_items api ON ap.id = api.answer_pattern_id
+        ORDER BY ap.id, api.item_order
+    </select>
+
+    <select id="selectById" resultMap="AnswerPatternMap">
+        SELECT 
+            ap.id, ap.pattern_name, ap.is_deleted,
+            api.id AS item_id, api.answer_pattern_id, api.item_text, api.item_order
+        FROM answer_patterns ap
+        LEFT JOIN answer_pattern_items api ON ap.id = api.answer_pattern_id
+        WHERE ap.id = #{id}
+        ORDER BY api.item_order
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO answer_patterns (pattern_name)
+        VALUES (#{patternName})
+    </insert>
+
+    <update id="update">
+        UPDATE answer_patterns
+        SET pattern_name = #{patternName},
+            is_deleted = #{deleted}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM answer_patterns
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

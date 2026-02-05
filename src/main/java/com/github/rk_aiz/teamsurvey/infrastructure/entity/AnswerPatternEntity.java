@@ -1,6 +1,9 @@
 package com.github.rk_aiz.teamsurvey.infrastructure.entity;
 
+import java.util.List;
+
 import org.springframework.beans.BeanUtils;
+
 import com.github.rk_aiz.teamsurvey.domain.model.AnswerOption;
 
 import lombok.AllArgsConstructor;
@@ -18,6 +21,8 @@ public class AnswerPatternEntity {
     private String patternName;
     private boolean isDeleted;
 
+    private List<AnswerPatternItemEntity> items;
+
     /**
      * Entity -> Domain Model 変換
      */
@@ -26,8 +31,12 @@ public class AnswerPatternEntity {
         BeanUtils.copyProperties(this, model);
         model.setAnswerOptionId(this.id);
         model.setName(patternName);
+        model.setItems(items.stream()
+                .map(AnswerPatternItemEntity::toModel)
+                .toList());
         return model;
     }
+    
     /**
      * Domain Model -> Entity 変換
      */

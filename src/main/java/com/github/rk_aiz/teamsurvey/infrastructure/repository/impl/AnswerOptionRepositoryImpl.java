@@ -38,21 +38,8 @@ public class AnswerOptionRepositoryImpl implements AnswerOptionRepository {
     }
 
     @Override
-    public List<AnswerOption> selectAllWithItems() {
-        List<AnswerOption> options = this.answerPatternMapper.selectAll()
-                .stream().map(AnswerPatternEntity::toModel).toList();
-
-        options.forEach(this::loadItems);
-        return options;
-    }
-
-    @Override
     public AnswerOption findById(Integer id) {
-        AnswerPatternEntity pattern = this.answerPatternMapper.selectById(id);
-        if (pattern == null)
-            return null;
-
-        return convertWithItems(pattern);
+        return this.answerPatternMapper.selectById(id).toModel();
     }
 
     @Override
@@ -106,20 +93,6 @@ public class AnswerOptionRepositoryImpl implements AnswerOptionRepository {
     public void remove(Integer id) {
         this.answerPatternItemMapper.deleteByPatternId(id);
         this.answerPatternMapper.delete(id);
-    }
-
-    private AnswerOption convertWithItems(AnswerPatternEntity entity) {
-        AnswerOption answerOption = entity.toModel();
-        loadItems(answerOption);
-        return answerOption;
-    }
-
-    private void loadItems(AnswerOption answerOption) {
-        this.answerPatternItemMapper
-                .selectByPatternId(answerOption.getAnswerOptionId())
-                .forEach(item -> {
-                    answerOption.addItem(item.getId(), item.getItemText(), item.getItemOrder());
-                });
     }
 
     private Integer insertItem(Integer patternId, OptionItem item) {

@@ -345,6 +345,46 @@
                 // (本格実装では /admin/pattern/api/list-json 等を呼んでDOM更新します)
                 console.log('Pattern saved. Please refresh page to see changes in dropdown.');
             }
+
+            // --- 回答パターン選択肢編集用 JS ---
+            
+            // 選択肢を追加
+            function addPatternItem() {
+                const container = document.getElementById('pattern-items-container');
+                const template = document.getElementById('pattern-item-template');
+                
+                if (container && template) {
+                    // テンプレートをクローン
+                    const clone = template.content.cloneNode(true);
+                    container.appendChild(clone);
+                    updatePatternItemIndices();
+                }
+            }
+
+            // 選択肢を削除
+            function removePatternItem(btn) {
+                const itemRow = btn.closest('.pattern-item-row');
+                if (itemRow) {
+                    itemRow.remove();
+                    updatePatternItemIndices();
+                }
+            }
+
+            // インデックスを振り直す (items[0], items[1]...)
+            function updatePatternItemIndices() {
+                const container = document.getElementById('pattern-items-container');
+                if (!container) return;
+                
+                const rows = container.querySelectorAll('.pattern-item-row');
+                rows.forEach((row, index) => {
+                    // inputのname属性を更新
+                    const input = row.querySelector('input[name*="items"]');
+                    if (input) {
+                        // items[x].itemText の形式に更新
+                        input.name = `items[${index}].itemText`;
+                    }
+                });
+            }
         </script>
 
         <!-- 並べ替え用の簡易スクリプト -->
