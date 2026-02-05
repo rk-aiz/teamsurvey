@@ -14,10 +14,10 @@ public interface SurveyTargetGroupRepository {
     /**
      * 新しい「アンケートとグループの紐づけ情報」を登録します
      */
-    void add(Integer surveyId, Integer groupId);
+    boolean add(Integer surveyId, Integer groupId);
 
     /**
      * 「アンケートとグループの紐づけ情報」を削除します
      */
-    void remove(Integer surveyId, Integer groupId);
+    boolean remove(Integer surveyId, Integer groupId);
 }

@@ -19,9 +19,9 @@ public interface UserGroupRepository {
 
     List<UserGroup> findBySurveyId(Integer surveyId);
 
-    void add(UserGroup group);
+    boolean add(UserGroup group);
 
-    void set(UserGroup group);
+    boolean set(UserGroup group);
 
-    void remove(Integer groupId);
+    boolean remove(Integer groupId);
 }

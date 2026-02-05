@@ -39,14 +39,12 @@
                 <tr>
                     <th>回答対象グループ</th>
                     <td>
-                        <div class="card p-2 bg-light mb-2">
-                            回答許可グループ:<br>
-                            <div th:each="group : ${userGroups}" class="form-check form-check-inline">
-                                <input type="checkbox" class="form-check-input" th:field="*{groupIds}"
-                                    th:value="${group.groupId}">
-                                <span th:text="${group.groupName}"></span>
-                            </div>
+                        <div id="selectedGroupsDisplay" class="mb-2">
+                            <span class="text-muted small">未選択</span>
                         </div>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#groupSelectionModal">
+                            <i class="bi bi-gear"></i> 設定を変更
+                        </button>
                     </td>
                 </tr>
                 <tr>
@@ -170,6 +168,30 @@
             <div style="margin-top: 20px;">
                 <button type="submit" class="btn btn-primary fw-bold px-4">保存</button>
             </div>
+
+            <!-- 回答対象グループ選択モーダル -->
+            <div class="modal fade" id="groupSelectionModal" tabindex="-1" aria-labelledby="groupSelectionModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="groupSelectionModalLabel">回答対象グループ設定</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="small text-muted">選択したグループのユーザーのみが回答できます。ボタンをクリックしてON/OFFを切り替えてください。</p>
+                            <div class="d-flex flex-wrap gap-2">
+                                <th:block th:each="group : ${userGroups}">
+                                    <input type="checkbox" class="btn-check" th:field="*{groupIds}" th:value="${group.groupId}" autocomplete="off">
+                                    <label class="btn btn-outline-primary" th:for="${#ids.prev('groupIds')}" th:text="${group.groupName}"></label>
+                                </th:block>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">決定</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </form>
 
         <!-- 回答パターン編集サイドペイン (Offcanvas) -->
@@ -181,7 +203,7 @@
             <div class="offcanvas-body">
                 <p class="small text-muted">ここでは選択中の回答パターンの内容を編集したり、新しいパターンをその場で作成したりできます（実装予定）。</p>
                 <!-- ここに非同期(AJAX)で読み込む編集フォームなどを配置する -->
-                <div id="pattern-editor-content">
+                <div id="patternEditorContent">
                     <div class="text-center mt-5 text-muted">パターンを選択してください</div>
                 </div>
             </div>
@@ -201,6 +223,37 @@
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 const userGroups = document.querySelectorAll('input[name="targetGroups"]');
+
+                // 対象グループ表示の更新
+                const groupCheckboxes = document.querySelectorAll('#groupSelectionModal input[type="checkbox"]');
+                const displayContainer = document.getElementById('selectedGroupsDisplay');
+
+                function updateGroupDisplay() {
+                    displayContainer.innerHTML = '';
+                    let selectedCount = 0;
+                    
+                    groupCheckboxes.forEach(cb => {
+                        if (cb.checked) {
+                            selectedCount++;
+                            const label = document.querySelector('label[for="' + cb.id + '"]');
+                            if (label) {
+                                const badge = document.createElement('span');
+                                badge.className = 'badge bg-primary me-1';
+                                badge.textContent = label.textContent;
+                                displayContainer.appendChild(badge);
+                            }
+                        }
+                    });
+
+                    if (selectedCount === 0) {
+                        displayContainer.innerHTML = '<span class="text-muted small">未選択（制限なし）</span>';
+                    }
+                }
+
+                updateGroupDisplay();
+                groupCheckboxes.forEach(cb => {
+                    cb.addEventListener('change', updateGroupDisplay);
+                });
 
                 // 設問タイプと回答パターンの連動
                 const questionItems = document.querySelectorAll('.question-item');
@@ -227,7 +280,71 @@
                         updatePatternState();
                     }
                 });
+
+                // Offcanvasが開かれたときに一覧をロード
+                const patternEditor = document.getElementById('patternEditor');
+                patternEditor.addEventListener('show.bs.offcanvas', function () {
+                    loadPatternList();
+                });
             });
+
+            // --- 回答パターン編集用 AJAX関数 ---
+
+            const editorContent = document.getElementById('patternEditorContent');
+
+            // 一覧ロード
+            function loadPatternList() {
+                fetch('/admin/pattern/fragment/list')
+                    .then(response => response.text())
+                    .then(html => {
+                        editorContent.innerHTML = html;
+                    });
+            }
+
+            // フォームロード (新規 or 編集)
+            function loadPatternForm(id) {
+                let url = '/admin/pattern/fragment/form';
+                if (id) {
+                    url += '?id=' + id;
+                }
+                fetch(url)
+                    .then(response => response.text())
+                    .then(html => {
+                        editorContent.innerHTML = html;
+                    });
+            }
+
+            // 保存処理
+            function submitPatternForm(event) {
+                event.preventDefault();
+                const form = event.target;
+                const formData = new FormData(form);
+
+                fetch('/admin/pattern/fragment/save', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(html => {
+                    // レスポンスが一覧フラグメントかフォームフラグメント(エラー時)かで分岐したいが、
+                    // 簡易的にHTMLを入れ替えて、フォームがなければ成功とみなす
+                    editorContent.innerHTML = html;
+                    
+                    // 保存成功（一覧画面に戻った）場合、メイン画面のセレクトボックスを更新する
+                    if (!editorContent.querySelector('form')) {
+                        refreshMainSelectBoxes();
+                    }
+                });
+            }
+
+            // メイン画面のセレクトボックスを更新する（ページリロードなしで反映）
+            function refreshMainSelectBoxes() {
+                // 本来はここでもAJAXで最新のOptionsを取得して差し替えるべきですが、
+                // 簡易的にページリロードを促すか、あるいは別途APIを用意します。
+                // 今回はUX向上のため、とりあえずアラートを出さずに静かに終了します。
+                // (本格実装では /admin/pattern/api/list-json 等を呼んでDOM更新します)
+                console.log('Pattern saved. Please refresh page to see changes in dropdown.');
+            }
         </script>
 
         <!-- 並べ替え用の簡易スクリプト -->

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+    <!-- 一覧表示フラグメント -->
+    <div th:fragment="list">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="mb-0">登録済みパターン</h6>
+            <button type="button" class="btn btn-sm btn-primary" onclick="loadPatternForm()">
+                <i class="bi bi-plus"></i> 新規作成
+            </button>
+        </div>
+        <div class="list-group">
+            <button type="button" class="list-group-item list-group-item-action" 
+                th:each="opt : ${answerOptions}"
+                th:onclick="'loadPatternForm(' + ${opt.answerOptionId} + ')'">
+                <div class="d-flex w-100 justify-content-between">
+                    <span th:text="${opt.name}">パターン名</span>
+                    <small class="text-muted" th:text="${#lists.size(opt.items)} + ' items'"></small>
+                </div>
+            </button>
+            <div th:if="${#lists.isEmpty(answerOptions)}" class="text-center text-muted p-3">
+                登録されたパターンはありません
+            </div>
+        </div>
+    </div>
+
+    <!-- 編集フォームフラグメント -->
+    <div th:fragment="form">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="mb-0" th:text="${answerOptionForm.answerOptionId == null ? '新規作成' : '編集'}">編集</h6>
+            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="loadPatternList()">
+                <i class="bi bi-arrow-left"></i> 一覧へ
+            </button>
+        </div>
+
+        <form id="patternForm" th:object="${answerOptionForm}" onsubmit="submitPatternForm(event)">
+            <input type="hidden" th:field="*{answerOptionId}">
+            
+            <div class="mb-3">
+                <label class="form-label">パターン名</label>
+                <input type="text" class="form-control" th:field="*{name}" placeholder="例: 5段階評価">
+                <div class="text-danger small" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+            </div>
+
+            <!-- 選択肢の編集UIはここに実装 (今回は省略) -->
+            <div class="alert alert-info small">
+                <i class="bi bi-info-circle"></i> 選択肢の編集機能は実装中です。
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">保存</button>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>

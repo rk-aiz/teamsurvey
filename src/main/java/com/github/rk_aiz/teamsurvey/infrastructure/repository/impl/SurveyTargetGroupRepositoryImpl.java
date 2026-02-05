@@ -28,15 +28,13 @@ public class SurveyTargetGroupRepositoryImpl implements SurveyTargetGroupReposit
     }
 
     @Override
-    public void add(Integer surveyId, Integer groupId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'add'");
+    public boolean add(Integer surveyId, Integer groupId) {
+        return surveyTargetGroupMapper.insert(surveyId, groupId) > 0;
     }
 
     @Override
-    public void remove(Integer surveyId, Integer groupId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'remove'");
+    public boolean remove(Integer surveyId, Integer groupId) {
+        return surveyTargetGroupMapper.delete(surveyId, groupId) > 0;
     }
 
 }

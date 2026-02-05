@@ -1,5 +1,9 @@
 package com.github.rk_aiz.teamsurvey.application.controller.admin.survey;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,8 +20,10 @@ import com.github.rk_aiz.teamsurvey.application.form.QuestionForm;
 import com.github.rk_aiz.teamsurvey.application.form.SurveyForm;
 import com.github.rk_aiz.teamsurvey.application.validation.SurveyValidationGroup;
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
+import com.github.rk_aiz.teamsurvey.domain.model.UserGroup;
 import com.github.rk_aiz.teamsurvey.domain.service.AnswerOptionService;
 import com.github.rk_aiz.teamsurvey.domain.service.SurveyService;
+import com.github.rk_aiz.teamsurvey.domain.service.UserGroupService;
 import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
 
 import lombok.RequiredArgsConstructor;
@@ -39,6 +45,7 @@ public class SurveyController {
 
     /** DI */
     private final SurveyService surveyService;
+    private final UserGroupService userGroupService;
     private final AnswerOptionService answerOptionService;
     private final SmartValidator validator;
 
@@ -54,12 +61,25 @@ public class SurveyController {
      * アンケートの一覧画面を表示します
      */
     @GetMapping("/list")
-    public String list(@RequestParam(value = "id", required = false) Integer id, Model model) {
+    public String list(
+            @RequestParam(value = "id", required = false) Integer id,
+            @RequestParam(value = "status", required = false) SurveyStatus status,
+            Model model) {
 
-        // 全件取得（中央カラム用）
-        model.addAttribute("surveys",
-                surveyService
-                        .findAllSurveys());
+        // 全件取得
+        List<Survey> allSurveys = surveyService.findAllSurveys();
+        List<Survey> displayedSurveys;
+
+        if (status != null) {
+            displayedSurveys = allSurveys.stream()
+                    .filter(s -> s.getStatus() == status)
+                    .collect(Collectors.toList());
+        } else {
+            displayedSurveys = allSurveys;
+        }
+
+        model.addAttribute("surveys", displayedSurveys);
+        model.addAttribute("currentStatus", status);
 
         // IDが指定されている場合、詳細情報を取得（右カラム用）
         if (id != null) {
@@ -82,9 +102,8 @@ public class SurveyController {
     public String detail(@PathVariable("id") Integer id, Model model) {
 
         // アンケート情報の取得
-        Survey survey = surveyService.findSurveyById(id);
-        model.addAttribute("survey", survey);
-        model.addAttribute("surveyId", id);
+        model.addAttribute("survey", surveyService.findSurveyById(id));
+        model.addAttribute("userGroups", userGroupService.findAll());
 
         return "admin/survey/detail";
     }
@@ -158,6 +177,7 @@ public class SurveyController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("answerOptions", answerOptionService.findAll());
+            model.addAttribute("userGroups", userGroupService.findAll());
             return "admin/survey/edit";
         }
 
@@ -181,6 +201,7 @@ public class SurveyController {
     public String addQuestion(@ModelAttribute SurveyForm form, Model model) {
         form.getQuestionForms().add(new QuestionForm());
         model.addAttribute("answerOptions", answerOptionService.findAll());
+        model.addAttribute("userGroups", userGroupService.findAll());
         return "admin/survey/edit";
     }
 
@@ -195,7 +216,8 @@ public class SurveyController {
         if (index >= 0 && index < form.getQuestionForms().size()) {
             form.getQuestionForms().remove(index);
         }
-        model.addAttribute("answerPatterns", answerOptionService.findAll());
+        model.addAttribute("answerOptions", answerOptionService.findAll());
+        model.addAttribute("userGroups", userGroupService.findAll());
         return "admin/survey/edit";
     }
 
@@ -219,9 +241,31 @@ public class SurveyController {
         return "redirect:/admin/survey/detail/" + id;
     }
 
-    @GetMapping("/target/")
-    public String getMethodName(@RequestParam String param) {
-        return new String();
+    /**
+     * 対象グループのみを更新します（詳細画面からの呼び出し）
+     */
+    @PostMapping("/target/{id}")
+    public String updateTargetGroups(
+            @PathVariable("id") Integer id,
+            @RequestParam(value = "groupIds", required = false) List<Integer> groupIds,
+            RedirectAttributes redirectAttributes) {
+
+        Survey survey = surveyService.findSurveyById(id);
+        List<UserGroup> allGroups = userGroupService.findAll();
+        List<UserGroup> newTargetGroups = new ArrayList<>();
+
+        if (groupIds != null) {
+            for (UserGroup group : allGroups) {
+                if (groupIds.contains(group.getGroupId())) {
+                    newTargetGroups.add(group);
+                }
+            }
+        }
+        survey.setTargetGroups(newTargetGroups);
+        surveyService.saveSurvey(survey);
+
+        redirectAttributes.addFlashAttribute(MESSAGE, "対象グループを更新しました");
+        return "redirect:/admin/survey/detail/" + id;
     }
 
 }

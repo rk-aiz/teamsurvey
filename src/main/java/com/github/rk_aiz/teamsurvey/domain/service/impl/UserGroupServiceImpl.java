@@ -26,14 +26,16 @@ public class UserGroupServiceImpl implements UserGroupService {
     }
 
     @Override
-    public boolean save(LoginUser loginUser) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'save'");
+    public boolean save(UserGroup userGroup) {
+        if (userGroup.getGroupId() == null) {
+            return userGroupRepository.add(userGroup);
+        } else {
+            return userGroupRepository.set(userGroup);
+        }
     }
 
     @Override
     public boolean delete(Integer groupId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'delete'");
+        return userGroupRepository.remove(groupId);
     }
 }

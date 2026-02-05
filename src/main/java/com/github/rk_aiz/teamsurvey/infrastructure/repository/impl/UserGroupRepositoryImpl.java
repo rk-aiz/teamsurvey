@@ -42,18 +42,18 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
     }
 
     @Override
-    public void add(UserGroup group) {
-        userGroupMapper.insert(UserGroupEntity.from(group));
+    public boolean add(UserGroup group) {
+        return userGroupMapper.insert(UserGroupEntity.from(group)) > 0;
     }
 
     @Override
-    public void set(UserGroup group) {
-        userGroupMapper.update(UserGroupEntity.from(group));
+    public boolean set(UserGroup group) {
+        return userGroupMapper.update(UserGroupEntity.from(group)) > 0;
     }
 
     @Override
-    public void remove(Integer groupId) {
-        userGroupMapper.delete(groupId);
+    public boolean remove(Integer groupId) {
+        return userGroupMapper.delete(groupId) > 0;
     }
 
 }

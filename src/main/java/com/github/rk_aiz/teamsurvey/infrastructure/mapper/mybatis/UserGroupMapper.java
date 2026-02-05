@@ -16,9 +16,9 @@ public interface UserGroupMapper {
 
     List<UserGroupEntity> selectByUsername(@Param("username") String username);
 
-    void insert(UserGroupEntity userGroup);
+    int insert(UserGroupEntity userGroup);
     
-    void update(UserGroupEntity userGroup);
+    int update(UserGroupEntity userGroup);
 
-    void delete(@Param("id") Integer id);
+    int delete(@Param("id") Integer id);
 }

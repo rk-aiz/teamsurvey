@@ -34,16 +34,16 @@ public interface SurveyMapper {
     /**
      * 新しいアンケートを登録します
      */
-    void insert(SurveyEntity surveyEntity);
+    int insert(SurveyEntity surveyEntity);
 
     /**
      * アンケートを更新します
      */
-    void update(SurveyEntity surveyEntity);
+    int update(SurveyEntity surveyEntity);
 
     /**
      * アンケートを削除します
      */
-    void delete(@Param("id") Integer id);
+    int delete(@Param("id") Integer id);
 
 }

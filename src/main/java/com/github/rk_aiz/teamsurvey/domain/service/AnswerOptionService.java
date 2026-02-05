@@ -16,7 +16,7 @@ public interface AnswerOptionService {
      */
     AnswerOption findAnswerOptionById(Integer id);
 
-    public void save(AnswerOption survey);
+    public void save(AnswerOption answerOption);
 
     /**
      * 回答選択肢を削除する

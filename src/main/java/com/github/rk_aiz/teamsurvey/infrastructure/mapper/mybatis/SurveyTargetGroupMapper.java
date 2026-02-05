@@ -3,6 +3,8 @@ package com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
 import com.github.rk_aiz.teamsurvey.infrastructure.entity.SurveyTargetGroupEntity;
 
 @Mapper
@@ -26,11 +28,11 @@ public interface SurveyTargetGroupMapper {
     /**
      * 新しい「アンケートと対象グループの紐づけ情報」を登録します
      */
-    void insert(SurveyTargetGroupEntity entity);
+    int insert(@Param("surveyId") Integer surveyId, @Param("groupId") Integer groupId);
 
     /**
      * 「アンケートと対象グループの紐づけ情報」を削除します
      */
-    void delete(SurveyTargetGroupEntity entity);
+    int delete(@Param("surveyId") Integer surveyId, @Param("groupId") Integer groupId);
 
 }
