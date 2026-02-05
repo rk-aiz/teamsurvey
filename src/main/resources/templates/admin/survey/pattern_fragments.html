@@ -48,7 +48,7 @@
                 <label class="form-label">選択肢</label>
                 <div id="pattern-items-container">
                     <div th:each="item, stat : *{items}" class="input-group mb-2 pattern-item-row">
-                        <span class="input-group-text"><i class="bi bi-list"></i></span>
+                        <span class="input-group-text handle" style="cursor: grab;"><i class="bi bi-grip-vertical"></i></span>
                         <input type="text" class="form-control" 
                                th:field="*{items[__${stat.index}__].itemText}" 
                                placeholder="選択肢を入力" required>
@@ -67,18 +67,19 @@
                 <button type="submit" class="btn btn-primary">保存</button>
             </div>
         </form>
-    </div>
 
-    <!-- 新規追加用のテンプレート (JavaScriptで使用) -->
-    <template id="pattern-item-template">
-        <div class="input-group mb-2 pattern-item-row">
-            <span class="input-group-text"><i class="bi bi-list"></i></span>
-            <input type="text" class="form-control" name="items[].itemText" placeholder="選択肢を入力" required>
-            <button type="button" class="btn btn-outline-danger" onclick="removePatternItem(this)">
-                <i class="bi bi-trash"></i>
-            </button>
-        </div>
-    </template>
+        <!-- 新規追加用のテンプレート (JavaScriptで使用) -->
+        <!-- フラグメント内に含めることで、AJAXロード時にも利用可能にする -->
+        <template id="pattern-item-template">
+            <div class="input-group mb-2 pattern-item-row">
+                <span class="input-group-text handle" style="cursor: grab;"><i class="bi bi-grip-vertical"></i></span>
+                <input type="text" class="form-control" name="items[].itemText" placeholder="選択肢を入力" required>
+                <button type="button" class="btn btn-outline-danger" onclick="removePatternItem(this)">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+        </template>
+    </div>
 
 </body>
 </html>

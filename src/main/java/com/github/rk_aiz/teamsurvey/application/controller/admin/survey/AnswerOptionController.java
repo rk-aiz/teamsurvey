@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.rk_aiz.teamsurvey.application.form.AnswerOptionForm;
 import com.github.rk_aiz.teamsurvey.application.form.OptionItemForm;
@@ -97,5 +98,14 @@ public class AnswerOptionController {
         // 保存成功時は一覧を返す
         model.addAttribute("answerOptions", answerOptionService.findAll());
         return "admin/survey/pattern_fragments :: list";
+    }
+
+    /**
+     * AJAX: 回答パターン一覧をJSONで取得 (ドロップダウン更新用)
+     */
+    @GetMapping("/list-json")
+    @ResponseBody
+    public List<AnswerOption> getListJson() {
+        return answerOptionService.findAll();
     }
 }
