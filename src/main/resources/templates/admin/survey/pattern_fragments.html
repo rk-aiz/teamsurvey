@@ -16,7 +16,7 @@
                 th:onclick="'loadPatternForm(' + ${opt.answerOptionId} + ')'">
                 <div class="d-flex w-100 justify-content-between">
                     <span th:text="${opt.name}">パターン名</span>
-                    <small class="text-muted" th:text="${#lists.size(opt.items)} + ' items'"></small>
+                    <small class="text-muted" th:text="${#lists.size(opt.items)} + ' 段階'"></small>
                 </div>
             </button>
             <div th:if="${#lists.isEmpty(answerOptions)}" class="text-center text-muted p-3">

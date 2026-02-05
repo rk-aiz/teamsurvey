@@ -20,6 +20,10 @@ public class AnswerPatternEntity {
     private Integer id;
     private String patternName;
     private boolean isDeleted;
+    private boolean isSnapshot;
+    
+    /** スナップショット作成時の採番ID受け取り用 (DBカラムなし) */
+    private Integer newId;
 
     private List<AnswerPatternItemEntity> items;
 
@@ -36,7 +40,7 @@ public class AnswerPatternEntity {
                 .toList());
         return model;
     }
-    
+
     /**
      * Domain Model -> Entity 変換
      */

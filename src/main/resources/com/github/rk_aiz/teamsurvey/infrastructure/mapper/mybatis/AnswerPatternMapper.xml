@@ -20,6 +20,7 @@
             api.id AS item_id, api.answer_pattern_id, api.item_text, api.item_order
         FROM answer_patterns ap
         LEFT JOIN answer_pattern_items api ON ap.id = api.answer_pattern_id
+        WHERE ap.is_snapshot = FALSE
         ORDER BY ap.id, api.item_order
     </select>
 
@@ -49,5 +50,25 @@
         DELETE FROM answer_patterns
         WHERE id = #{id}
     </delete>
+
+    <select id="countUsage" resultType="int">
+        SELECT COUNT(*) FROM questions WHERE answer_pattern_id = #{id}
+    </select>
+
+    <!-- スナップショットとしてコピー作成 (IDを返す) -->
+    <insert id="copyAsSnapshot" useGeneratedKeys="true" keyProperty="newId">
+        INSERT INTO answer_patterns (pattern_name, is_snapshot)
+        SELECT pattern_name || ' (Snapshot ' || TO_CHAR(NOW(), 'YYYYMMDDHH24MISS') || ')', TRUE
+        FROM answer_patterns
+        WHERE id = #{id}
+    </insert>
+
+    <!-- 選択肢のコピー -->
+    <insert id="copyItems">
+        INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order)
+        SELECT #{newId}, item_text, item_order
+        FROM answer_pattern_items
+        WHERE answer_pattern_id = #{originalId}
+    </insert>
 
 </mapper>

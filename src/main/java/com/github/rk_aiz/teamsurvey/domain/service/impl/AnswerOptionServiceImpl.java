@@ -42,4 +42,14 @@ public class AnswerOptionServiceImpl implements AnswerOptionService {
         answerOptionRepository.remove(id);
     }
 
+    @Override
+    public Integer createSnapshot(Integer originalId) {
+        return answerOptionRepository.createSnapshot(originalId);
+    }
+
+    @Override
+    public boolean isSnapshot(Integer id) {
+        return answerOptionRepository.isSnapshot(id);
+    }
+
 }

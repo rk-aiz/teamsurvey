@@ -22,4 +22,14 @@ public interface AnswerOptionService {
      * 回答選択肢を削除する
      */
     public void remove(Integer id);
+
+    /**
+     * 指定された回答パターンのスナップショットを作成します
+     */
+    Integer createSnapshot(Integer originalId);
+
+    /**
+     * 指定された回答パターンがスナップショットかどうかを判定します
+     */
+    boolean isSnapshot(Integer id);
 }

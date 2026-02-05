@@ -35,4 +35,15 @@ public interface AnswerPatternMapper {
      */
     void delete(@Param("id") Integer id);
 
+    /**
+     * 指定されたIDのパターンをスナップショットとして複製します
+     * @param originalId 元のパターンID
+     * @return 新しいパターンエンティティ（IDのみセットされた状態を想定、またはvoidでkeyProperty利用）
+     */
+    void copyAsSnapshot(AnswerPatternEntity entity); // entity.newId にIDが入る想定
+
+    /**
+     * 選択肢をコピーします
+     */
+    void copyItems(@Param("originalId") Integer originalId, @Param("newId") Integer newId);
 }

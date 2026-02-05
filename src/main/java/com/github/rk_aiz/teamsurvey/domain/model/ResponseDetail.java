@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.github.rk_aiz.teamsurvey.domain.model.question.Question;
 import com.github.rk_aiz.teamsurvey.domain.type.QuestionType;
@@ -32,15 +33,29 @@ public class ResponseDetail {
         return this.getQuestion().getType();
     }
 
+    public void setTextResponse(String text) {
+        this.setRawData(text);
+    }
+
     public String getTextResponse() {
         return this.getRawData();
+    }
+
+    public void setSingleChoiceResponse(Integer itemId) {
+        this.setRawData(itemId.toString());
     }
 
     /**
      * 単一選択の回答を数値(ID)として取得します。
      */
     public Integer getSingleChoiceResponse() {
-        return parseId(this.getRawData());
+        return parseId(getRawData());
+    }
+
+    public void setMultiChoiceResponses(List<Integer> itemIds) {
+        this.setRawData(itemIds.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(",")));
     }
 
     /**

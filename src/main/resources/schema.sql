@@ -99,9 +99,12 @@ CREATE TABLE user_groups (
 CREATE TABLE answer_patterns (
 	id serial PRIMARY KEY,
     -- 同じ名称は回答パターン選択項目が分かりずらくなる、重複を避けるなどの理由で許可しない
-	pattern_name VARCHAR(100) NOT NULL UNIQUE, -- 管理用名称（例：5段階評価、Yes/No）
-	is_deleted BOOLEAN NOT NULL DEFAULT FALSE -- 論理削除フラグ
+	pattern_name VARCHAR(100) NOT NULL, -- 管理用名称（例：5段階評価、Yes/No）
+	is_deleted BOOLEAN NOT NULL DEFAULT FALSE, -- 論理削除フラグ
+	is_snapshot BOOLEAN NOT NULL DEFAULT FALSE -- スナップショットフラグ
 );
+-- テンプレート（スナップショット以外）のみ名称の重複を禁止する
+CREATE UNIQUE INDEX answer_patterns_name_idx ON answer_patterns (pattern_name) WHERE is_snapshot = FALSE;
 
 -- 回答パターンの選択肢（子）テーブル
 CREATE TABLE answer_pattern_items (
@@ -110,6 +113,8 @@ CREATE TABLE answer_pattern_items (
 	item_text VARCHAR(255) NOT NULL,
     -- 表示順序
 	item_order INTEGER NOT NULL
+	-- スナップショットフラグ
+	is_snapshot BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 -- 設問用のテーブル作成

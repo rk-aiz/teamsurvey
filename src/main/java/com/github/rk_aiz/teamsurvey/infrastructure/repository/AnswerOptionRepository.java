@@ -29,4 +29,15 @@ public interface AnswerOptionRepository {
      * 回答パターンを削除します
      */
     void remove(Integer id);
+
+    /**
+     * 指定されたIDがスナップショットかどうかを判定します
+     */
+    boolean isSnapshot(Integer id);
+
+    /**
+     * 指定されたIDの回答パターンをスナップショットとして複製します
+     * @param originalId 元の回答パターンID
+     */
+    Integer createSnapshot(Integer originalId);
 }
