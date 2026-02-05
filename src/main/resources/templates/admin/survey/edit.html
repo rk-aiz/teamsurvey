@@ -4,6 +4,8 @@
 
 <head>
     <title th:text="${title} ?: 'アンケート編集'">アンケート編集</title>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 
 <body>

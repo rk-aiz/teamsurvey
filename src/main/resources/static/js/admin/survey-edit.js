@@ -110,9 +110,18 @@ function submitPatternForm(event) {
     const editorContent = document.getElementById('patternEditorContent');
     const form = event.target;
     const formData = new FormData(form);
+    
+    // CSRFトークンの取得
+    const token = document.querySelector('meta[name="_csrf"]')?.content;
+    const header = document.querySelector('meta[name="_csrf_header"]')?.content;
+    const headers = {};
+    if (token && header) {
+        headers[header] = token;
+    }
 
     fetch('/admin/pattern/fragment/save', {
         method: 'POST',
+        headers: headers,
         body: formData
     })
     .then(response => response.text())
