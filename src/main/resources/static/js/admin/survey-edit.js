@@ -211,11 +211,17 @@ function updatePatternItemIndices() {
     
     const rows = container.querySelectorAll('.pattern-item-row');
     rows.forEach((row, index) => {
-        // inputのname属性を更新
-        const input = row.querySelector('input[name*="items"]');
-        if (input) {
-            // items[x].itemText の形式に更新
-            input.name = `items[${index}].itemText`;
+        // 行内のすべての input[name*="items"] を取得してインデックスを更新
+        const inputs = row.querySelectorAll('input[name*="items"]');
+        inputs.forEach(input => {
+            // name属性のインデックス部分を置換 items[?] -> items[index]
+            input.name = input.name.replace(/items\[\d*\]/, `items[${index}]`);
+        });
+
+        // itemOrder の値を更新 (0始まりの連番)
+        const orderInput = row.querySelector('.item-order');
+        if (orderInput) {
+            orderInput.value = index;
         }
     });
 }

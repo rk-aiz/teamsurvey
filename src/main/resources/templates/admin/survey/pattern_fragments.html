@@ -49,6 +49,7 @@
                 <div id="pattern-items-container">
                     <div th:each="item, stat : *{items}" class="input-group mb-2 pattern-item-row">
                         <span class="input-group-text handle" style="cursor: grab;"><i class="bi bi-grip-vertical"></i></span>
+                        <input type="hidden" th:field="*{items[__${stat.index}__].itemOrder}" class="item-order">
                         <input type="text" class="form-control" 
                                th:field="*{items[__${stat.index}__].itemText}" 
                                placeholder="選択肢を入力" required>
@@ -73,6 +74,7 @@
         <template id="pattern-item-template">
             <div class="input-group mb-2 pattern-item-row">
                 <span class="input-group-text handle" style="cursor: grab;"><i class="bi bi-grip-vertical"></i></span>
+                <input type="hidden" name="items[].itemOrder" class="item-order" value="0">
                 <input type="text" class="form-control" name="items[].itemText" placeholder="選択肢を入力" required>
                 <button type="button" class="btn btn-outline-danger" onclick="removePatternItem(this)">
                     <i class="bi bi-trash"></i>

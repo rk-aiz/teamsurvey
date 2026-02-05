@@ -51,27 +51,17 @@ public class AnswerOptionController {
      */
     @GetMapping("/form")
     public String getFormFragment(@RequestParam(required = false) Integer id, Model model) {
+        
         AnswerOptionForm form = new AnswerOptionForm();
         if (id != null) {
             AnswerOption answerOption = answerOptionService.findAnswerOptionById(id);
             
             if (answerOption != null) {
                 // Entity -> Form 変換 (簡易実装: 本来はFormクラスに変換メソッドを持たせるかMapperを使う)
-                form.setAnswerOptionId(answerOption.getAnswerOptionId());
-                form.setName(answerOption.getName());
-                
-                // itemsの変換
-                if (answerOption.getItems() != null) {
-                    List<OptionItemForm> formItems = new ArrayList<>();
-                    for (AnswerOption.OptionItem item : answerOption.getItems()) {
-                        OptionItemForm formItem = new OptionItemForm();
-                        formItem.setItemText(item.getItemText());
-                        formItems.add(formItem);
-                    }
-                    form.setItems(formItems);
-                }
+                form = AnswerOptionForm.from(answerOption);
             }
         }
+
         model.addAttribute("answerOptionForm", form);
         return "admin/survey/pattern_fragments :: form";
     }

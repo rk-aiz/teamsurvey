@@ -34,24 +34,14 @@ public class AnswerOptionForm {
     public AnswerOption toModel() {
         AnswerOption answerOption = new AnswerOption();
         BeanUtils.copyProperties(this, answerOption, "items");
-        answerOption.setItems(this.getItems().stream().map(itemForm -> {
-            OptionItem optionItem = new OptionItem();
-            BeanUtils.copyProperties(itemForm, optionItem);
-            return optionItem;
-        }).toList());
-
+        answerOption.setItems(this.getItems().stream().map(OptionItemForm::toModel).toList());
         return answerOption;
     }
 
-    public AnswerOptionForm from(AnswerOption answerOption) {
+    public static AnswerOptionForm from(AnswerOption answerOption) {
         AnswerOptionForm form = new AnswerOptionForm();
         BeanUtils.copyProperties(answerOption, form, "items");
-        form.setItems(answerOption.getItems().stream().map(item -> {
-            OptionItemForm itemForm = new OptionItemForm();
-            BeanUtils.copyProperties(item, itemForm);
-            return itemForm;
-        }).toList());
-
+        form.setItems(answerOption.getItems().stream().map(item -> OptionItemForm.from(item)).toList());
         return form;
     }
 }
