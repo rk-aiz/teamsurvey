@@ -41,6 +41,7 @@ public class AnswerOptionController {
      */
     @GetMapping("/list")
     public String getListFragment(Model model) {
+    	
         model.addAttribute("answerOptions", answerOptionService.findAll());
         return "admin/survey/pattern_fragments :: list";
     }
@@ -52,21 +53,17 @@ public class AnswerOptionController {
     public String getFormFragment(@RequestParam(required = false) Integer id, Model model) {
         AnswerOptionForm form = new AnswerOptionForm();
         if (id != null) {
-            // 簡易検索 (本来はService.findByIdを使用すべき)
-            AnswerOption entity = answerOptionService.findAll().stream()
-                    .filter(opt -> opt.getAnswerOptionId().equals(id))
-                    .findFirst()
-                    .orElse(null);
+            AnswerOption answerOption = answerOptionService.findAnswerOptionById(id);
             
-            if (entity != null) {
+            if (answerOption != null) {
                 // Entity -> Form 変換 (簡易実装: 本来はFormクラスに変換メソッドを持たせるかMapperを使う)
-                form.setAnswerOptionId(entity.getAnswerOptionId());
-                form.setName(entity.getName());
+                form.setAnswerOptionId(answerOption.getAnswerOptionId());
+                form.setName(answerOption.getName());
                 
                 // itemsの変換
-                if (entity.getItems() != null) {
+                if (answerOption.getItems() != null) {
                     List<OptionItemForm> formItems = new ArrayList<>();
-                    for (AnswerOption.OptionItem item : entity.getItems()) {
+                    for (AnswerOption.OptionItem item : answerOption.getItems()) {
                         OptionItemForm formItem = new OptionItemForm();
                         formItem.setItemText(item.getItemText());
                         formItems.add(formItem);
