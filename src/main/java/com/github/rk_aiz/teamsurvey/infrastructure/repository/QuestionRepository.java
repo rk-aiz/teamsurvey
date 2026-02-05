@@ -3,6 +3,7 @@ package com.github.rk_aiz.teamsurvey.infrastructure.repository;
 import java.util.List;
 
 import com.github.rk_aiz.teamsurvey.domain.model.question.Question;
+import com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.QuestionMapper;
 
 /**
  * ユースケース -> {@link QuestionSurvice}
@@ -27,15 +28,15 @@ public interface QuestionRepository {
     /**
      * 新しい質問を登録します
      */
-    void add(Question question);
+    boolean add(Question question);
 
     /**
      * 質問を更新します
      */
-    void set(Question question);
+    boolean set(Question question);
 
     /**
      * 質問を削除します
      */
-    void remove(Integer id);
+    boolean remove(Integer id);
 }

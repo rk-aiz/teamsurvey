@@ -108,6 +108,7 @@ public class SurveyController {
 
         // 回答パターンの選択肢（ドロップダウン用）
         model.addAttribute("answerOptions", answerOptionService.findAll());
+        model.addAttribute("userGroups", userGroupService.findAll());
 
         return "admin/survey/edit";
     }
@@ -231,6 +232,7 @@ public class SurveyController {
 
     /**
      * 対象グループのみを更新します（詳細画面からの呼び出し）
+     * TODO : 機能していないようなので確認
      */
     @PostMapping("/target/{id}")
     public String updateTargetGroups(

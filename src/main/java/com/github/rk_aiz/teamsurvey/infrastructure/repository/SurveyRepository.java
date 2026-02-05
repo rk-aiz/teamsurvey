@@ -29,15 +29,15 @@ public interface SurveyRepository {
     /**
      * 新しい質問を登録します
      */
-    void add(Survey survey);
+    boolean add(Survey survey);
 
     /**
      * 質問を更新します
      */
-    void set(Survey survey);
+    boolean set(Survey survey);
 
     /**
      * 質問を削除します
      */
-    void remove(Integer id);
+    boolean remove(Integer id);
 }

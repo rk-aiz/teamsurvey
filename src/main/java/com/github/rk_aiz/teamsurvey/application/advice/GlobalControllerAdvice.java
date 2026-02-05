@@ -1,4 +1,4 @@
-package com.github.rk_aiz.teamsurvey.advice;
+package com.github.rk_aiz.teamsurvey.application.advice;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

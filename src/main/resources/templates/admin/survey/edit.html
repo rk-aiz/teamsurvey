@@ -4,8 +4,8 @@
 
 <head>
     <title th:text="${title} ?: 'アンケート編集'">アンケート編集</title>
-    <meta name="_csrf" th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
 </head>
 
 <body>
@@ -44,7 +44,8 @@
                         <div id="selectedGroupsDisplay" class="mb-2">
                             <span class="text-muted small">未選択</span>
                         </div>
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#groupSelectionModal">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#groupSelectionModal">
                             <i class="bi bi-gear"></i> 設定を変更
                         </button>
                     </td>
@@ -54,7 +55,8 @@
                     <td>
                         アンケート集計結果を閲覧できる範囲:<br>
                         <select th:field="*{resultVisibility}" class="form-select" style="width: auto;">
-                            <option th:each="vis : ${T(com.github.rk_aiz.teamsurvey.domain.type.ResultVisibility).values()}"
+                            <option
+                                th:each="vis : ${T(com.github.rk_aiz.teamsurvey.domain.type.ResultVisibility).values()}"
                                 th:value="${vis}" th:text="${vis.label}"></option>
                         </select>
                     </td>
@@ -99,7 +101,7 @@
                             <label class="form-check-label" th:for="${'q_req_' + stat.index}">必須</label>
                         </div>
                     </div>
-                
+
                     <!-- 操作ボタン群 -->
                     <div th:if="${surveyForm.status.name() == 'DRAFT'}">
                         <button type="button" onclick="moveUp(this)" class="btn btn-sm btn-outline-secondary me-1">
@@ -113,7 +115,7 @@
                             削除
                         </button>
                     </div>
-                
+
                 </div>
 
 
@@ -148,10 +150,12 @@
                                 th:field="*{questionForms[__${stat.index}__].answerOption.answerOptionId}"
                                 th:disabled="${surveyForm.status.name() != 'DRAFT'}">
                                 <option value="">-- 選択してください --</option>
-                                <option th:each="ao : ${answerOptions}" th:value="${ao.answerOptionId}" th:text="${ao.name}">
+                                <option th:each="ao : ${answerOptions}" th:value="${ao.answerOptionId}"
+                                    th:text="${ao.name}">
                                 </option>
                             </select>
-                            <button class="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#patternEditor" aria-controls="patternEditor">
+                            <button class="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas"
+                                data-bs-target="#patternEditor" aria-controls="patternEditor">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
                         </div>
@@ -174,7 +178,8 @@
             </div>
 
             <!-- 回答対象グループ選択モーダル -->
-            <div class="modal fade" id="groupSelectionModal" tabindex="-1" aria-labelledby="groupSelectionModalLabel" aria-hidden="true">
+            <div class="modal fade" id="groupSelectionModal" tabindex="-1" aria-labelledby="groupSelectionModalLabel"
+                aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -185,8 +190,12 @@
                             <p class="small text-muted">選択したグループのユーザーのみが回答できます。ボタンをクリックしてON/OFFを切り替えてください。</p>
                             <div class="d-flex flex-wrap gap-2">
                                 <th:block th:each="group : ${userGroups}">
-                                    <input type="checkbox" class="btn-check" th:field="*{groupIds}" th:value="${group.groupId}" autocomplete="off">
-                                    <label class="btn btn-outline-primary" th:for="${#ids.prev('groupIds')}" th:text="${group.groupName}"></label>
+                                    <input type="checkbox" class="btn-check" name="groupIds"
+                                        th:id="${'modal_group_' + group.groupId}" th:value="${group.groupId}"
+                                        th:checked="${surveyForm.targetGroups != null and #lists.contains(surveyForm.targetGroups.![groupId], group.groupId)}"
+                                        autocomplete="off">
+                                    <label class="btn btn-outline-primary" th:for="${'modal_group_' + group.groupId}"
+                                        th:text="${group.groupName}"></label>
                                 </th:block>
                             </div>
                         </div>
@@ -199,7 +208,8 @@
         </form>
 
         <!-- 回答パターン編集サイドペイン (Offcanvas) -->
-        <div class="offcanvas offcanvas-end" tabindex="-1" id="patternEditor" aria-labelledby="patternEditorLabel" style="width: 400px;">
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="patternEditor" aria-labelledby="patternEditorLabel"
+            style="width: 400px;">
             <div class="offcanvas-header border-bottom">
                 <h5 class="offcanvas-title" id="patternEditorLabel">回答パターンのクイック編集</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -214,13 +224,13 @@
         </div>
 
         <br>
-		
-		<div th:if="${surveyForm.isNew}">
-		    <a th:href="@{/admin/survey/list}" class="btn btn-link" >一覧に戻る</a>
-		</div>
-		<div th:unless="${surveyForm.isNew}">
-        	<a th:href="@{/admin/survey/detail/{id}(id=${surveyForm.surveyId})}" class="btn btn-link" >詳細に戻る</a>
-		</div>
+
+        <div th:if="${surveyForm.isNew}">
+            <a th:href="@{/admin/survey/list}" class="btn btn-link">一覧に戻る</a>
+        </div>
+        <div th:unless="${surveyForm.isNew}">
+            <a th:href="@{/admin/survey/detail/{id}(id=${surveyForm.surveyId})}" class="btn btn-link">詳細に戻る</a>
+        </div>
 
         <!-- SortableJS (ドラッグ&ドロップ用ライブラリ) -->
         <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>

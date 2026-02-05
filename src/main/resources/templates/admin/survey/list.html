@@ -35,8 +35,8 @@
                 </a>
             </div>
 
-            <!-- 中央カラム: アンケート一覧 (col-lg-4) -->
-            <div class="col-lg-4">
+            <!-- 中央カラム: アンケート一覧 (col-lg-6) -->
+            <div class="col-lg-6">
                 <div class="card shadow-sm h-100">
                     <div class="card-header bg-transparent py-3">
                         <h5 class="card-title mb-0">アンケート一覧</h5>
@@ -84,8 +84,8 @@
                 </div>
             </div>
 
-            <!-- 右カラム: 選択項目の詳細プレビュー (col-lg-6) -->
-            <div class="col-lg-6">
+            <!-- 右カラム: 選択項目の詳細プレビュー (col-lg-4) -->
+            <div class="col-lg-4" id="detail-pane">
                 <div th:if="${selectedSurvey != null}" class="card shadow-sm border-0">
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-start mb-4">
@@ -114,18 +114,19 @@
                         </div>
 
                         <div class="d-flex gap-2">
-							<a th:href="@{/admin/survey/detail/{id}(id=${selectedSurvey.surveyId})}"
-							    class="btn btn-outline-primary">
-							    <i class="bi bi-eye"></i> 詳細画面を開く
-							</a>
+                            <a th:href="@{/admin/survey/detail/{id}(id=${selectedSurvey.surveyId})}"
+                                class="btn btn-outline-primary">
+                                <i class="bi bi-eye"></i> 詳細画面を開く
+                            </a>
                             <a th:href="@{/admin/survey/edit/{id}(id=${selectedSurvey.surveyId})}"
                                 class="btn btn-outline-primary">
                                 <i class="bi bi-pencil"></i> 編集
                             </a>
+                            <!-- TODO 回答パターンスナップショットの関係で、複製機能は一時凍結
                             <a th:href="@{/admin/survey/copy/{id}(id=${selectedSurvey.surveyId})}"
                                 class="btn btn-outline-secondary">
                                 <i class="bi bi-copy"></i> 複製
-                            </a>
+                            </a> -->
                         </div>
                     </div>
                 </div>

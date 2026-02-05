@@ -95,19 +95,19 @@ public class AnswerOptionRepositoryImpl implements AnswerOptionRepository {
         this.answerPatternMapper.delete(id);
     }
 
-    @Override // Interfaceに追加が必要
+    @Override
     public Integer createSnapshot(Integer originalId) {
         AnswerPatternEntity entity = new AnswerPatternEntity();
         entity.setId(originalId);
-        
+
         this.answerPatternMapper.copyAsSnapshot(entity);
         Integer newId = entity.getNewId();
-        
+
         this.answerPatternMapper.copyItems(originalId, newId);
         return newId;
     }
 
-    @Override // Interfaceに追加が必要
+    @Override
     public boolean isSnapshot(Integer id) {
         AnswerPatternEntity entity = this.answerPatternMapper.selectById(id);
         return entity != null && entity.isSnapshot();

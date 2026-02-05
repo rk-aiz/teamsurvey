@@ -15,8 +15,9 @@
                 color: var(--bs-body-color);
                 opacity: 1;
             }
+
             .survey-preview .form-check-input:disabled,
-            .survey-preview .form-check-input:disabled ~ .form-check-label {
+            .survey-preview .form-check-input:disabled~.form-check-label {
                 opacity: 1;
                 color: var(--bs-body-color);
             }
@@ -64,23 +65,23 @@
             </tr>
         </table>
 
-        <!-- ステータス変更アクション -->
+        <!--/* ステータス変更アクション */-->
         <div
             style="margin: 20px 0; padding: 15px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px;">
             <h4 style="margin-top: 0;">ステータス変更</h4>
             <div style="display: flex; gap: 10px;">
 
-                <!-- 下書き(DRAFT)の場合 -> 公開 (回答受付) -->
-				<th:block th:if="${survey.status.name() == 'DRAFT'}">
-				    <form th:action="@{/admin/survey/status/{id}(id=${survey.surveyId})}" method="post">
-				        <input type="hidden" name="status" value="PUBLISHED">
-				        <button type="submit" onclick="return confirm('回答受付状態にしますか？')" class="btn btn-success">
-				            公開する（回答受付状態）
-				        </button>
-				    </form>
-				</th:block>
+                <!--/* 下書き(DRAFT)の場合 -> 公開 (回答受付) */-->
+                <th:block th:if="${survey.status.name() == 'DRAFT'}">
+                    <form th:action="@{/admin/survey/status/{id}(id=${survey.surveyId})}" method="post">
+                        <input type="hidden" name="status" value="PUBLISHED">
+                        <button type="submit" onclick="return confirm('回答受付状態にしますか？')" class="btn btn-success">
+                            公開する（回答受付状態）
+                        </button>
+                    </form>
+                </th:block>
 
-                <!-- 公開中(PUBLISHED)の場合 -> 終了 or 下書き -->
+                <!--/* 公開中(PUBLISHED)の場合 -> 終了 or 下書き */-->
                 <th:block th:if="${survey.status.name() == 'PUBLISHED'}">
                     <form th:action="@{/admin/survey/status/{id}(id=${survey.surveyId})}" method="post">
                         <input type="hidden" name="status" value="CLOSED">
@@ -90,7 +91,7 @@
                     </form>
                 </th:block>
 
-                <!-- 終了(CLOSED)の場合 -> 再公開 -->
+                <!--/* 終了(CLOSED)の場合 -> 再公開 */-->
                 <th:block th:if="${survey.status.name() == 'CLOSED'}">
                     <form th:action="@{/admin/survey/status/{id}(id=${survey.surveyId})}" method="post">
                         <input type="hidden" name="status" value="PUBLISHED">
@@ -100,8 +101,9 @@
                     </form>
                 </th:block>
 
-                <!-- 対象グループ設定 -->
-                <button type="button" class="btn btn-info text-white" data-bs-toggle="modal" data-bs-target="#targetGroupModal">
+                <!--/* 対象グループ設定 */-->
+                <button type="button" class="btn btn-info text-white" data-bs-toggle="modal"
+                    data-bs-target="#targetGroupModal">
                     対象グループ設定
                 </button>
             </div>
@@ -110,47 +112,51 @@
         <hr>
         <h3>アンケート内容（プレビュー）</h3>
         <div class="survey-preview">
-        <div th:each="question, stat : ${survey.questions}" class="card mb-3 p-3">
-            <div class="d-flex align-items-start" style="font-weight: bold; margin-bottom: 10px;">
-                <h5 class="me-2 mb-0" style="white-space: nowrap;" th:text="'Q' + ${stat.count} + '.'">Q1.</h5>
-                <span th:if="${question.required}" class="badge bg-danger me-2" style="white-space: nowrap;">必須</span>
-                <span th:text="${question.text}" style="white-space: pre-wrap;">設問文</span>
-            </div>
-            <div>
-                <!-- 設問タイプ(TEXT, RADIO, CHECKBOX)によって出し分け -->
-                <div th:if="${question.type.name() == 'TEXT'}">
-                    <input type="text" class="form-control" placeholder="回答入力欄" disabled style="width: 50%;">
+            <div th:each="question, stat : ${survey.questions}" class="card mb-3 p-3">
+                <div class="d-flex align-items-start" style="font-weight: bold; margin-bottom: 10px;">
+                    <h5 class="me-2 mb-0" style="white-space: nowrap;" th:text="'Q' + ${stat.count} + '.'">Q1.</h5>
+                    <span th:if="${question.required}" class="badge bg-danger me-2"
+                        style="white-space: nowrap;">必須</span>
+                    <span th:text="${question.text}" style="white-space: pre-wrap;">設問文</span>
                 </div>
+                <div>
+                    <!--/* 設問タイプ(TEXT, RADIO, CHECKBOX)によって出し分け */-->
+                    <div th:if="${question.type.name() == 'TEXT'}">
+                        <input type="text" class="form-control" placeholder="回答入力欄" disabled style="width: 50%;">
+                    </div>
 
-                <div th:if="${question.type.name() == 'RADIO'}" class="ms-3 p-3 border rounded bg-body-tertiary">
-                    <div class="form-check" th:each="item : ${question.answerOption.items}">
-                        <input type="radio" class="form-check-input" disabled>
-                        <label class="form-check-label" th:text="${item.itemText}">選択肢</label>
+                    <div th:if="${question.type.name() == 'RADIO'}" class="ms-3 p-3 border rounded bg-body-tertiary">
+                        <div class="form-check" th:each="item : ${question.answerOption.items}">
+                            <input type="radio" class="form-check-input" disabled>
+                            <label class="form-check-label" th:text="${item.itemText}">選択肢</label>
+                        </div>
+                    </div>
+
+                    <div th:if="${question.type.name() == 'CHECKBOX'}" class="ms-3 p-3 border rounded bg-body-tertiary">
+                        <div class="form-check" th:each="item : ${question.answerOption.items}">
+                            <input type="checkbox" class="form-check-input" disabled>
+                            <label class="form-check-label" th:text="${item.itemText}">選択肢</label>
+                        </div>
                     </div>
                 </div>
-
-                <div th:if="${question.type.name() == 'CHECKBOX'}" class="ms-3 p-3 border rounded bg-body-tertiary">
-                    <div class="form-check" th:each="item : ${question.answerOption.items}">
-                        <input type="checkbox" class="form-check-input" disabled>
-                        <label class="form-check-label" th:text="${item.itemText}">選択肢</label>
-                    </div>
-                </div>
             </div>
-        </div>
         </div>
 
         <a th:href="@{/admin/survey/edit/{id}(id=${survey.surveyId})}" class="btn btn-primary">編集する</a>
         <a th:href="@{/admin/survey/list}" class="btn btn-outline-secondary">一覧に戻る</a>
 
+        <!--/*/ TODO 回答パターンスナップショットの関係で、複製機能は一時凍結
         <div
             style="margin-top: 50px; border-top: 1px solid #eee; padding-top: 10px; text-align: right; font-size: 0.9em;">
             <span style="color: #666;">その他の操作:</span>
-            <a th:href="@{/admin/survey/copy/{id}(id=${survey.surveyId})}" onclick="return confirm('このアンケートを複製して新規作成しますか？')"
-                style="color: #666;">複製して新規作成</a>
+            <a th:href="@{/admin/survey/copy/{id}(id=${survey.surveyId})}"
+                onclick="return confirm('このアンケートを複製して新規作成しますか？')" style="color: #666;">複製して新規作成</a>
         </div>
+        /*/-->
 
         <!-- 対象グループ設定モーダル -->
-        <div class="modal fade" id="targetGroupModal" tabindex="-1" aria-labelledby="targetGroupModalLabel" aria-hidden="true">
+        <div class="modal fade" id="targetGroupModal" tabindex="-1" aria-labelledby="targetGroupModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <form th:action="@{/admin/survey/target/{id}(id=${survey.surveyId})}" method="post">
@@ -162,9 +168,12 @@
                             <p class="small text-muted">選択したグループのユーザーのみが回答できます。</p>
                             <div class="d-flex flex-wrap gap-2">
                                 <th:block th:each="group : ${userGroups}">
-                                    <input type="checkbox" class="btn-check" name="groupIds" th:id="${'modal_group_' + group.groupId}" th:value="${group.groupId}"
-                                        th:checked="${survey.targetGroups != null and #lists.contains(survey.targetGroups.![groupId], group.groupId)}" autocomplete="off">
-                                    <label class="btn btn-outline-primary" th:for="${'modal_group_' + group.groupId}" th:text="${group.groupName}"></label>
+                                    <input type="checkbox" class="btn-check" name="groupIds"
+                                        th:id="${'modal_group_' + group.groupId}" th:value="${group.groupId}"
+                                        th:checked="${survey.targetGroups != null and #lists.contains(survey.targetGroups.![groupId], group.groupId)}"
+                                        autocomplete="off">
+                                    <label class="btn btn-outline-primary" th:for="${'modal_group_' + group.groupId}"
+                                        th:text="${group.groupName}"></label>
                                 </th:block>
                             </div>
                         </div>

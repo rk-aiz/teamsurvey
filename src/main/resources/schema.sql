@@ -112,7 +112,7 @@ CREATE TABLE answer_pattern_items (
 	answer_pattern_id INTEGER NOT NULL REFERENCES answer_patterns(id) ON DELETE CASCADE,
 	item_text VARCHAR(255) NOT NULL,
     -- 表示順序
-	item_order INTEGER NOT NULL
+	item_order INTEGER NOT NULL,
 	-- スナップショットフラグ
 	is_snapshot BOOLEAN NOT NULL DEFAULT FALSE
 );

@@ -59,10 +59,11 @@ public class SurveyRepositoryImpl implements SurveyRepository {
     }
 
     @Override
-    public void add(Survey survey) {
+    public boolean add(Survey survey) {
+
         // 1. Header保存
         SurveyEntity entity = SurveyEntity.fromModel(survey);
-        this.surveyMapper.insert(entity);
+        boolean ret = this.surveyMapper.insert(entity) > 0;
 
         // 自動採番されたIDをドメインモデルに反映
         survey.setSurveyId(entity.getId());
@@ -70,38 +71,43 @@ public class SurveyRepositoryImpl implements SurveyRepository {
         // 2. Questions保存 (新規作成時も質問があれば保存する)
         Collection<Question> questions = survey.getQuestions();
         if (questions != null) {
-            saveQuestions(entity.getId(), questions);
+            ret &= saveQuestions(entity.getId(), questions);
         }
+
+        return ret;
     }
 
     @Override
-    public void set(Survey survey) {
+    public boolean set(Survey survey) {
         // 1. Headerの更新
         SurveyEntity entity = SurveyEntity.fromModel(survey);
-        this.surveyMapper.update(entity);
+        boolean ret = this.surveyMapper.update(entity) > 0;
 
         if (survey.getQuestions() != null) {
-            saveQuestions(entity.getId(), survey.getQuestions());
+            ret &= saveQuestions(entity.getId(), survey.getQuestions());
         }
+        return ret;
     }
 
     /**
      * 質問リストを保存するヘルパーメソッド
      */
-    private void saveQuestions(Integer surveyId, Collection<Question> questions) {
+    private boolean saveQuestions(Integer surveyId, Collection<Question> questions) {
+        boolean ret = true;
         for (Question q : questions) {
             q.setSurveyId(surveyId); // 親IDをセット
             if (q.getQuestionId() == null) {
-                this.questionRepository.add(q);
+                ret &= this.questionRepository.add(q);
             } else {
-                this.questionRepository.set(q);
+                ret &= this.questionRepository.set(q);
             }
         }
+        return ret;
     }
 
     @Override
-    public void remove(Integer id) {
+    public boolean remove(Integer id) {
         // 子要素の削除はDBの外部キー制約(ON DELETE CASCADE)に任せる
-        this.surveyMapper.delete(id);
+        return this.surveyMapper.delete(id) > 0;
     }
 }

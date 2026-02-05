@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xml:lang="ja"
-    layout:decorate="${#authorization.expression('hasAuthority(''ADMIN'')') ? 'admin/admin_layout' : 'user/user_layout'}">
+    layout:decorate="~{ ${layout} }">
 
 <head>
     <meta charset="UTF-8">

@@ -24,9 +24,9 @@ public interface QuestionMapper {
      */
     List<QuestionEntity> selectBySurveyId(@Param("surveyId") Integer surveyId);
 
-    void insert(QuestionEntity question);
+    int insert(QuestionEntity question);
 
-    void update(QuestionEntity question);
+    int update(QuestionEntity question);
 
-    void delete(@Param("id") Integer id);
+    int delete(@Param("id") Integer id);
 }

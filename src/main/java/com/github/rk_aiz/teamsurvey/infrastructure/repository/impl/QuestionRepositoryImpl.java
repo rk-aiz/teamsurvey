@@ -43,22 +43,25 @@ public class QuestionRepositoryImpl implements QuestionRepository {
     }
 
     @Override
-    public void add(Question question) {
+    public boolean add(Question question) {
         QuestionEntity entity = QuestionEntity.from(question);
-        questionMapper.insert(entity);
+
+        boolean ret = questionMapper.insert(entity) > 0;
         // 自動採番されたIDをドメインモデルに反映
         question.setQuestionId(entity.getId());
+
+        return ret;
     }
 
     @Override
-    public void set(Question question) {
+    public boolean set(Question question) {
         QuestionEntity entity = QuestionEntity.from(question);
-        questionMapper.update(entity);
+        return this.questionMapper.update(entity) > 0;
     }
 
     @Override
-    public void remove(Integer id) {
-        questionMapper.delete(id);
+    public boolean remove(Integer id) {
+        return this.questionMapper.delete(id) > 0;
     }
 
     private Question convertWithAnswerOption(QuestionEntity entity) {

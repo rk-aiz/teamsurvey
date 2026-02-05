@@ -8,8 +8,12 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.github.rk_aiz.teamsurvey.domain.exception.ServiceRuleException;
+import com.github.rk_aiz.teamsurvey.domain.model.AnswerOption;
 import com.github.rk_aiz.teamsurvey.domain.model.Response;
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
+import com.github.rk_aiz.teamsurvey.domain.model.question.SingleChoiceQuestion;
+import com.github.rk_aiz.teamsurvey.domain.service.AnswerOptionService;
 import com.github.rk_aiz.teamsurvey.domain.service.QuestionService;
 import com.github.rk_aiz.teamsurvey.domain.service.ResponseService;
 import com.github.rk_aiz.teamsurvey.domain.service.SurveyService;
@@ -27,6 +31,7 @@ public class SurveyServiceImpl implements SurveyService {
     private final SurveyRepository surveyRepository;
     private final ResponseService responseService;
     private final QuestionService questionService;
+    private final AnswerOptionService answerOptionService;
 
     /**
      * アンケート一覧を取得します。
@@ -99,19 +104,53 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
-    public boolean tryChangeStatusById(Integer id, SurveyStatus status) throws IllegalArgumentException {
+    public boolean tryChangeStatusById(Integer id, SurveyStatus newStatus) {
 
         Survey survey = this.findSurveyById(id);
 
-        // 公開(PUBLISHED)への変更時のみ、整合性チェックを行う
-        if (status == SurveyStatus.PUBLISHED && !survey.canPublish()) {
-            throw new IllegalArgumentException("設問に不備があるためステータスを公開に変更できません。");
+        // ステータス変更整合性チェック
+        switch (newStatus) {
+            case DRAFT -> {
+                // 修正: 「新しいステータス」ではなく「現在のステータス」をチェックする
+                if (survey.getStatus().isAtLeast(SurveyStatus.PUBLISHED)) {
+                    throw new ServiceRuleException("公開済みのアンケートを下書きに変更できません。");
+                }
+            }
+            case PUBLISHED -> {
+                if (!survey.canPublish()) {
+                    throw new ServiceRuleException("設問に不備があるためステータスを公開に変更できません。");
+                }
+
+                // 回答パターンをスナップショットに変更
+                survey.getQuestions().stream().forEach(q -> {
+                    if (q instanceof SingleChoiceQuestion scq) {
+                        AnswerOption answerOption = scq.getAnswerOption();
+                        Integer newId = answerOptionService.createSnapshot(answerOption.getAnswerOptionId());
+                        answerOption.setAnswerOptionId(newId);
+                    }
+                });
+            }
+            case SUSPENDED -> {
+                if (survey.getStatus() != SurveyStatus.PUBLISHED) {
+                    throw new ServiceRuleException("アンケートを一時停止状態に変更できません。");
+                }
+            }
+            case CLOSED -> {
+                if (!survey.getStatus().canChangeToClose()) {
+                    throw new ServiceRuleException("アンケートを終了状態に変更できません。");
+                }
+            }
+            case DELETED -> {
+                // 修正: 「現在のステータス」が終了済みかどうかをチェックする
+                if (!survey.getStatus().isAtLeast(SurveyStatus.CLOSED)) {
+                    throw new ServiceRuleException("アンケート削除前に、終了に変更してください");
+                }
+            }
+            default -> throw new IllegalArgumentException("Unexpected value: " + newStatus);
         }
 
-        survey.setStatus(status);
-        surveyRepository.set(survey);
-
-        return true;
+        survey.setStatus(newStatus);
+        return surveyRepository.set(survey);
     }
 
     @Override
@@ -139,18 +178,10 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
-    public List<Survey> findAvailableSurveys() {
-        return this.surveyRepository.findAll()
-                .stream()
-                .filter(survey -> survey.getStatus() != SurveyStatus.DRAFT)
-                .toList();
-    }
-    
-    @Override
     public Survey getEmptySurvey() {
-    	return Survey.builder()
-    			.status(SurveyStatus.DRAFT)
-    			.resultVisibility(ResultVisibility.ADMIN_ONLY)
-    			.build();
+        return Survey.builder()
+                .status(SurveyStatus.DRAFT)
+                .resultVisibility(ResultVisibility.ADMIN_ONLY)
+                .build();
     }
 }
