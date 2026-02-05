@@ -81,17 +81,16 @@ public class Survey {
      */
     public Survey toDraftCopy() {
         Survey copy = Survey.builder()
-                .title(this.getTitle() + " (コピー)")
-                .resultVisibility(this.getResultVisibility())
+                .title(getTitle() + " (コピー)")
+                .resultVisibility(getResultVisibility())
                 .status(SurveyStatus.DRAFT) // 下書きに戻す
                 .build();
 
         // 質問のコピー
-        for (Question q : this.getQuestions()) {
-            copy.getQuestions().add(q.createCopy());
-        }
+        copy.setQuestions(getQuestions());
+        
         // 対象グループのコピー
-        copy.setTargetGroups(new ArrayList<>(this.getTargetGroups()));
+        copy.setTargetGroups(getTargetGroups());
         return copy;
     }
 

@@ -38,4 +38,6 @@ public interface SurveyService {
     List<Survey> findAvailableSurveys();
 
     List<Survey> findAvailableSurveysByUsername(String username);
+
+	Survey getEmptySurvey();
 }

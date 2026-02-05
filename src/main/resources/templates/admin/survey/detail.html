@@ -70,11 +70,15 @@
             <h4 style="margin-top: 0;">ステータス変更</h4>
             <div style="display: flex; gap: 10px;">
 
-                <!-- 下書き(DRAFT)の場合 -> 公開ボタン -->
-                <a th:if="${survey.status.name() == 'DRAFT'}"
-                    th:href="@{/admin/survey/publish/{id}(id=${survey.surveyId})}" class="btn btn-success">
-                    公開設定へ
-                </a>
+                <!-- 下書き(DRAFT)の場合 -> 公開 (回答受付) -->
+				<th:block th:if="${survey.status.name() == 'DRAFT'}">
+				    <form th:action="@{/admin/survey/status/{id}(id=${survey.surveyId})}" method="post">
+				        <input type="hidden" name="status" value="PUBLISHED">
+				        <button type="submit" onclick="return confirm('回答受付状態にしますか？')" class="btn btn-success">
+				            公開する（回答受付状態）
+				        </button>
+				    </form>
+				</th:block>
 
                 <!-- 公開中(PUBLISHED)の場合 -> 終了 or 下書き -->
                 <th:block th:if="${survey.status.name() == 'PUBLISHED'}">

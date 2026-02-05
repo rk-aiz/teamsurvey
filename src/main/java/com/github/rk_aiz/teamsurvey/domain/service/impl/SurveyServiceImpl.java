@@ -13,6 +13,7 @@ import com.github.rk_aiz.teamsurvey.domain.model.Survey;
 import com.github.rk_aiz.teamsurvey.domain.service.QuestionService;
 import com.github.rk_aiz.teamsurvey.domain.service.ResponseService;
 import com.github.rk_aiz.teamsurvey.domain.service.SurveyService;
+import com.github.rk_aiz.teamsurvey.domain.type.ResultVisibility;
 import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
 import com.github.rk_aiz.teamsurvey.infrastructure.repository.SurveyRepository;
 
@@ -57,8 +58,7 @@ public class SurveyServiceImpl implements SurveyService {
      */
     @Override
     public Survey findSurveyAsDraftCopy(Integer id) {
-        Survey original = surveyRepository.findById(id);
-        return original.toDraftCopy();
+        return surveyRepository.findById(id).toDraftCopy();
     }
 
     @Override
@@ -144,5 +144,13 @@ public class SurveyServiceImpl implements SurveyService {
                 .stream()
                 .filter(survey -> survey.getStatus() != SurveyStatus.DRAFT)
                 .toList();
+    }
+    
+    @Override
+    public Survey getEmptySurvey() {
+    	return Survey.builder()
+    			.status(SurveyStatus.DRAFT)
+    			.resultVisibility(ResultVisibility.ADMIN_ONLY)
+    			.build();
     }
 }

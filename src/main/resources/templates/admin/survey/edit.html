@@ -188,8 +188,16 @@
         </div>
 
         <br>
-        <a th:href="@{/admin/survey/detail/{id}(id=${surveyForm.surveyId})}" class="btn btn-link">詳細に戻る</a>
+		
+		<div th:if="${surveyForm.isNew}">
+		    <a th:href="@{/admin/survey/list}" class="btn btn-link" >一覧に戻る</a>
+		</div>
+		<div th:unless="${surveyForm.isNew}">
+        	<a th:href="@{/admin/survey/detail/{id}(id=${surveyForm.surveyId})}" class="btn btn-link" >詳細に戻る</a>
+		</div>
 
+
+		
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 const userGroups = document.querySelectorAll('input[name="targetGroups"]');

@@ -1,13 +1,9 @@
 package com.github.rk_aiz.teamsurvey.application.controller.admin.survey;
 
-import java.time.LocalDateTime;
-
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.SmartValidator;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Controller
-@RequestMapping("/admin")
+@RequestMapping("/admin/survey")
 @RequiredArgsConstructor
 public class SurveyController {
 
@@ -46,14 +42,10 @@ public class SurveyController {
     private final AnswerOptionService answerOptionService;
     private final SmartValidator validator;
 
-    /** デフォルトの締め切り日数（application.propertiesから取得）TODO サービスに移動 */
-    @Value("${app.survey.default-deadline-days:30}")
-    private int defaultDeadlineDays;
-
     /**
      * アンケートの一覧画面を表示します
      */
-    @GetMapping("/survey")
+    @GetMapping
     public String survey() {
         return "redirect:/admin/survey/list";
     }
@@ -61,7 +53,7 @@ public class SurveyController {
     /**
      * アンケートの一覧画面を表示します
      */
-    @GetMapping("/survey/list")
+    @GetMapping("/list")
     public String list(@RequestParam(value = "id", required = false) Integer id, Model model) {
 
         // 全件取得（中央カラム用）
@@ -86,7 +78,7 @@ public class SurveyController {
     /**
      * 詳細画面を表示します（設問一覧も含む）
      */
-    @GetMapping("/survey/detail/{id}")
+    @GetMapping("/detail/{id}")
     public String detail(@PathVariable("id") Integer id, Model model) {
 
         // アンケート情報の取得
@@ -100,7 +92,7 @@ public class SurveyController {
     /**
      * 編集画面を表示します（設問一覧も含む）
      */
-    @GetMapping("/survey/edit/{id}")
+    @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Integer id, Model model) {
 
         // Modelに追加 <- Formに変換 <- アンケート情報(エンティティ)の取得 <- id
@@ -116,7 +108,7 @@ public class SurveyController {
     /**
      * アンケートをコピーして新規作成画面を表示します
      */
-    @GetMapping("/survey/copy/{id}")
+    @GetMapping("/copy/{id}")
     public String copy(@PathVariable("id") Integer id, Model model) {
 
         // アンケート情報の取得 -> クローン(ステータスはDRAFT) -> Formに変換
@@ -130,45 +122,28 @@ public class SurveyController {
     }
 
     /**
-     * 新規登録画面を表示します
+     * 新規作成
+     * 空のFormを作成し、編集画面へ遷移します
      */
-    @GetMapping("/survey/new")
-    public String form(
-            @ModelAttribute SurveyForm form,
-            Model model) {
-        form.setNew(true);
-        // デフォルトの締め切り日時を設定（現在日時 + 設定された日数）
-        form.setDeadline(LocalDateTime.now().plusDays(defaultDeadlineDays));
-        return "admin/survey/new";
-    }
-
-    /**
-     * 新規作成(Step1)からの登録処理
-     * タイトル等を保存し、編集画面(Step2)へ遷移します
-     */
-    @PostMapping("/survey/create")
+    @GetMapping("/new")
     public String create(
-            @Validated @ModelAttribute SurveyForm form,
-            BindingResult bindingResult,
-            RedirectAttributes redirectAttributes) {
+            Model model) {
 
-        // バリデーションエラー時は新規作成画面に戻る
-        if (bindingResult.hasErrors()) {
-            return "admin/survey/new";
-        }
+        // アンケート情報の取得 -> クローン(ステータスはDRAFT) -> Formに変換
+        model.addAttribute("surveyForm", SurveyForm.from(
+                surveyService.getEmptySurvey(), true));
 
-        // 保存処理 (IDが発行される)
-        Survey savedSurvey = surveyService.saveSurvey(form.toModel());
+        // 回答パターンの選択肢（ドロップダウン用）
+        model.addAttribute("answerOptions", answerOptionService.findAll());
 
-        redirectAttributes.addFlashAttribute(MESSAGE, "下書きを作成しました。続けて設問を編集してください。");
         // 編集画面へリダイレクト
-        return "redirect:/admin/survey/edit/" + savedSurvey.getSurveyId();
+        return "/admin/survey/edit";
     }
 
     /**
      * Survey登録を実行します
      */
-    @PostMapping("/survey/save")
+    @PostMapping("/save")
     public String save(
             @ModelAttribute SurveyForm form,
             BindingResult bindingResult,
@@ -183,11 +158,11 @@ public class SurveyController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("answerOptions", answerOptionService.findAll());
-            return "admin/survey/edit/";
+            return "admin/survey/edit";
         }
 
         // サービス層で保存処理（新規・更新・セキュリティチェック・削除同期すべて含む）
-        surveyService.saveSurvey(form.toModel());
+        Survey newSurvey = surveyService.saveSurvey(form.toModel());
 
         if (form.isNew()) {
             redirectAttributes.addFlashAttribute(MESSAGE, "新しいアンケートが追加されました");
@@ -195,14 +170,14 @@ public class SurveyController {
             redirectAttributes.addFlashAttribute(MESSAGE, "アンケートを更新しました");
         }
         // PRGパターン
-        return "redirect:/admin/survey/detail/" + form.getSurveyId();
+        return "redirect:/admin/survey/detail/" + newSurvey.getSurveyId();
     }
 
     /**
      * 設問追加ボタン押下時の処理
      * params = "addQuestion" でボタンのname属性を判定します
      */
-    @PostMapping(value = "/survey/save", params = "addQuestion")
+    @PostMapping(value = "/save", params = "addQuestion")
     public String addQuestion(@ModelAttribute SurveyForm form, Model model) {
         form.getQuestionForms().add(new QuestionForm());
         model.addAttribute("answerOptions", answerOptionService.findAll());
@@ -213,7 +188,7 @@ public class SurveyController {
      * 設問削除ボタン押下時の処理
      * params = "removeQuestion" でボタンのname属性を判定します
      */
-    @PostMapping(value = "/survey/save", params = "removeQuestion")
+    @PostMapping(value = "/save", params = "removeQuestion")
     public String removeQuestion(@ModelAttribute SurveyForm form, @RequestParam("removeQuestion") int index,
             Model model) {
         // 指定されたインデックスの質問をリストから削除
@@ -227,7 +202,7 @@ public class SurveyController {
     /**
      * ステータスを変更します
      */
-    @PostMapping("/survey/status/{id}")
+    @PostMapping("/status/{id}")
     public String changeStatus(
             @PathVariable("id") Integer id,
             @RequestParam("status") SurveyStatus status,
@@ -244,7 +219,7 @@ public class SurveyController {
         return "redirect:/admin/survey/detail/" + id;
     }
 
-    @GetMapping("/survey/target/")
+    @GetMapping("/target/")
     public String getMethodName(@RequestParam String param) {
         return new String();
     }
