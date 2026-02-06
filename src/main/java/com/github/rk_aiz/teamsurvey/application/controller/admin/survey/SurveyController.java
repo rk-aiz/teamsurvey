@@ -232,7 +232,6 @@ public class SurveyController {
 
     /**
      * 対象グループのみを更新します（詳細画面からの呼び出し）
-     * TODO : 機能していないようなので確認
      */
     @PostMapping("/target/{id}")
     public String updateTargetGroups(
@@ -240,19 +239,7 @@ public class SurveyController {
             @RequestParam(value = "groupIds", required = false) List<Integer> groupIds,
             RedirectAttributes redirectAttributes) {
 
-        Survey survey = surveyService.findSurveyById(id);
-        List<UserGroup> allGroups = userGroupService.findAll();
-        List<UserGroup> newTargetGroups = new ArrayList<>();
-
-        if (groupIds != null) {
-            for (UserGroup group : allGroups) {
-                if (groupIds.contains(group.getGroupId())) {
-                    newTargetGroups.add(group);
-                }
-            }
-        }
-        survey.setTargetGroups(newTargetGroups);
-        surveyService.saveSurvey(survey);
+        surveyService.updateTargetGroups(id, groupIds);
 
         redirectAttributes.addFlashAttribute(MESSAGE, "対象グループを更新しました");
         return "redirect:/admin/survey/detail/" + id;

@@ -31,8 +31,18 @@ public interface SurveyTargetGroupMapper {
     int insert(@Param("surveyId") Integer surveyId, @Param("groupId") Integer groupId);
 
     /**
+     * バルクインサート
+     */
+    int insertBulk(@Param("surveyId") Integer surveyId, @Param("groupIds") List<Integer> groupIds);
+
+    /**
      * 「アンケートと対象グループの紐づけ情報」を削除します
      */
     int delete(@Param("surveyId") Integer surveyId, @Param("groupId") Integer groupId);
+
+    /**
+     * 「指定されたアンケートIDのグループの紐づけ情報」を削除します
+     */
+    int deleteBySurveyId(@Param("surveyId") Integer surveyId);
 
 }

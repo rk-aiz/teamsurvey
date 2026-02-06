@@ -1,5 +1,6 @@
 package com.github.rk_aiz.teamsurvey.domain.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -12,14 +13,17 @@ import com.github.rk_aiz.teamsurvey.domain.exception.ServiceRuleException;
 import com.github.rk_aiz.teamsurvey.domain.model.AnswerOption;
 import com.github.rk_aiz.teamsurvey.domain.model.Response;
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
+import com.github.rk_aiz.teamsurvey.domain.model.UserGroup;
 import com.github.rk_aiz.teamsurvey.domain.model.question.SingleChoiceQuestion;
 import com.github.rk_aiz.teamsurvey.domain.service.AnswerOptionService;
 import com.github.rk_aiz.teamsurvey.domain.service.QuestionService;
 import com.github.rk_aiz.teamsurvey.domain.service.ResponseService;
 import com.github.rk_aiz.teamsurvey.domain.service.SurveyService;
+import com.github.rk_aiz.teamsurvey.domain.service.UserGroupService;
 import com.github.rk_aiz.teamsurvey.domain.type.ResultVisibility;
 import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
 import com.github.rk_aiz.teamsurvey.infrastructure.repository.SurveyRepository;
+import com.github.rk_aiz.teamsurvey.infrastructure.repository.SurveyTargetGroupRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,6 +36,8 @@ public class SurveyServiceImpl implements SurveyService {
     private final ResponseService responseService;
     private final QuestionService questionService;
     private final AnswerOptionService answerOptionService;
+    private final SurveyTargetGroupRepository surveyTargetGroupRepository;
+    private final UserGroupService userGroupService;
 
     /**
      * アンケート一覧を取得します。
@@ -183,5 +189,29 @@ public class SurveyServiceImpl implements SurveyService {
                 .status(SurveyStatus.DRAFT)
                 .resultVisibility(ResultVisibility.ADMIN_ONLY)
                 .build();
+    }
+
+    @Override
+    public void updateTargetGroups(Integer surveyId, List<Integer> groupIds) {
+        
+        // 1. 既存の紐付けを全削除
+        surveyTargetGroupRepository.removeBySurveyId(surveyId);
+
+        if (groupIds == null || groupIds.isEmpty()) {
+            return;
+        }
+
+        // 2. バルクインサートは安全のため分割して登録 (Defensive Programming)
+        // DBのパラメータ数上限やパケットサイズ制限を回避するため、一定件数ごとに分割してINSERTする
+        // ※これは参考用(まずバッチサイズを超えることはない) 
+        final int BATCH_SIZE = 1000;
+
+        for (int i = 0; i < groupIds.size(); i += BATCH_SIZE) {
+            int end = Math.min(groupIds.size(), i + BATCH_SIZE);
+            List<Integer> batchList = groupIds.subList(i, end);
+            surveyTargetGroupRepository.add(surveyId, batchList);
+        }
+
+        return;
     }
 }

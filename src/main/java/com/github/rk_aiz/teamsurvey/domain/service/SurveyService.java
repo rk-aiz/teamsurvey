@@ -38,4 +38,6 @@ public interface SurveyService {
     List<Survey> findAvailableSurveysByUsername(String username);
 
     Survey getEmptySurvey();
+
+    void updateTargetGroups(Integer surveyId, List<Integer> groupIds);
 }

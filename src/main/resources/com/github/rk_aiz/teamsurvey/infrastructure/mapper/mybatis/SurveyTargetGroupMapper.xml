@@ -27,10 +27,25 @@
         VALUES (#{surveyId}, #{groupId})
     </insert>
 
+	<!--  新しい「アンケートと対象グループの紐づけ情報」を一括登録 -->
+    <insert id="insertBulk">
+        INSERT INTO survey_target_groups (survey_id, group_id)
+        VALUES
+        <foreach collection="groupIds" item="groupId" separator=",">
+            (#{surveyId}, #{groupId})
+        </foreach>
+    </insert>
+
 	<!--  「アンケートと対象グループの紐づけ情報」を削除します -->
     <delete id="delete">
         DELETE FROM survey_target_groups
         WHERE survey_id = #{surveyId} AND group_id = #{groupId}
+    </delete>
+
+    <!--  指定されたアンケートIDに紐づくグループを全削除します -->
+    <delete id="deleteBySurveyId">
+        DELETE FROM survey_target_groups
+        WHERE survey_id = #{surveyId}
     </delete>
 
 </mapper>

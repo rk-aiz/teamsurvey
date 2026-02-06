@@ -31,10 +31,20 @@ public class SurveyTargetGroupRepositoryImpl implements SurveyTargetGroupReposit
     public boolean add(Integer surveyId, Integer groupId) {
         return surveyTargetGroupMapper.insert(surveyId, groupId) > 0;
     }
+    
+    @Override
+    public boolean add(Integer surveyId, List<Integer> groupIds) {
+        return surveyTargetGroupMapper.insertBulk(surveyId, groupIds) > 0;
+    }
 
     @Override
     public boolean remove(Integer surveyId, Integer groupId) {
         return surveyTargetGroupMapper.delete(surveyId, groupId) > 0;
+    }
+
+    @Override
+    public boolean removeBySurveyId(Integer surveyId) {
+        return surveyTargetGroupMapper.deleteBySurveyId(surveyId) > 0;
     }
 
 }

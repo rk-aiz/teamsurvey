@@ -16,8 +16,19 @@ public interface SurveyTargetGroupRepository {
      */
     boolean add(Integer surveyId, Integer groupId);
 
+    /*
+     * バルクインサート
+     */
+    boolean add(Integer surveyId, List<Integer> groupIds);
+
     /**
      * 「アンケートとグループの紐づけ情報」を削除します
      */
     boolean remove(Integer surveyId, Integer groupId);
+
+    /**
+     * 「指定されたアンケートIDのグループの紐づけ情報」を削除します
+     */
+    
+    boolean removeBySurveyId(Integer surveyId);
 }
