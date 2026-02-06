@@ -1,8 +1,7 @@
 package com.github.rk_aiz.teamsurvey.domain.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -13,7 +12,7 @@ import com.github.rk_aiz.teamsurvey.domain.exception.ServiceRuleException;
 import com.github.rk_aiz.teamsurvey.domain.model.AnswerOption;
 import com.github.rk_aiz.teamsurvey.domain.model.Response;
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
-import com.github.rk_aiz.teamsurvey.domain.model.UserGroup;
+import com.github.rk_aiz.teamsurvey.domain.model.question.Question;
 import com.github.rk_aiz.teamsurvey.domain.model.question.SingleChoiceQuestion;
 import com.github.rk_aiz.teamsurvey.domain.service.AnswerOptionService;
 import com.github.rk_aiz.teamsurvey.domain.service.QuestionService;
@@ -74,7 +73,8 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public Survey saveSurvey(Survey survey) {
-        if (survey.getSurveyId() == null) {
+    	
+        if (survey.getId() == null) {
             // 新規登録
             surveyRepository.add(survey);
             return survey;
@@ -82,30 +82,22 @@ public class SurveyServiceImpl implements SurveyService {
 
         // 更新処理
         // DB上の現在の状態を取得
-        Survey currentDbSurvey = this.findSurveyById(survey.getSurveyId());
+        Survey currentDbSurvey = this.findSurveyById(survey.getId());
+        
+        if (currentDbSurvey == null) throw new IllegalArgumentException(
+        		"更新対象のアンケートが見つかりません");
+        
+        survey.setStatus(currentDbSurvey.getStatus());
+        surveyRepository.updateHeader(survey);
 
-        // DB上のステータスがDRAFT以外の場合、設問構成変更を許可しない
-        if (currentDbSurvey.getStatus() != SurveyStatus.DRAFT) {
-            // 変更を無視し、DBの値を強制的にセット
-            survey.setQuestions(currentDbSurvey.getQuestions());
-        } else {
-            // DRAFTの場合のみ、設問の構成変更を行う
-            Set<Integer> questionIds = survey.getQuestions() == null ? Set.of()
-                    : survey.getQuestions().stream()
-                            .map(q -> q.getQuestionId())
-                            .filter(Objects::nonNull)
-                            .collect(Collectors.toSet());
-
-            // DBに存在するがフォームに含まれていない質問を削除
-            if (currentDbSurvey.getQuestions() != null) {
-                currentDbSurvey.getQuestions().stream()
-                        .map(q -> q.getQuestionId())
-                        .filter(id -> !questionIds.contains(id))
-                        .forEach(questionService::removeQuestion);
-            }
+        // DB上のステータスがDRAFTの場合のみ、設問構成を更新
+        if (currentDbSurvey.getStatus() == SurveyStatus.DRAFT) {
+        	questionService.removeQuestionBySurveyId(survey.getId());
+        	for (Question question : survey.getQuestions()) {
+        		Optional.ofNullable(question).ifPresent(questionService::saveQuestion);
+        	}
         }
-
-        surveyRepository.set(survey);
+        
         return survey;
     }
 
@@ -156,7 +148,7 @@ public class SurveyServiceImpl implements SurveyService {
         }
 
         survey.setStatus(newStatus);
-        return surveyRepository.set(survey);
+        return surveyRepository.updateHeader(survey);
     }
 
     @Override
@@ -174,7 +166,7 @@ public class SurveyServiceImpl implements SurveyService {
         return this.findSurveysByUsername(username)
                 .stream()
                 .filter(survey -> survey.getStatus() == SurveyStatus.PUBLISHED
-                        && !answeredSurveyIds.contains(survey.getSurveyId()))
+                        && !answeredSurveyIds.contains(survey.getId()))
                 .toList();
     }
 

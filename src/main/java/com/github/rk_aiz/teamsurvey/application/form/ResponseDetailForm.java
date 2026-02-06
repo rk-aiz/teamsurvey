@@ -29,7 +29,7 @@ public class ResponseDetailForm {
 
     public static ResponseDetailForm fromQuestion(Question question) {
         ResponseDetailForm form = new ResponseDetailForm();
-        form.setQuestionId(question.getQuestionId());
+        form.setQuestionId(question.getId());
         form.setCheckboxOptionIds(new ArrayList<>());
         return form;
     }

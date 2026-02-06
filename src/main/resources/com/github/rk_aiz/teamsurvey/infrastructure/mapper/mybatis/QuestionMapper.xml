@@ -69,5 +69,10 @@
         DELETE FROM questions 
         WHERE id = #{id} 
     </delete>
+    
+    <delete id="deleteBySurveyId">
+        DELETE FROM questions 
+        WHERE surveyId = #{surveyId} 
+    </delete>
 
 </mapper>

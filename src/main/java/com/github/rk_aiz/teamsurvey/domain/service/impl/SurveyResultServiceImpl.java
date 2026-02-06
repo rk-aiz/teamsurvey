@@ -86,14 +86,14 @@ public class SurveyResultServiceImpl implements SurveyResultService {
             // 回答詳細をMap化 (QuestionId -> RawData)
             Map<Integer, String> answerMap = r.getResponseDetails().stream()
                     .collect(Collectors.toMap(
-                            d -> d.getQuestion().getQuestionId(),
+                            d -> d.getQuestion().getId(),
                             ResponseDetail::getRawData,
                             (v1, v2) -> v1 // 重複時は最初を採用
                     ));
 
             for (Question q : questions) {
                 sb.append(",");
-                String raw = answerMap.get(q.getQuestionId());
+                String raw = answerMap.get(q.getId());
                 if (raw != null) {
                     // 選択肢IDが含まれる場合(数値のみ、またはカンマ区切りの数値)はテキストに変換
                     // 自由記述でも数字のみの場合があるが、optionMapにヒットしなければそのまま出力されるのでOK

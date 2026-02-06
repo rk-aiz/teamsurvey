@@ -3,8 +3,8 @@ package com.github.rk_aiz.teamsurvey.infrastructure.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.rk_aiz.teamsurvey.domain.model.ResponseDetail;
 import com.github.rk_aiz.teamsurvey.domain.model.Response;
+import com.github.rk_aiz.teamsurvey.domain.model.ResponseDetail;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,7 +36,7 @@ public class ResponseDetailEntity {
                     new ResponseDetailEntity(
                         detail.getResponseDetailId(),
                         response.getResponseId(),
-                        detail.getQuestion().getQuestionId(),
+                        detail.getQuestion().getId(),
                         null,
                         detail.getRawData()
                     ));
@@ -46,7 +46,7 @@ public class ResponseDetailEntity {
                     new ResponseDetailEntity(
                         detail.getResponseDetailId(),
                         response.getResponseId(),
-                        detail.getQuestion().getQuestionId(),
+                        detail.getQuestion().getId(),
                         detail.getSingleChoiceResponse(),
                         null
                     )
@@ -58,7 +58,7 @@ public class ResponseDetailEntity {
                         new ResponseDetailEntity(
                             detail.getResponseDetailId(),
                             response.getResponseId(),
-                            detail.getQuestion().getQuestionId(),
+                            detail.getQuestion().getId(),
                             optionId,
                             null
                         )

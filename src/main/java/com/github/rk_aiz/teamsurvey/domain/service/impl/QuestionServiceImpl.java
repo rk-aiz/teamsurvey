@@ -34,18 +34,22 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public void saveQuestion(Question question) {
-
-        if (question.getQuestionId() == null) {
-            questionRepository.set(question);
+    public boolean saveQuestion(Question question) {
+        if (question.getId() == null) {
+            return questionRepository.set(question);
         } else {
-            questionRepository.add(question);
+            return questionRepository.add(question);
         }
     }
 
     @Override
-    public void removeQuestion(Integer id) {
-        questionRepository.remove(id);
+    public boolean removeQuestion(Integer id) {
+        return questionRepository.remove(id);
+    }
+    
+    @Override
+    public boolean removeQuestionBySurveyId(Integer surveyId) {
+    	return questionRepository.removeBySurveyId(surveyId);
     }
 
 }

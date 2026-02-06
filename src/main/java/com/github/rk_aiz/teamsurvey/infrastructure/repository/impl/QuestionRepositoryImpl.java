@@ -2,6 +2,7 @@ package com.github.rk_aiz.teamsurvey.infrastructure.repository.impl;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.github.rk_aiz.teamsurvey.domain.model.question.MultiChoiceQuestion;
@@ -48,7 +49,7 @@ public class QuestionRepositoryImpl implements QuestionRepository {
 
         boolean ret = questionMapper.insert(entity) > 0;
         // 自動採番されたIDをドメインモデルに反映
-        question.setQuestionId(entity.getId());
+        question.setId(entity.getId());
 
         return ret;
     }
@@ -81,4 +82,9 @@ public class QuestionRepositoryImpl implements QuestionRepository {
         return question;
     }
 
+    @Override
+    public boolean removeBySurveyId(@Param("surveyId") Integer surveyId) {
+    	return this.questionMapper.deleteBySurveyId(surveyId) > 0;
+    }
+    
 }

@@ -2,6 +2,8 @@ package com.github.rk_aiz.teamsurvey.infrastructure.repository;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.github.rk_aiz.teamsurvey.domain.model.question.Question;
 import com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.QuestionMapper;
 
@@ -21,22 +23,27 @@ public interface QuestionRepository {
     Question findById(Integer id);
 
     /**
-     * 指定されたアンケートIDに紐づく質問一覧を取得します
+     * 指定されたアンケートIDに紐づく設問一覧を取得します
      */
     List<Question> findBySurveyId(Integer surveyId);
 
     /**
-     * 新しい質問を登録します
+     * 新しい設問を登録します
      */
     boolean add(Question question);
 
     /**
-     * 質問を更新します
+     * 設問を更新します
      */
     boolean set(Question question);
 
     /**
-     * 質問を削除します
+     * 設問を削除します
      */
     boolean remove(Integer id);
+    
+    /**
+     * 指定されたアンケートIDに紐づく設問を削除します
+     */
+    boolean removeBySurveyId(@Param("surveyId") Integer surveyId);
 }

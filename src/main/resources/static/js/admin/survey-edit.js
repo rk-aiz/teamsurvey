@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         if (selectedCount === 0) {
-            displayContainer.innerHTML = '<span class="text-muted small">未選択（制限なし）</span>';
+            displayContainer.innerHTML = '<span class="text-muted small">未選択</span>';
         }
     }
 

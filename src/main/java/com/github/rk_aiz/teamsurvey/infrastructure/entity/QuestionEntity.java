@@ -48,7 +48,6 @@ public class QuestionEntity {
         };
 
         BeanUtils.copyProperties(this, question);
-        question.setQuestionId(this.id);
         return question;
     }
 
@@ -58,7 +57,6 @@ public class QuestionEntity {
     public static QuestionEntity from(Question model) {
         QuestionEntity entity = new QuestionEntity();
         BeanUtils.copyProperties(model, entity);
-        entity.setId(model.getQuestionId());
 
         switch (model.getType()) {
             case RADIO, CHECKBOX -> {

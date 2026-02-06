@@ -34,7 +34,7 @@ public interface SurveyRepository {
     /**
      * 質問を更新します
      */
-    boolean set(Survey survey);
+    boolean updateHeader(Survey survey);
 
     /**
      * 質問を削除します

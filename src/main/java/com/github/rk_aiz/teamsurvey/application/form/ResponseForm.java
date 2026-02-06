@@ -31,7 +31,7 @@ public class ResponseForm {
                 .map(ResponseDetailForm::fromQuestion)
                 .toList();
 
-        form.setSurveyId(survey.getSurveyId());
+        form.setSurveyId(survey.getId());
         form.setUsername(loginUser.getUsername());
         form.setDetails(details);
 

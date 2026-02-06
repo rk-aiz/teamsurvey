@@ -16,8 +16,11 @@ public interface QuestionService {
     Question findQuestionById(Integer id);
 
     /** 質問を保存（新規・更新）します */
-    void saveQuestion(Question question);
+    boolean saveQuestion(Question question);
 
     /** 質問を削除します */
-    void removeQuestion(Integer id);
+    boolean removeQuestion(Integer id);
+    
+    /** 指定されたアンケートIDに紐づく質問を削除します */
+    boolean removeQuestionBySurveyId(Integer surveyId);
 }

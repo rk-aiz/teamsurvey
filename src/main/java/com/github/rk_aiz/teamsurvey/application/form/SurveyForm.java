@@ -3,6 +3,12 @@ package com.github.rk_aiz.teamsurvey.application.form;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -11,14 +17,9 @@ import com.github.rk_aiz.teamsurvey.application.validation.CriticalNotNull;
 import com.github.rk_aiz.teamsurvey.application.validation.OnPublishedSurvey;
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
 import com.github.rk_aiz.teamsurvey.domain.model.UserGroup;
-import com.github.rk_aiz.teamsurvey.domain.model.question.Question;
 import com.github.rk_aiz.teamsurvey.domain.type.ResultVisibility;
 import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,7 +35,7 @@ public class SurveyForm {
 
     /** Survey ID */
     @CriticalNotNull(groups = OnPublishedSurvey.class)
-    private Integer surveyId;
+    private Integer id;
 
     /** title */
     @NotBlank(message = "Titleは必須です")
@@ -73,20 +74,9 @@ public class SurveyForm {
 
         form.setNew(isNew);
 
-        // 質問リストの手動マッピング
-        if (model.getQuestions() != null) {
-            List<QuestionForm> questionForms = new ArrayList<>();
-            for (Question question : model.getQuestions()) {
-                QuestionForm qf = new QuestionForm();
-                BeanUtils.copyProperties(question, qf);
-                qf.setId(question.getQuestionId());
-                questionForms.add(qf);
-            }
-            form.setQuestionForms(questionForms);
-        }
-
-        log.info(form.getStatus().toString());
-
+        Optional.ofNullable(model.getQuestions()).ifPresent(questions -> 
+        		form.setQuestionForms(questions.stream().map(QuestionForm::from).toList()));
+        
         return form;
     }
 
@@ -96,21 +86,23 @@ public class SurveyForm {
     public Survey toModel() {
         Survey survey = new Survey();
         // questionsは型が違うため除外してコピー
-        BeanUtils.copyProperties(this, survey, "questions");
-        survey.setSurveyId(this.getSurveyId());
+        BeanUtils.copyProperties(this, survey, "questionForms");
 
-        // QuestionForm -> Question への変換
-        if (this.getQuestionForms() != null) {
-            List<Question> questions = new ArrayList<>();
-            int order = 1;
-            for (QuestionForm qForm : this.getQuestionForms()) {
-                Question q = qForm.toModel();
-                q.setDisplayOrder(order++); // リストの順番通りに番号を振る
-                questions.add(q);
-            }
-            survey.setQuestions(questions);
+        //リストの順番通りにdisplayOrderをセット
+        int order = 1;
+        for (QuestionForm qf : this.getQuestionForms()) {
+        	qf.setDisplayOrder(order++);
         }
-
+        
+        // List<QuestionForm> -> List<Question> へ変換して、セッターに渡す
+        Optional.ofNullable(this.getQuestionForms()).ifPresent(forms ->
+        		survey.setQuestions(
+        				forms.stream()
+        				.map(QuestionForm::toModel)
+        				.filter(Optional::isPresent)
+        				.map(Optional::get)
+        				.toList()));
+        
         return survey;
     }
 }

@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
 public class Survey {
 
     /** 主キー */
-    private Integer surveyId;
+    private Integer id;
 
     /** アンケート名 */
     private String title;
@@ -121,7 +121,7 @@ public class Survey {
         }
         // Mapに変換してセットする
         this.questions = questions.stream()
-                .collect(HashMap::new, (m, q) -> m.put(q.getQuestionId(), q), Map::putAll);
+                .collect(HashMap::new, (m, q) -> m.put(q.getId(), q), Map::putAll);
     }
 
     public void setQuestions(Map<Integer, Question> questions) {

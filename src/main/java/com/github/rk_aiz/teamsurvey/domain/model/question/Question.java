@@ -17,7 +17,7 @@ import lombok.experimental.SuperBuilder;
 public abstract class Question {
 
     /** 設問ID */
-    private Integer questionId;
+    private Integer id;
     /** 対象アンケート */
     private Integer surveyId;
     /** 質問詳細 */

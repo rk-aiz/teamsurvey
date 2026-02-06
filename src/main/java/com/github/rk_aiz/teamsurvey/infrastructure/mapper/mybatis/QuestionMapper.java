@@ -29,4 +29,6 @@ public interface QuestionMapper {
     int update(QuestionEntity question);
 
     int delete(@Param("id") Integer id);
+    
+    int deleteBySurveyId(@Param("surveyId") Integer surveyId);
 }

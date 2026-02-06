@@ -1,8 +1,6 @@
 package com.github.rk_aiz.teamsurvey.application.controller.admin.survey;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,7 +18,6 @@ import com.github.rk_aiz.teamsurvey.application.form.QuestionForm;
 import com.github.rk_aiz.teamsurvey.application.form.SurveyForm;
 import com.github.rk_aiz.teamsurvey.application.validation.SurveyValidationGroup;
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
-import com.github.rk_aiz.teamsurvey.domain.model.UserGroup;
 import com.github.rk_aiz.teamsurvey.domain.service.AnswerOptionService;
 import com.github.rk_aiz.teamsurvey.domain.service.SurveyService;
 import com.github.rk_aiz.teamsurvey.domain.service.UserGroupService;
@@ -154,6 +151,7 @@ public class SurveyController {
     @PostMapping("/save")
     public String save(
             @ModelAttribute SurveyForm form,
+            @RequestParam(value = "groupIds", required = false) List<Integer> groupIds,
             BindingResult bindingResult,
             Model model,
             RedirectAttributes redirectAttributes) {
@@ -178,8 +176,11 @@ public class SurveyController {
         } else {
             redirectAttributes.addFlashAttribute(MESSAGE, "アンケートを更新しました");
         }
+        
+        surveyService.updateTargetGroups(newSurvey.getId(), groupIds);
+        
         // PRGパターン
-        return "redirect:/admin/survey/detail/" + newSurvey.getSurveyId();
+        return "redirect:/admin/survey/detail/" + newSurvey.getId();
     }
 
     /**

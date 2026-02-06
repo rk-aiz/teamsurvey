@@ -26,7 +26,7 @@
         <table class="table table-bordered">
             <tr>
                 <th>ID</th>
-                <td th:text="${survey.surveyId}"></td>
+                <td th:text="${survey.id}"></td>
             </tr>
             <tr>
                 <th>タイトル</th>
@@ -73,7 +73,7 @@
 
                 <!--/* 下書き(DRAFT)の場合 -> 公開 (回答受付) */-->
                 <th:block th:if="${survey.status.name() == 'DRAFT'}">
-                    <form th:action="@{/admin/survey/status/{id}(id=${survey.surveyId})}" method="post">
+                    <form th:action="@{/admin/survey/status/{id}(id=${survey.id})}" method="post">
                         <input type="hidden" name="status" value="PUBLISHED">
                         <button type="submit" onclick="return confirm('回答受付状態にしますか？')" class="btn btn-success">
                             公開する（回答受付状態）
@@ -83,7 +83,7 @@
 
                 <!--/* 公開中(PUBLISHED)の場合 -> 終了 or 下書き */-->
                 <th:block th:if="${survey.status.name() == 'PUBLISHED'}">
-                    <form th:action="@{/admin/survey/status/{id}(id=${survey.surveyId})}" method="post">
+                    <form th:action="@{/admin/survey/status/{id}(id=${survey.id})}" method="post">
                         <input type="hidden" name="status" value="CLOSED">
                         <button type="submit" onclick="return confirm('回答受付を終了しますか？')" class="btn btn-secondary">
                             締め切る
@@ -93,7 +93,7 @@
 
                 <!--/* 終了(CLOSED)の場合 -> 再公開 */-->
                 <th:block th:if="${survey.status.name() == 'CLOSED'}">
-                    <form th:action="@{/admin/survey/status/{id}(id=${survey.surveyId})}" method="post">
+                    <form th:action="@{/admin/survey/status/{id}(id=${survey.id})}" method="post">
                         <input type="hidden" name="status" value="PUBLISHED">
                         <button type="submit" onclick="return confirm('再公開しますか？')" class="btn btn-success">
                             再公開する
@@ -142,24 +142,24 @@
             </div>
         </div>
 
-        <a th:href="@{/admin/survey/edit/{id}(id=${survey.surveyId})}" class="btn btn-primary">編集する</a>
+        <a th:href="@{/admin/survey/edit/{id}(id=${survey.id})}" class="btn btn-primary">編集する</a>
         <a th:href="@{/admin/survey/list}" class="btn btn-outline-secondary">一覧に戻る</a>
 
-        <!--/*/ TODO 回答パターンスナップショットの関係で、複製機能は一時凍結
+        <!--/* TODO 回答パターンスナップショットの関係で、複製機能は一時凍結
         <div
             style="margin-top: 50px; border-top: 1px solid #eee; padding-top: 10px; text-align: right; font-size: 0.9em;">
             <span style="color: #666;">その他の操作:</span>
-            <a th:href="@{/admin/survey/copy/{id}(id=${survey.surveyId})}"
+            <a th:href="@{/admin/survey/copy/{id}(id=${survey.id})}"
                 onclick="return confirm('このアンケートを複製して新規作成しますか？')" style="color: #666;">複製して新規作成</a>
         </div>
-        /*/-->
+        */-->
 
         <!-- 対象グループ設定モーダル -->
         <div class="modal fade" id="targetGroupModal" tabindex="-1" aria-labelledby="targetGroupModalLabel"
             aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
-                    <form th:action="@{/admin/survey/target/{id}(id=${survey.surveyId})}" method="post">
+                    <form th:action="@{/admin/survey/target/{id}(id=${survey.id})}" method="post">
                         <div class="modal-header">
                             <h5 class="modal-title" id="targetGroupModalLabel">回答対象グループ設定</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

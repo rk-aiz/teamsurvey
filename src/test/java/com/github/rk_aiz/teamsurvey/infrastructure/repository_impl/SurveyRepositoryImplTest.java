@@ -1,11 +1,10 @@
 package com.github.rk_aiz.teamsurvey.infrastructure.repository_impl;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -55,7 +54,7 @@ class SurveyRepositoryImplTest {
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(surveyEntity.getId(), result.get(0).getSurveyId());
+        assertEquals(surveyEntity.getId(), result.get(0).getId());
         verify(surveyMapper).selectAll();
     }
 
@@ -65,15 +64,15 @@ class SurveyRepositoryImplTest {
         when(surveyMapper.selectById(id)).thenReturn(surveyEntity);
 
         Question question = new SingleChoiceQuestion();
-        question.setQuestionId(10);
+        question.setId(10);
         when(questionRepository.findBySurveyId(id)).thenReturn(List.of(question));
 
         Survey result = surveyRepository.findById(id);
 
         assertNotNull(result);
-        assertEquals(id, result.getSurveyId());
+        assertEquals(id, result.getId());
         assertEquals(1, result.getQuestions().size());
-        assertEquals(10, result.getQuestions().iterator().next().getQuestionId());
+        assertEquals(10, result.getQuestions().iterator().next().getId());
 
         verify(surveyMapper).selectById(id);
         verify(questionRepository).findBySurveyId(id);
@@ -110,7 +109,7 @@ class SurveyRepositoryImplTest {
 
         surveyRepository.add(newSurvey);
 
-        assertEquals(100, newSurvey.getSurveyId());
+        assertEquals(100, newSurvey.getId());
         assertEquals(100, newQuestion.getSurveyId()); // Check parent ID set
 
         verify(surveyMapper).insert(any(SurveyEntity.class));
@@ -120,20 +119,20 @@ class SurveyRepositoryImplTest {
     @Test
     void set_UpdatesSurveyAndQuestions() {
         Survey existingSurvey = Survey.builder()
-                .surveyId(1)
+                .id(1)
                 .title("Updated Survey")
                 .questions(new HashMap<>())
                 .build();
 
         Question existingQuestion = new SingleChoiceQuestion();
-        existingQuestion.setQuestionId(10);
+        existingQuestion.setId(10);
 
         Question newQuestion = new SingleChoiceQuestion(); // ID null
 
         existingSurvey.getQuestions().add(existingQuestion);
         existingSurvey.getQuestions().add(newQuestion);
 
-        surveyRepository.set(existingSurvey);
+        surveyRepository.updateHeader(existingSurvey);
 
         verify(surveyMapper).update(any(SurveyEntity.class));
 

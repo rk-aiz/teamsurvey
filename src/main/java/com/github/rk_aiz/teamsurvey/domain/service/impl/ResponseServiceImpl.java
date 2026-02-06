@@ -54,7 +54,7 @@ public class ResponseServiceImpl implements ResponseService {
     public Response createNewResponseBySurvey(Survey survey, LoginUser loginUser) {
 
         ResponseBuilder responseBuilder = Response.builder()
-                .surveyId(survey.getSurveyId())
+                .surveyId(survey.getId())
                 .username(loginUser.getUsername());
 
         return responseBuilder.build();

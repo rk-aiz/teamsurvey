@@ -11,6 +11,7 @@ import com.github.rk_aiz.teamsurvey.infrastructure.entity.SurveyEntity;
 import com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.SurveyMapper;
 import com.github.rk_aiz.teamsurvey.infrastructure.repository.QuestionRepository;
 import com.github.rk_aiz.teamsurvey.infrastructure.repository.SurveyRepository;
+import com.github.rk_aiz.teamsurvey.infrastructure.repository.SurveyTargetGroupRepository;
 import com.github.rk_aiz.teamsurvey.infrastructure.repository.UserGroupRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class SurveyRepositoryImpl implements SurveyRepository {
     private final SurveyMapper surveyMapper;
     private final QuestionRepository questionRepository;
     private final UserGroupRepository userGroupRepository;
+    private final SurveyTargetGroupRepository surveyTargetGroupRepository;
 
     @Override
     public List<Survey> findAll() {
@@ -66,26 +68,22 @@ public class SurveyRepositoryImpl implements SurveyRepository {
         boolean ret = this.surveyMapper.insert(entity) > 0;
 
         // 自動採番されたIDをドメインモデルに反映
-        survey.setSurveyId(entity.getId());
+        survey.setId(entity.getId());
 
         // 2. Questions保存 (新規作成時も質問があれば保存する)
         Collection<Question> questions = survey.getQuestions();
-        if (questions != null) {
-            ret &= saveQuestions(entity.getId(), questions);
+        if (questions != null && !questions.isEmpty()) {
+            ret &= this.saveQuestions(entity.getId(), questions);
         }
-
+        
         return ret;
     }
 
     @Override
-    public boolean set(Survey survey) {
+    public boolean updateHeader(Survey survey) {
         // 1. Headerの更新
-        SurveyEntity entity = SurveyEntity.fromModel(survey);
-        boolean ret = this.surveyMapper.update(entity) > 0;
-
-        if (survey.getQuestions() != null) {
-            ret &= saveQuestions(entity.getId(), survey.getQuestions());
-        }
+    	boolean ret = this.surveyMapper.update(SurveyEntity.fromModel(survey)) > 0;
+        
         return ret;
     }
 
@@ -94,9 +92,10 @@ public class SurveyRepositoryImpl implements SurveyRepository {
      */
     private boolean saveQuestions(Integer surveyId, Collection<Question> questions) {
         boolean ret = true;
+
         for (Question q : questions) {
             q.setSurveyId(surveyId); // 親IDをセット
-            if (q.getQuestionId() == null) {
+            if (q.getId() == null) {
                 ret &= this.questionRepository.add(q);
             } else {
                 ret &= this.questionRepository.set(q);

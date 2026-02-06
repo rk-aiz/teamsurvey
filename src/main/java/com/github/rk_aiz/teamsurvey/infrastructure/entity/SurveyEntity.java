@@ -1,7 +1,6 @@
 package com.github.rk_aiz.teamsurvey.infrastructure.entity;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 
 import org.springframework.beans.BeanUtils;
 
@@ -44,16 +43,10 @@ public class SurveyEntity {
      * Entity -> Domain Model 変換
      */
     public Survey toModel() {
-        return Survey.builder()
-                .surveyId(id)
-                .title(title)
-                .createdAt(createdAt)
-                .updatedAt(updatedAt)
-                .deadline(deadline)
-                .status(status)
-                .resultVisibility(resultVisibility)
-                .questions(new HashMap<>()) // Repositoryで後からsetする
-                .build();
+    	Survey survey = new Survey();
+    	BeanUtils.copyProperties(this, survey);
+    	
+        return survey;
     }
 
     /**
@@ -62,7 +55,6 @@ public class SurveyEntity {
     public static SurveyEntity fromModel(Survey model) {
         SurveyEntity entity = new SurveyEntity();
         BeanUtils.copyProperties(model, entity);
-        entity.setId(model.getSurveyId());
 
         return entity;
     }

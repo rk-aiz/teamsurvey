@@ -48,13 +48,13 @@
                             th:text="${errorMessage}"></div>
 
                         <!-- 一覧ループ -->
-                        <a th:each="survey : ${surveys}" th:href="@{/admin/survey/list(id=${survey.surveyId})}"
+                        <a th:each="survey : ${surveys}" th:href="@{/admin/survey/list(id=${survey.id})}"
                             class="list-group-item list-group-item-action py-3 survey-item"
                             th:data-survey-status="${survey.status}"
-                            th:classappend="${selectedSurvey != null && selectedSurvey.surveyId == survey.surveyId} ? 'list-group-item-primary' : ''">
+                            th:classappend="${selectedSurvey != null && selectedSurvey.id == survey.id} ? 'list-group-item-primary' : ''">
                             <div class="d-flex w-100 justify-content-between align-items-center mb-1">
                                 <h6 class="mb-1 fw-bold text-truncate" th:text="${survey.title}">タイトル</h6>
-                                <small class="text-muted" th:text="'#' + ${survey.surveyId}">#1</small>
+                                <small class="text-muted" th:text="'#' + ${survey.id}">#1</small>
                             </div>
                             <div class="d-flex align-items-center gap-2">
                                 <!-- ステータスバッジ -->
@@ -114,16 +114,16 @@
                         </div>
 
                         <div class="d-flex gap-2">
-                            <a th:href="@{/admin/survey/detail/{id}(id=${selectedSurvey.surveyId})}"
+                            <a th:href="@{/admin/survey/detail/{id}(id=${selectedSurvey.id})}"
                                 class="btn btn-outline-primary">
                                 <i class="bi bi-eye"></i> 詳細画面を開く
                             </a>
-                            <a th:href="@{/admin/survey/edit/{id}(id=${selectedSurvey.surveyId})}"
+                            <a th:href="@{/admin/survey/edit/{id}(id=${selectedSurvey.id})}"
                                 class="btn btn-outline-primary">
                                 <i class="bi bi-pencil"></i> 編集
                             </a>
                             <!-- TODO 回答パターンスナップショットの関係で、複製機能は一時凍結
-                            <a th:href="@{/admin/survey/copy/{id}(id=${selectedSurvey.surveyId})}"
+                            <a th:href="@{/admin/survey/copy/{id}(id=${selectedSurvey.id})}"
                                 class="btn btn-outline-secondary">
                                 <i class="bi bi-copy"></i> 複製
                             </a> -->
