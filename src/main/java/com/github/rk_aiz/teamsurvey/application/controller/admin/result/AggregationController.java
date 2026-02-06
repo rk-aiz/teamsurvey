@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.github.rk_aiz.teamsurvey.domain.model.result.SurveyAggregation;
-import com.github.rk_aiz.teamsurvey.domain.service.SurveyResultService;
 import com.github.rk_aiz.teamsurvey.domain.service.AccountService;
+import com.github.rk_aiz.teamsurvey.domain.service.SurveyResultService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -67,7 +67,6 @@ public class AggregationController {
         // アンケート情報の取得
         SurveyAggregation aggregation = surveyResultService.findSurveyAggregationById(id);
 
-        System.out.println(aggregation.getQuestionAggregations());
         model.addAttribute("aggregation", aggregation);
 
         return "admin/result/detail";

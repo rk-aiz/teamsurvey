@@ -4,14 +4,15 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 import org.springframework.beans.BeanUtils;
 
 import com.github.rk_aiz.teamsurvey.domain.model.LoginUser;
 import com.github.rk_aiz.teamsurvey.domain.model.UserGroup;
 
-import jakarta.validation.constraints.AssertTrue;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -50,6 +51,8 @@ public class AccountForm {
 
     private List<UserGroup> assignedGroups = new ArrayList<>();
 
+    private List<Integer> groupIds = new ArrayList<>();
+    
     private boolean isNew;
 
     /**
@@ -59,6 +62,8 @@ public class AccountForm {
         AccountForm form = new AccountForm();
         BeanUtils.copyProperties(model, form);
         form.setNew(isNew);
+        
+        form.setGroupIds(model.getAssignedGroups().stream().map(UserGroup::getGroupId).toList());
 
         // ハッシュ化されたパスワードを誤ってThymeleafで使用しないようにクリア
         form.setPassword(null);

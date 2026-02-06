@@ -62,8 +62,9 @@ public class AccountController {
             @PageableDefault(size = 20) Pageable pageable, Model model) {
 
         // ページネーション付きで取得
-        Page<LoginUser> users = accountService.findWithPaging(pageable);
+        Page<LoginUser> users = this.accountService.findWithPaging(pageable);
         model.addAttribute("users", users);
+        model.addAttribute("userGroups", this.userGroupService.findAll());
 
         // モーダル表示用の処理
         if ("new".equals(action)) {
@@ -71,7 +72,6 @@ public class AccountController {
             AccountForm form = new AccountForm();
             form.setNew(true);
             model.addAttribute("accountForm", form);
-            model.addAttribute("userGroups", this.userGroupService.findAll());
             model.addAttribute("showModal", true);
         } else if ("edit".equals(action) && username != null) {
             // 編集
@@ -137,7 +137,10 @@ public class AccountController {
             log.error("アカウント保存エラー", e);
             redirectAttributes.addFlashAttribute("errorMessage", "システムエラーが発生しました。");
         }
-
+        
+        // TODO 削除
+        form.getGroupIds().stream().forEach(System.out::println);
+        
         return REDIRECT_TO_LIST;
     }
 

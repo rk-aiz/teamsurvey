@@ -5,10 +5,10 @@
 
     <!-- SurveySummary ResultMap (一覧用：詳細な設問集計を含まないマップ) -->
     <resultMap id="SurveySummaryMap" type="com.github.rk_aiz.teamsurvey.domain.model.result.SurveyAggregation">
-        <id property="survey.surveyId" column="survey_id" />
+        <id property="survey.id" column="survey_id" />
         <result property="totalResponseCount" column="total_response_count" />
         <association property="survey" javaType="com.github.rk_aiz.teamsurvey.domain.model.Survey">
-            <id property="surveyId" column="survey_id" />
+            <id property="id" column="survey_id" />
             <result property="title" column="title" />
             <result property="status" column="status" />
             <result property="resultVisibility" column="result_visibility" />
@@ -20,10 +20,10 @@
 
     <!-- SurveyAggregation ResultMap -->
     <resultMap id="SurveyAggregationMap" type="com.github.rk_aiz.teamsurvey.domain.model.result.SurveyAggregation">
-        <id property="survey.surveyId" column="survey_id" />
+        <id property="survey.id" column="survey_id" />
         <result property="totalResponseCount" column="total_response_count" />
         <association property="survey" javaType="com.github.rk_aiz.teamsurvey.domain.model.Survey">
-            <id property="surveyId" column="survey_id" />
+            <id property="id" column="survey_id" />
             <result property="title" column="title" />
             <result property="status" column="status" />
             <result property="resultVisibility" column="result_visibility" />
@@ -39,7 +39,7 @@
         <id property="questionId" column="id" />
         <result property="answerCount" column="answer_count" />
         <association property="question" javaType="com.github.rk_aiz.teamsurvey.domain.model.question.Question">
-            <id property="questionId" column="id" />
+            <id property="id" column="id" />
             <result property="surveyId" column="survey_id" />
             <result property="text" column="question_text" />
             <result property="required" column="is_required" />
@@ -176,7 +176,7 @@
             <result property="rawData" column="answer_value" />
             <!-- IDだけ保持できれば良いので、便宜的にFreeResponseQuestionとしてマッピング -->
             <association property="question" javaType="com.github.rk_aiz.teamsurvey.domain.model.question.FreeResponseQuestion">
-                <id property="questionId" column="question_id"/>
+                <id property="id" column="question_id"/>
             </association>
         </collection>
     </resultMap>
