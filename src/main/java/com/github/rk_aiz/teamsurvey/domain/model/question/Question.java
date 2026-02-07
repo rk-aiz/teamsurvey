@@ -3,7 +3,7 @@ package com.github.rk_aiz.teamsurvey.domain.model.question;
 import java.time.LocalDateTime;
 
 import com.github.rk_aiz.teamsurvey.domain.type.QuestionType;
-import com.github.rk_aiz.teamsurvey.domain.util.StringUtils;
+import com.github.rk_aiz.teamsurvey.util.StringUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

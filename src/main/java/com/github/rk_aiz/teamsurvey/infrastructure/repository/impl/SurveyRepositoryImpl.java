@@ -75,16 +75,14 @@ public class SurveyRepositoryImpl implements SurveyRepository {
         if (questions != null && !questions.isEmpty()) {
             ret &= this.saveQuestions(entity.getId(), questions);
         }
-        
+
         return ret;
     }
 
     @Override
     public boolean updateHeader(Survey survey) {
         // 1. Headerの更新
-    	boolean ret = this.surveyMapper.update(SurveyEntity.fromModel(survey)) > 0;
-        
-        return ret;
+        return 0 < this.surveyMapper.update(SurveyEntity.fromModel(survey));
     }
 
     /**

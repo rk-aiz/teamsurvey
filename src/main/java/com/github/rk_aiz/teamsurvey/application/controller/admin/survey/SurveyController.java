@@ -20,6 +20,7 @@ import com.github.rk_aiz.teamsurvey.application.validation.SurveyValidationGroup
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
 import com.github.rk_aiz.teamsurvey.domain.service.AnswerOptionService;
 import com.github.rk_aiz.teamsurvey.domain.service.SurveyService;
+import com.github.rk_aiz.teamsurvey.domain.service.SurveyTargetGroupService;
 import com.github.rk_aiz.teamsurvey.domain.service.UserGroupService;
 import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
 
@@ -44,6 +45,7 @@ public class SurveyController {
     private final SurveyService surveyService;
     private final UserGroupService userGroupService;
     private final AnswerOptionService answerOptionService;
+    private final SurveyTargetGroupService surveyTargetGroupService;
     private final SmartValidator validator;
 
     /**
@@ -176,9 +178,10 @@ public class SurveyController {
         } else {
             redirectAttributes.addFlashAttribute(MESSAGE, "アンケートを更新しました");
         }
-        
-        surveyService.updateTargetGroups(newSurvey.getId(), groupIds);
-        
+
+        // アンケートと対象グループの紐づけ情報保存
+        surveyTargetGroupService.save(newSurvey.getId(), groupIds);
+
         // PRGパターン
         return "redirect:/admin/survey/detail/" + newSurvey.getId();
     }
@@ -240,10 +243,10 @@ public class SurveyController {
             @RequestParam(value = "groupIds", required = false) List<Integer> groupIds,
             RedirectAttributes redirectAttributes) {
 
-        surveyService.updateTargetGroups(id, groupIds);
+        // アンケートと対象グループの紐づけ情報保存
+        surveyTargetGroupService.save(id, groupIds);
 
         redirectAttributes.addFlashAttribute(MESSAGE, "対象グループを更新しました");
         return "redirect:/admin/survey/detail/" + id;
     }
-
 }

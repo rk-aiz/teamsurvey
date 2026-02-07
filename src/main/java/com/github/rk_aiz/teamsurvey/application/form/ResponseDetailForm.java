@@ -9,7 +9,7 @@ import org.springframework.beans.BeanUtils;
 import com.github.rk_aiz.teamsurvey.domain.model.ResponseDetail;
 import com.github.rk_aiz.teamsurvey.domain.model.question.Question;
 import com.github.rk_aiz.teamsurvey.domain.type.QuestionType;
-import com.github.rk_aiz.teamsurvey.domain.util.StringUtils;
+import com.github.rk_aiz.teamsurvey.util.StringUtils;
 
 import lombok.Data;
 

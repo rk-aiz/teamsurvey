@@ -3,11 +3,14 @@ package com.github.rk_aiz.teamsurvey.infrastructure.repository.impl;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
+
 import com.github.rk_aiz.teamsurvey.domain.model.UserGroup;
 import com.github.rk_aiz.teamsurvey.infrastructure.entity.UserGroupEntity;
 import com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.SurveyTargetGroupMapper;
 import com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.UserGroupMapper;
+import com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.UserGroupMappingMapper;
 import com.github.rk_aiz.teamsurvey.infrastructure.repository.UserGroupRepository;
+import com.github.rk_aiz.teamsurvey.util.ListUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class UserGroupRepositoryImpl implements UserGroupRepository {
 
     private final UserGroupMapper userGroupMapper;
+    private final UserGroupMappingMapper userGroupMappingMapper;
     private final SurveyTargetGroupMapper surveyTargetGroupMapper;
 
     @Override
@@ -56,4 +60,37 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
         return userGroupMapper.delete(groupId) > 0;
     }
 
+    @Override
+    public boolean updateUserGroupMapping(String username, List<Integer> groupIds) {
+        // 現在のグループIDリストを取得
+        List<Integer> currentGroupIds = this.findByUsername(username).stream()
+                .map(UserGroup::getGroupId)
+                .sorted()
+                .toList();
+
+        // 新しいグループIDリストを整理
+        List<Integer> newGroupIds = (groupIds == null ? List.<Integer>of() : groupIds).stream()
+                .distinct()
+                .sorted()
+                .toList();
+
+        // 変更がないなら即return
+        if (currentGroupIds.equals(newGroupIds)) {
+            return false;
+        }
+
+        // 現在のDBから全削除
+        if (!currentGroupIds.isEmpty()) {
+            this.userGroupMappingMapper.deleteByUsername(username);
+        }
+
+        // バルクインサート
+        if (!newGroupIds.isEmpty()) {
+            // バルクインサートは念のためバッチ処理
+            for (List<Integer> batch : ListUtils.partition(newGroupIds, 1000)) {
+                this.userGroupMappingMapper.insertBulk(username, batch);
+            }
+        }
+        return true;
+    }
 }

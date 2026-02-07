@@ -18,11 +18,9 @@ import com.github.rk_aiz.teamsurvey.domain.service.AnswerOptionService;
 import com.github.rk_aiz.teamsurvey.domain.service.QuestionService;
 import com.github.rk_aiz.teamsurvey.domain.service.ResponseService;
 import com.github.rk_aiz.teamsurvey.domain.service.SurveyService;
-import com.github.rk_aiz.teamsurvey.domain.service.UserGroupService;
 import com.github.rk_aiz.teamsurvey.domain.type.ResultVisibility;
 import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
 import com.github.rk_aiz.teamsurvey.infrastructure.repository.SurveyRepository;
-import com.github.rk_aiz.teamsurvey.infrastructure.repository.SurveyTargetGroupRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,8 +33,6 @@ public class SurveyServiceImpl implements SurveyService {
     private final ResponseService responseService;
     private final QuestionService questionService;
     private final AnswerOptionService answerOptionService;
-    private final SurveyTargetGroupRepository surveyTargetGroupRepository;
-    private final UserGroupService userGroupService;
 
     /**
      * アンケート一覧を取得します。
@@ -73,7 +69,7 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public Survey saveSurvey(Survey survey) {
-    	
+
         if (survey.getId() == null) {
             // 新規登録
             surveyRepository.add(survey);
@@ -83,21 +79,22 @@ public class SurveyServiceImpl implements SurveyService {
         // 更新処理
         // DB上の現在の状態を取得
         Survey currentDbSurvey = this.findSurveyById(survey.getId());
-        
-        if (currentDbSurvey == null) throw new IllegalArgumentException(
-        		"更新対象のアンケートが見つかりません");
-        
+
+        if (currentDbSurvey == null)
+            throw new IllegalArgumentException(
+                    "更新対象のアンケートが見つかりません");
+
         survey.setStatus(currentDbSurvey.getStatus());
         surveyRepository.updateHeader(survey);
 
         // DB上のステータスがDRAFTの場合のみ、設問構成を更新
         if (currentDbSurvey.getStatus() == SurveyStatus.DRAFT) {
-        	questionService.removeQuestionBySurveyId(survey.getId());
-        	for (Question question : survey.getQuestions()) {
-        		Optional.ofNullable(question).ifPresent(questionService::saveQuestion);
-        	}
+            questionService.removeQuestionBySurveyId(survey.getId());
+            for (Question question : survey.getQuestions()) {
+                Optional.ofNullable(question).ifPresent(questionService::saveQuestion);
+            }
         }
-        
+
         return survey;
     }
 
@@ -120,13 +117,7 @@ public class SurveyServiceImpl implements SurveyService {
                 }
 
                 // 回答パターンをスナップショットに変更
-                survey.getQuestions().stream().forEach(q -> {
-                    if (q instanceof SingleChoiceQuestion scq) {
-                        AnswerOption answerOption = scq.getAnswerOption();
-                        Integer newId = answerOptionService.createSnapshot(answerOption.getAnswerOptionId());
-                        answerOption.setAnswerOptionId(newId);
-                    }
-                });
+                this.createSnapshotForQuestions(survey);
             }
             case SUSPENDED -> {
                 if (survey.getStatus() != SurveyStatus.PUBLISHED) {
@@ -149,6 +140,16 @@ public class SurveyServiceImpl implements SurveyService {
 
         survey.setStatus(newStatus);
         return surveyRepository.updateHeader(survey);
+    }
+
+    private void createSnapshotForQuestions(Survey survey) {
+        survey.getQuestions().stream().forEach(q -> {
+            if (q instanceof SingleChoiceQuestion scq) {
+                AnswerOption answerOption = scq.getAnswerOption();
+                Integer newId = answerOptionService.createSnapshot(answerOption.getAnswerOptionId());
+                answerOption.setAnswerOptionId(newId);
+            }
+        });
     }
 
     @Override
@@ -181,29 +182,5 @@ public class SurveyServiceImpl implements SurveyService {
                 .status(SurveyStatus.DRAFT)
                 .resultVisibility(ResultVisibility.ADMIN_ONLY)
                 .build();
-    }
-
-    @Override
-    public void updateTargetGroups(Integer surveyId, List<Integer> groupIds) {
-        
-        // 1. 既存の紐付けを全削除
-        surveyTargetGroupRepository.removeBySurveyId(surveyId);
-
-        if (groupIds == null || groupIds.isEmpty()) {
-            return;
-        }
-
-        // 2. バルクインサートは安全のため分割して登録 (Defensive Programming)
-        // DBのパラメータ数上限やパケットサイズ制限を回避するため、一定件数ごとに分割してINSERTする
-        // ※これは参考用(まずバッチサイズを超えることはない) 
-        final int BATCH_SIZE = 1000;
-
-        for (int i = 0; i < groupIds.size(); i += BATCH_SIZE) {
-            int end = Math.min(groupIds.size(), i + BATCH_SIZE);
-            List<Integer> batchList = groupIds.subList(i, end);
-            surveyTargetGroupRepository.add(surveyId, batchList);
-        }
-
-        return;
     }
 }

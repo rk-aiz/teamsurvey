@@ -1,4 +1,4 @@
-package com.github.rk_aiz.teamsurvey.domain.util;
+package com.github.rk_aiz.teamsurvey.util;
 
 /**
  * ドメイン層で使用する文字列操作ユーティリティ。

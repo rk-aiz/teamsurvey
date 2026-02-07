@@ -24,4 +24,6 @@ public interface UserGroupRepository {
     boolean set(UserGroup group);
 
     boolean remove(Integer groupId);
+
+    boolean updateUserGroupMapping(String username, List<Integer> groupIds);
 }

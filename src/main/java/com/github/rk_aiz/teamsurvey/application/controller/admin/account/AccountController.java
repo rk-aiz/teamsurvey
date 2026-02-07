@@ -137,10 +137,10 @@ public class AccountController {
             log.error("アカウント保存エラー", e);
             redirectAttributes.addFlashAttribute("errorMessage", "システムエラーが発生しました。");
         }
-        
+
         // TODO 削除
         form.getGroupIds().stream().forEach(System.out::println);
-        
+
         return REDIRECT_TO_LIST;
     }
 

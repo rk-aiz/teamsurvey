@@ -41,7 +41,6 @@ public class AnswerOptionController {
      */
     @GetMapping("/list")
     public String getListFragment(Model model) {
-    	
         model.addAttribute("answerOptions", answerOptionService.findAll());
         return "admin/survey/pattern_fragments :: list";
     }
@@ -51,11 +50,11 @@ public class AnswerOptionController {
      */
     @GetMapping("/form")
     public String getFormFragment(@RequestParam(required = false) Integer id, Model model) {
-        
+
         AnswerOptionForm form = new AnswerOptionForm();
         if (id != null) {
             AnswerOption answerOption = answerOptionService.findAnswerOptionById(id);
-            
+
             if (answerOption != null) {
                 // Entity -> Form 変換 (簡易実装: 本来はFormクラスに変換メソッドを持たせるかMapperを使う)
                 form = AnswerOptionForm.from(answerOption);
@@ -81,7 +80,7 @@ public class AnswerOptionController {
         }
 
         answerOptionService.save(form.toModel());
-        
+
         // 保存成功時は一覧を返す
         model.addAttribute("answerOptions", answerOptionService.findAll());
         return "admin/survey/pattern_fragments :: list";

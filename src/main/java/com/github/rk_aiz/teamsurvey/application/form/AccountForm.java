@@ -4,15 +4,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.validation.constraints.AssertTrue;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-
-import org.springframework.beans.BeanUtils;
-
 import com.github.rk_aiz.teamsurvey.domain.model.LoginUser;
 import com.github.rk_aiz.teamsurvey.domain.model.UserGroup;
 
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -49,21 +46,24 @@ public class AccountForm {
 
     private LocalDateTime createdAt;
 
-    private List<UserGroup> assignedGroups = new ArrayList<>();
-
     private List<Integer> groupIds = new ArrayList<>();
-    
+
     private boolean isNew;
 
     /**
      * Model -> Form
      */
     public static AccountForm from(LoginUser model, boolean isNew) {
-        AccountForm form = new AccountForm();
-        BeanUtils.copyProperties(model, form);
-        form.setNew(isNew);
-        
-        form.setGroupIds(model.getAssignedGroups().stream().map(UserGroup::getGroupId).toList());
+        AccountForm form = new AccountForm(
+                model.getUsername(),
+                null,
+                null,
+                model.getDisplayName(),
+                model.getEmail(),
+                model.isEnabled(),
+                model.getCreatedAt(),
+                model.getAssignedGroups().stream().map(UserGroup::getGroupId).toList(),
+                isNew);
 
         // ハッシュ化されたパスワードを誤ってThymeleafで使用しないようにクリア
         form.setPassword(null);
@@ -78,13 +78,12 @@ public class AccountForm {
                 getUsername(),
                 "", // パスワードはService層でハッシュ化・設定するため、ここではダミー(空文字)を渡す
                 isNew ? LocalDateTime.now() : getCreatedAt(),
-                null,
+                null, // 更新日時は実際にDBに保存されたときにDBで設定する為、ここでは設定しない
                 isEnabled(),
-                getAssignedGroups().stream().flatMap(group -> group.getAuthorityList().stream()).toList());
+                null); // 権限は、直接サービスで更新する為、Formからは取得しない
 
         loginUser.setDisplayName(displayName);
         loginUser.setEmail(email);
-        loginUser.setAssignedGroups(assignedGroups);
 
         return loginUser;
     }

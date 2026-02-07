@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.UserGroupMappingMapper">
+
+    <insert id="insertBulk">
+        INSERT INTO user_group_mapping (username, group_id)
+        VALUES
+        <foreach item="groupId" collection="groupIds" separator=",">
+            (#{username}, #{groupId})
+        </foreach>
+    </insert>
+    
+	<!--「ユーザーとグループの紐づけ情報」を削除 -->
+    <delete id="deleteByUsername">
+        DELETE FROM user_group_mappings
+        WHERE username = #{username}
+    </delete>
+
+</mapper>

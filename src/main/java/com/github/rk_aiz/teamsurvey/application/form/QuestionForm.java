@@ -15,7 +15,7 @@ import com.github.rk_aiz.teamsurvey.domain.model.question.MultiChoiceQuestion;
 import com.github.rk_aiz.teamsurvey.domain.model.question.Question;
 import com.github.rk_aiz.teamsurvey.domain.model.question.SingleChoiceQuestion;
 import com.github.rk_aiz.teamsurvey.domain.type.QuestionType;
-import com.github.rk_aiz.teamsurvey.domain.util.StringUtils;
+import com.github.rk_aiz.teamsurvey.util.StringUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -69,27 +69,26 @@ public class QuestionForm {
     }
 
     public Optional<Question> toModel() {
-    	
-    	Optional<Question> question = Optional.ofNullable(this.getType()).map(type -> 
-    		switch (this.getType()) {
-            	case TEXT -> new FreeResponseQuestion();
-            	case RADIO -> new SingleChoiceQuestion();
-            	case CHECKBOX -> new MultiChoiceQuestion();
+
+        Optional<Question> question = Optional.ofNullable(this.getType()).map(type -> switch (this.getType()) {
+            case TEXT -> new FreeResponseQuestion();
+            case RADIO -> new SingleChoiceQuestion();
+            case CHECKBOX -> new MultiChoiceQuestion();
         });
-    	question.ifPresent(q -> BeanUtils.copyProperties(this, q));
+        question.ifPresent(q -> BeanUtils.copyProperties(this, q));
         return question;
     }
 
     public static QuestionForm from(Question question) {
         QuestionForm form = new QuestionForm();
-        
+
         BeanUtils.copyProperties(question, form);
-        form.setType(switch(question) {
-        	case MultiChoiceQuestion q -> QuestionType.CHECKBOX;
-        	case SingleChoiceQuestion q -> QuestionType.RADIO;
-        	default -> QuestionType.TEXT;
+        form.setType(switch (question) {
+            case MultiChoiceQuestion q -> QuestionType.CHECKBOX;
+            case SingleChoiceQuestion q -> QuestionType.RADIO;
+            default -> QuestionType.TEXT;
         });
-        
+
         return form;
     }
 }

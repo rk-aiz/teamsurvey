@@ -11,15 +11,7 @@ public interface SurveyTargetGroupRepository {
 
     List<Integer> findBySurveyId(Integer surveyId);
 
-    /**
-     * 新しい「アンケートとグループの紐づけ情報」を登録します
-     */
-    boolean add(Integer surveyId, Integer groupId);
-
-    /*
-     * バルクインサート
-     */
-    boolean add(Integer surveyId, List<Integer> groupIds);
+    public boolean updateTargetGroups(Integer surveyId, List<Integer> groupIds);
 
     /**
      * 「アンケートとグループの紐づけ情報」を削除します
@@ -29,6 +21,6 @@ public interface SurveyTargetGroupRepository {
     /**
      * 「指定されたアンケートIDのグループの紐づけ情報」を削除します
      */
-    
+
     boolean removeBySurveyId(Integer surveyId);
 }
