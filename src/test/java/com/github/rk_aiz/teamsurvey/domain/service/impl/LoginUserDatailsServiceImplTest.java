@@ -11,14 +11,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import com.github.rk_aiz.teamsurvey.domain.model.LoginUser;
+import com.github.rk_aiz.teamsurvey.domain.model.UserAccount;
 import com.github.rk_aiz.teamsurvey.infrastructure.repository.AccountRepository;
 
 @ExtendWith(MockitoExtension.class)
 class LoginUserDatailsServiceImplTest {
 
     @Mock
-    private AccountRepository loginUserRepository;
+    private AccountRepository accountRepository;
 
     @InjectMocks
     private LoginUserDatailsServiceImpl loginUserDatailsService;
@@ -27,8 +27,8 @@ class LoginUserDatailsServiceImplTest {
     void loadUserByUsername_ExistingUser_ReturnsUserDetails() {
         // Arrange
         String username = "testuser";
-        LoginUser mockUser = mock(LoginUser.class);
-        when(loginUserRepository.findByUsername(username)).thenReturn(mockUser);
+        UserAccount mockUser = mock(UserAccount.class);
+        when(accountRepository.findByUsername(username)).thenReturn(mockUser);
 
         // Act
         UserDetails result = loginUserDatailsService.loadUserByUsername(username);
@@ -36,14 +36,14 @@ class LoginUserDatailsServiceImplTest {
         // Assert
         assertNotNull(result);
         assertEquals(mockUser, result);
-        verify(loginUserRepository).findByUsername(username);
+        verify(accountRepository).findByUsername(username);
     }
 
     @Test
     void loadUserByUsername_NonExistingUser_ThrowsUsernameNotFoundException() {
         // Arrange
         String username = "unknown";
-        when(loginUserRepository.findByUsername(username)).thenReturn(null);
+        when(accountRepository.findByUsername(username)).thenReturn(null);
 
         // Act & Assert
         UsernameNotFoundException exception = assertThrows(UsernameNotFoundException.class, () -> {
@@ -51,6 +51,6 @@ class LoginUserDatailsServiceImplTest {
         });
 
         assertEquals(username + " => 指定しているユーザー名は存在しません", exception.getMessage());
-        verify(loginUserRepository).findByUsername(username);
+        verify(accountRepository).findByUsername(username);
     }
 }

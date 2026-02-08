@@ -19,7 +19,7 @@ public class SurveyTargetGroupServiceImpl implements SurveyTargetGroupService {
     private final SurveyTargetGroupRepository surveyTargetGroupRepository;
 
     @Override
-    public boolean save(Integer surveyId, List<Integer> groupIds) {
-        return this.surveyTargetGroupRepository.updateTargetGroups(surveyId, groupIds);
+    public void save(Integer surveyId, List<Integer> groupIds) {
+        this.surveyTargetGroupRepository.updateTargetGroups(surveyId, groupIds);
     }
 }

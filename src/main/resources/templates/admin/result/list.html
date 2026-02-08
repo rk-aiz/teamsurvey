@@ -15,10 +15,6 @@
                         <h2 class="h3 mb-0">集計結果一覧</h2>
                     </div>
 
-                    <!-- メッセージ表示 -->
-                    <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
-                    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
-
                     <div class="card shadow-sm">
                         <div class="list-group list-group-flush">
                             <!-- ヘッダー行 -->
@@ -37,23 +33,26 @@
                             </div>
 
                             <!-- リストループ -->
-                            <a th:each="agg : ${aggregations}" 
-                               th:href="@{/admin/result/detail/{id}(id=${agg.survey.id})}"
-                               class="list-group-item list-group-item-action py-3">
+                            <a th:each="agg : ${aggregations}"
+                                th:href="@{/admin/result/detail/{id}(id=${agg.survey.id})}"
+                                class="list-group-item list-group-item-action py-3">
                                 <div class="row align-items-center">
                                     <!-- アンケート情報 -->
                                     <div class="col-md-7 mb-2 mb-md-0">
                                         <div class="d-flex align-items-center mb-1">
-                                            <h5 class="mb-0 fw-bold text-truncate" th:text="${agg.survey.title}">タイトル</h5>
+                                            <h5 class="mb-0 fw-bold text-truncate" th:text="${agg.survey.title}">タイトル
+                                            </h5>
                                         </div>
                                         <div class="text-muted small">
                                             <span class="me-3">
                                                 <i class="bi bi-calendar"></i>
-                                                作成: <span th:text="${#temporals.format(agg.survey.createdAt, 'yyyy/MM/dd')}"></span>
+                                                作成: <span
+                                                    th:text="${#temporals.format(agg.survey.createdAt, 'yyyy/MM/dd')}"></span>
                                             </span>
                                             <span>
                                                 <i class="bi bi-clock"></i>
-                                                期限: <span th:text="${agg.survey.deadline != null ? #temporals.format(agg.survey.deadline, 'yyyy/MM/dd HH:mm') : '無期限'}"></span>
+                                                期限: <span
+                                                    th:text="${agg.survey.deadline != null ? #temporals.format(agg.survey.deadline, 'yyyy/MM/dd HH:mm') : '無期限'}"></span>
                                             </span>
                                         </div>
                                     </div>
@@ -70,7 +69,8 @@
 
                                     <!-- 回答数 -->
                                     <div class="col-md-2 text-end">
-                                        <span class="h4 fw-bold text-primary mb-0" th:text="${agg.totalResponseCount}">0</span>
+                                        <span class="h4 fw-bold text-primary mb-0"
+                                            th:text="${agg.totalResponseCount}">0</span>
                                         <span class="small text-muted">件</span>
                                     </div>
                                 </div>

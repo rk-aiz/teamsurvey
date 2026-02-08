@@ -35,6 +35,12 @@ public class ResponseRepositoryImpl implements ResponseRepository {
     }
 
     @Override
+    public List<Response> findBySurveyId(Integer surveyId) {
+        return this.responseMapper.selectBySurveyId(surveyId)
+                .stream().map(ResponseEntity::toModel).toList();
+    }
+
+    @Override
     public List<Response> findByUsername(String username) {
         return responseMapper.selectByUsername(username)
                 .stream().map(ResponseEntity::toModel).toList();
@@ -48,7 +54,7 @@ public class ResponseRepositoryImpl implements ResponseRepository {
 
     @Override
     public void add(Response response) {
-    	ResponseEntity entity = ResponseEntity.from(response);
+        ResponseEntity entity = ResponseEntity.from(response);
         responseMapper.insert(entity);
         response.setResponseId(entity.getId());
         addAllResponseDetails(response);
@@ -57,7 +63,7 @@ public class ResponseRepositoryImpl implements ResponseRepository {
     @Override
     public void set(Response response) {
         responseMapper.update(ResponseEntity.from(response));
-        
+
         responseDetailMapper.deleteByResponseId(response.getResponseId());
         addAllResponseDetails(response);
     }

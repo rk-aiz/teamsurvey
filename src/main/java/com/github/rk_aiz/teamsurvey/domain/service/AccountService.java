@@ -3,25 +3,18 @@ package com.github.rk_aiz.teamsurvey.domain.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.github.rk_aiz.teamsurvey.domain.model.LoginUser;
+import com.github.rk_aiz.teamsurvey.domain.model.UserAccount;
 
 public interface AccountService {
 
     /** 全てのアカウントを取得します */
-    Page<LoginUser> findWithPaging(Pageable pageable);
+    Page<UserAccount> findWithPaging(Pageable pageable);
 
     public boolean isLastAdmin(String username);
 
-    LoginUser findAccountByUsername(String username);
+    UserAccount findAccountByUsername(String username);
 
-    boolean saveAccount(LoginUser loginUser);
-
-    /**
-     * アカウント情報を保存します。（パスワードのハッシュ化や既存情報のマージを行います）
-     * 
-     * @param rawPassword 入力された生のパスワード（変更がない場合はnullまたは空文字）
-     */
-    boolean saveAccount(LoginUser inputUser, String rawPassword, boolean isNew);
+    boolean saveAccount(UserAccount inputUser, String rawPassword, boolean isNew);
 
     boolean deleteAccountByUsername(String username);
 

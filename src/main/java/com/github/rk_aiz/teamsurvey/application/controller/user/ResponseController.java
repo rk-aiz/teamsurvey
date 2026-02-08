@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.github.rk_aiz.teamsurvey.application.form.ResponseForm;
+import com.github.rk_aiz.teamsurvey.domain.model.UserAccount;
 import com.github.rk_aiz.teamsurvey.domain.model.LoginUser;
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
 import com.github.rk_aiz.teamsurvey.domain.service.ResponseService;
@@ -42,7 +43,7 @@ public class ResponseController {
 
         if (!surveyService.canResponseBySurveyid(surveyId, loginUser.getUsername())) {
             redirectAttributes.addFlashAttribute(
-                    "message",
+                    MESSAGE,
                     "このアンケートに回答する権限がありません。");
             return "redirect:/";
         }
@@ -50,7 +51,9 @@ public class ResponseController {
         Survey survey = this.surveyService.findSurveyById(surveyId);
 
         model.addAttribute("survey", survey);
-        model.addAttribute("responseForm", ResponseForm.fromSurvey(survey, loginUser));
+        model.addAttribute(
+                "responseForm",
+                ResponseForm.fromSurvey(survey, loginUser.getUsername()));
 
         return "user/response";
     }
@@ -74,7 +77,7 @@ public class ResponseController {
         boolean success = responseService.saveResponse(survey, responseForm.toModel(survey));
         if (!success) {
             redirectAttributes.addFlashAttribute(MESSAGE, "回答の登録に失敗しました。");
-        } else {   
+        } else {
             redirectAttributes.addFlashAttribute(MESSAGE, "回答を送信しました。");
         }
         // ホームへリダイレクト

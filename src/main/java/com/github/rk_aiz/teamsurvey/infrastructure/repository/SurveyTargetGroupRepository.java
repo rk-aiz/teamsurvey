@@ -11,7 +11,7 @@ public interface SurveyTargetGroupRepository {
 
     List<Integer> findBySurveyId(Integer surveyId);
 
-    public boolean updateTargetGroups(Integer surveyId, List<Integer> groupIds);
+    public void updateTargetGroups(Integer surveyId, List<Integer> groupIds);
 
     /**
      * 「アンケートとグループの紐づけ情報」を削除します

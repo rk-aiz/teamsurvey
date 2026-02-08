@@ -1,6 +1,5 @@
 package com.github.rk_aiz.teamsurvey.application.controller.admin.survey;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.rk_aiz.teamsurvey.application.form.AnswerOptionForm;
-import com.github.rk_aiz.teamsurvey.application.form.OptionItemForm;
 import com.github.rk_aiz.teamsurvey.domain.model.AnswerOption;
 import com.github.rk_aiz.teamsurvey.domain.service.AnswerOptionService;
 

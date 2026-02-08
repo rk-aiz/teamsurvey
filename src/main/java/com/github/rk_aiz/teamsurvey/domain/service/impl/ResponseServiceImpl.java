@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.github.rk_aiz.teamsurvey.domain.model.LoginUser;
+import com.github.rk_aiz.teamsurvey.domain.model.UserAccount;
 import com.github.rk_aiz.teamsurvey.domain.model.Response;
 import com.github.rk_aiz.teamsurvey.domain.model.Response.ResponseBuilder;
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
@@ -28,9 +28,8 @@ public class ResponseServiceImpl implements ResponseService {
     }
 
     @Override
-    public Response findResponseById(Integer responseId) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findResponseById'");
+    public Response findResponseById(Integer responseId) {
+        return this.responseRepository.findById(responseId);
     }
 
     @Override
@@ -51,19 +50,18 @@ public class ResponseServiceImpl implements ResponseService {
     }
 
     @Override
-    public Response createNewResponseBySurvey(Survey survey, LoginUser loginUser) {
+    public Response createNewResponseBySurvey(Survey survey, UserAccount account) {
 
         ResponseBuilder responseBuilder = Response.builder()
                 .surveyId(survey.getId())
-                .username(loginUser.getUsername());
+                .username(account.username());
 
         return responseBuilder.build();
     }
 
     @Override
     public List<Response> findResponseBySurveyId(Integer surveyId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findResponseBySurveyId'");
+        return this.responseRepository.findBySurveyId(surveyId);
     }
 
     @Override

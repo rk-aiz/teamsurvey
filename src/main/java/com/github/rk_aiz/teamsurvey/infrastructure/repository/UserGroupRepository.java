@@ -19,11 +19,12 @@ public interface UserGroupRepository {
 
     List<UserGroup> findBySurveyId(Integer surveyId);
 
-    boolean add(UserGroup group);
+    boolean existsByGroupName(String groupName);
 
-    boolean set(UserGroup group);
+    boolean save(UserGroup group);
 
     boolean remove(Integer groupId);
 
-    boolean updateUserGroupMapping(String username, List<Integer> groupIds);
+    void updateUserGroupMapping(String username, List<Integer> groupIds);
+
 }

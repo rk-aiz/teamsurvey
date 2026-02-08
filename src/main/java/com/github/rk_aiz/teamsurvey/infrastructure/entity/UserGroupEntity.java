@@ -16,14 +16,12 @@ public class UserGroupEntity {
 
     public UserGroup toModel() {
         UserGroup model = new UserGroup();
-        model.setGroupId(this.id);
         BeanUtils.copyProperties(this, model);
         return model;
     }
 
     public static UserGroupEntity from(UserGroup model) {
         UserGroupEntity entity = new UserGroupEntity();
-        entity.setId(model.getGroupId());
         BeanUtils.copyProperties(model, entity);
         return entity;
     }

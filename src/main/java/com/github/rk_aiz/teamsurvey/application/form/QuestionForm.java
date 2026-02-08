@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import org.springframework.beans.BeanUtils;
 
 import com.github.rk_aiz.teamsurvey.application.validation.OnDraftSurvey;
+import com.github.rk_aiz.teamsurvey.application.validation.QuestionFormCheck;
 import com.github.rk_aiz.teamsurvey.domain.model.AnswerOption;
 import com.github.rk_aiz.teamsurvey.domain.model.question.FreeResponseQuestion;
 import com.github.rk_aiz.teamsurvey.domain.model.question.MultiChoiceQuestion;
@@ -26,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@QuestionFormCheck
 public class QuestionForm {
 
     private Integer id;
@@ -37,18 +39,15 @@ public class QuestionForm {
     @NotNull(message = "設問の種類を指定してください", groups = OnDraftSurvey.class)
     private QuestionType type;
 
-    private boolean required;
+    private Boolean required;
 
-    // ここからanserOptionの内容を編集することはないのでDomain Modelを利用
-    private AnswerOption answerOption;
+    // FormではIDのみを保持する（バインディングのトラブル回避のため）
+    private Integer answerOptionId;
 
     private Integer displayOrder;
 
-    /**
-     * ThymeleafのFormBindingでNPEを防ぐためのGetter
-     */
-    public AnswerOption getAnswerOption() {
-        return this.answerOption;
+    public boolean isRequired() {
+        return this.required != null && this.required;
     }
 
     /**
@@ -65,17 +64,32 @@ public class QuestionForm {
             return true;
         }
         // 選択式(RADIO/CHECKBOX)の場合、回答パターンが設定(IDが存在)されている必要がある
-        return !getAnswerOption().isEmpty();
+        return this.answerOptionId != null;
     }
 
-    public Optional<Question> toModel() {
+    public Question toModel() {
 
-        Optional<Question> question = Optional.ofNullable(this.getType()).map(type -> switch (this.getType()) {
+        if (this.getType() == null)
+            return null;
+
+        Question question = switch (this.getType()) {
             case TEXT -> new FreeResponseQuestion();
-            case RADIO -> new SingleChoiceQuestion();
-            case CHECKBOX -> new MultiChoiceQuestion();
-        });
-        question.ifPresent(q -> BeanUtils.copyProperties(this, q));
+            case RADIO -> {
+                SingleChoiceQuestion scq = new SingleChoiceQuestion();
+                AnswerOption ao = new AnswerOption();
+                ao.setAnswerOptionId(this.answerOptionId);
+                scq.setAnswerOption(ao);
+                yield scq;
+            }
+            case CHECKBOX -> {
+                MultiChoiceQuestion mcq = new MultiChoiceQuestion();
+                AnswerOption ao = new AnswerOption();
+                ao.setAnswerOptionId(this.answerOptionId);
+                mcq.setAnswerOption(ao);
+                yield mcq;
+            }
+        };
+        BeanUtils.copyProperties(this, question);
         return question;
     }
 
@@ -88,6 +102,10 @@ public class QuestionForm {
             case SingleChoiceQuestion q -> QuestionType.RADIO;
             default -> QuestionType.TEXT;
         });
+
+        if (question instanceof SingleChoiceQuestion scq) {
+            form.setAnswerOptionId(scq.getAnswerOption().getAnswerOptionId());
+        }
 
         return form;
     }

@@ -88,7 +88,7 @@ public class Survey {
 
         // 質問のコピー
         copy.setQuestions(getQuestions());
-        
+
         // 対象グループのコピー
         copy.setTargetGroups(getTargetGroups());
         return copy;
@@ -115,13 +115,12 @@ public class Survey {
     }
 
     public void setQuestions(Collection<Question> questions) {
-        if (questions == null) {
-            this.questions = new HashMap<>();
-            return;
-        }
+        this.questions = new HashMap<>();
         // Mapに変換してセットする
-        this.questions = questions.stream()
-                .collect(HashMap::new, (m, q) -> m.put(q.getId(), q), Map::putAll);
+        for (Question q : questions) {
+            if (q != null)
+                this.questions.put(q.getId(), q);
+        }
     }
 
     public void setQuestions(Map<Integer, Question> questions) {

@@ -19,7 +19,7 @@ public class UserGroupMappingServiceImpl implements UserGroupMappingService {
     private final UserGroupRepository userGroupRepository;
 
     @Override
-    public boolean save(String username, List<Integer> groupIds) {
-        return userGroupRepository.updateUserGroupMapping(username, groupIds);
+    public void save(String username, List<Integer> groupIds) {
+        this.userGroupRepository.updateUserGroupMapping(username, groupIds);
     }
 }

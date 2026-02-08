@@ -58,12 +58,11 @@ public class QuestionEntity {
         QuestionEntity entity = new QuestionEntity();
         BeanUtils.copyProperties(model, entity);
 
-        switch (model.getType()) {
-            case RADIO, CHECKBOX -> {
-                entity.setAnswerPatternId(
-                        ((SingleChoiceQuestion) model)
-                                .getAnswerOption()
-                                .getAnswerOptionId());
+        switch (model) {
+            case SingleChoiceQuestion scq -> {
+                entity.setAnswerPatternId(scq
+                        .getAnswerOption()
+                        .getAnswerOptionId());
             }
             default -> {
             }

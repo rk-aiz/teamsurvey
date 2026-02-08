@@ -2,6 +2,7 @@ package com.github.rk_aiz.teamsurvey.infrastructure.repository.impl;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
@@ -11,7 +12,6 @@ import com.github.rk_aiz.teamsurvey.infrastructure.entity.SurveyEntity;
 import com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.SurveyMapper;
 import com.github.rk_aiz.teamsurvey.infrastructure.repository.QuestionRepository;
 import com.github.rk_aiz.teamsurvey.infrastructure.repository.SurveyRepository;
-import com.github.rk_aiz.teamsurvey.infrastructure.repository.SurveyTargetGroupRepository;
 import com.github.rk_aiz.teamsurvey.infrastructure.repository.UserGroupRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,6 @@ public class SurveyRepositoryImpl implements SurveyRepository {
     private final SurveyMapper surveyMapper;
     private final QuestionRepository questionRepository;
     private final UserGroupRepository userGroupRepository;
-    private final SurveyTargetGroupRepository surveyTargetGroupRepository;
 
     @Override
     public List<Survey> findAll() {
@@ -65,18 +64,21 @@ public class SurveyRepositoryImpl implements SurveyRepository {
 
         // 1. Header保存
         SurveyEntity entity = SurveyEntity.fromModel(survey);
-        boolean ret = this.surveyMapper.insert(entity) > 0;
+        if (this.surveyMapper.insert(entity) == 0)
+            return false;
 
-        // 自動採番されたIDをドメインモデルに反映
-        survey.setId(entity.getId());
+        Optional.ofNullable(entity.getId()).ifPresent(newId -> {
+            // 自動採番されたIDをドメインモデルに反映
+            survey.setId(newId);
 
-        // 2. Questions保存 (新規作成時も質問があれば保存する)
-        Collection<Question> questions = survey.getQuestions();
-        if (questions != null && !questions.isEmpty()) {
-            ret &= this.saveQuestions(entity.getId(), questions);
-        }
+            // 2. Questions保存 (新規作成時も質問があれば保存する)
+            Collection<Question> questions = survey.getQuestions();
+            if (questions != null && !questions.isEmpty()) {
+                this.saveQuestions(entity.getId(), questions);
+            }
+        });
 
-        return ret;
+        return true;
     }
 
     @Override

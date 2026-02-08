@@ -35,7 +35,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public boolean saveQuestion(Question question) {
-        if (question.getId() == null) {
+        if (question.getId() != null) {
             return questionRepository.set(question);
         } else {
             return questionRepository.add(question);
@@ -46,10 +46,10 @@ public class QuestionServiceImpl implements QuestionService {
     public boolean removeQuestion(Integer id) {
         return questionRepository.remove(id);
     }
-    
+
     @Override
     public boolean removeQuestionBySurveyId(Integer surveyId) {
-    	return questionRepository.removeBySurveyId(surveyId);
+        return questionRepository.removeBySurveyId(surveyId);
     }
 
 }

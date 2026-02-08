@@ -4,7 +4,7 @@
 	namespace="com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.UserGroupMappingMapper">
 
     <insert id="insertBulk">
-        INSERT INTO user_group_mapping (username, group_id)
+        INSERT INTO user_group_mappings (username, group_id)
         VALUES
         <foreach item="groupId" collection="groupIds" separator=",">
             (#{username}, #{groupId})

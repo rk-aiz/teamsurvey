@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.github.rk_aiz.teamsurvey.domain.model.Response;
 import com.github.rk_aiz.teamsurvey.infrastructure.entity.ResponseEntity;
 
 @Mapper
@@ -24,6 +25,11 @@ public interface ResponseMapper {
      * 指定されたユーザー名に対する回答を取得します
      */
     List<ResponseEntity> selectByUsername(String username);
+
+    /**
+     * 指定されたアンケートIDに対する回答を取得します
+     */
+    List<ResponseEntity> selectBySurveyId(Integer surveyId);
 
     /**
      * 新しい回答を登録します

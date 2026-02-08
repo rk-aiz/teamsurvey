@@ -22,6 +22,11 @@ public interface ResponseRepository {
     List<Response> findByUsername(String username);
 
     /**
+     * 指定されたアンケートIDに対する回答を取得します
+     */
+    List<Response> findBySurveyId(Integer surveyId);
+
+    /**
      * 新しい回答を登録します
      */
     void add(Response response);

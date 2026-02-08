@@ -23,7 +23,7 @@
         <result property="updatedAt" column="updated_at" />
         <result property="enabled" column="enabled" />
         <collection property="assignedGroups" ofType="com.github.rk_aiz.teamsurvey.domain.model.UserGroup">
-            <id property="groupId" column="group_id" />
+            <id property="id" column="group_id" />
             <result property="groupName" column="group_name" />
             <result property="authority" column="authority"/>
             <result property="isSystemGroup" column="is_system_group" />
@@ -61,8 +61,8 @@
     </select>
 
     <!-- ユーザーの存在チェック -->
-    <select id="countByUsername" resultType="int">
-        SELECT count(*) FROM authentications WHERE username = #{username}
+    <select id="exists" resultType="boolean">
+        SELECT EXISTS (SELECT 1 FROM authentications WHERE username = #{username})
     </select>
 
     <!-- 有効な管理者数をカウント -->

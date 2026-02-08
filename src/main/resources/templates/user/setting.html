@@ -19,20 +19,6 @@
                         </div>
                         <div class="card-body p-4">
 
-                            <!-- メッセージ表示 -->
-                            <div th:if="${message}" class="alert alert-success alert-dismissible fade show"
-                                role="alert">
-                                <span th:text="${message}"></span>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show"
-                                role="alert">
-                                <span th:text="${errorMessage}"></span>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                    aria-label="Close"></button>
-                            </div>
-
                             <form th:action="@{/setting/save}" method="post" th:object="${accountForm}">
                                 <div class="mb-3">
                                     <label for="username" class="form-label">ユーザーID</label>
@@ -63,7 +49,7 @@
                                     <label for="passwordConfirmation" class="form-label">パスワード（確認）</label>
                                     <input type="password" class="form-control" th:field="*{passwordConfirmation}"
                                         th:errorclass="is-invalid" placeholder="パスワードを変更する場合は再入力">
-                                    <div class="invalid-feedback" th:errors="*{passwordMatching}"></div>
+                                    <div class="invalid-feedback" th:errors="*{passwordConfirmation}"></div>
                                 </div>
 
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">

@@ -8,7 +8,7 @@ import java.util.Map;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import com.github.rk_aiz.teamsurvey.domain.model.LoginUser;
+import com.github.rk_aiz.teamsurvey.domain.model.UserAccount;
 import com.github.rk_aiz.teamsurvey.domain.model.Response;
 import com.github.rk_aiz.teamsurvey.domain.model.ResponseDetail;
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
@@ -43,7 +43,7 @@ public class SurveyDataInitializer implements CommandLineRunner {
 
         // ID=2: サービス満足度調査
         publishSurvey(2);
-        
+
         // ID=3: 【下書き】新規企画アンケート (DRAFTのまま)
 
         // ID=4: 社内イベント感想 (CLOSEDにするため、一度公開してから終了)
@@ -129,16 +129,18 @@ public class SurveyDataInitializer implements CommandLineRunner {
 
     /**
      * 回答登録ヘルパー
+     * 
      * @param surveyId アンケートID
      * @param username 回答者ユーザー名
-     * @param answers Key:設問の表示順(displayOrder), Value:回答内容(Integer=ItemOrder, String=Text, List=MultiItemOrder)
+     * @param answers  Key:設問の表示順(displayOrder), Value:回答内容(Integer=ItemOrder,
+     *                 String=Text, List=MultiItemOrder)
      */
     @SuppressWarnings("unchecked")
     private void createResponse(Integer surveyId, String username, Map<Integer, Object> answers) {
         try {
             // 最新のアンケート情報を取得（スナップショット化された回答パターンを含む）
             Survey survey = surveyService.findSurveyById(surveyId);
-            LoginUser user = accountService.findAccountByUsername(username);
+            UserAccount user = accountService.findAccountByUsername(username);
 
             Response response = responseService.createNewResponseBySurvey(survey, user);
             response.setStatus(ResponseStatus.VALID);

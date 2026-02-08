@@ -1,12 +1,11 @@
 package com.github.rk_aiz.teamsurvey.infrastructure.repository.impl;
 
-import java.util.Collection;
 import java.util.List;
 
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.github.rk_aiz.teamsurvey.domain.model.LoginUser;
+import com.github.rk_aiz.teamsurvey.domain.model.UserAccount;
 import com.github.rk_aiz.teamsurvey.domain.model.UserGroup;
 import com.github.rk_aiz.teamsurvey.infrastructure.entity.AuthenticationEntity;
 import com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.AuthenticationMapper;
@@ -23,49 +22,14 @@ public class AccountRepositoryImpl implements AccountRepository {
     private final UserGroupRepository userGroupRepository;
 
     @Override
-    public List<LoginUser> findAll() {
-        return authenticationMapper.selectAll()
-                .stream()
-                .map(AuthenticationEntity::toModel)
-                .toList();
+    public UserAccount findByUsername(String username) {
+        return authenticationMapper.selectByUsername(username).toModel();
     }
 
     @Override
-    public LoginUser findByUsername(String username) {
-
-        AuthenticationEntity entity = authenticationMapper.selectByUsername(username);
-
-        if (entity == null)
-            return null;
-
-        List<UserGroup> groups = userGroupRepository.findByUsername(username);
-
-        Collection<? extends GrantedAuthority> authorities = groups.stream().flatMap(
-                g -> g.getAuthorityList().stream()).distinct().toList();
-
-        LoginUser user = new LoginUser(
-                entity.getUsername(),
-                entity.getPassword(),
-                entity.getCreatedAt(),
-                entity.getUpdatedAt(),
-                entity.isEnabled(),
-                authorities);
-
-        user.setAssignedGroups(groups);
-        user.setEmail(entity.getEmail());
-        user.setDisplayName(entity.getDisplayName());
-        return user;
-    }
-
-    @Override
-    public List<LoginUser> findWithPaging(long offset, int pageSize) {
+    public List<UserAccount> findWithPaging(long offset, int pageSize) {
         List<AuthenticationEntity> entities = authenticationMapper.selectWithPaging(offset, pageSize);
-
-        return entities.stream().map(entity -> {
-            LoginUser loginUser = entity.toModel();
-            loginUser.setAssignedGroups(entity.getAssignedGroups());
-            return loginUser;
-        }).toList();
+        return entities.stream().map(AuthenticationEntity::toModel).toList();
     }
 
     @Override
@@ -74,13 +38,27 @@ public class AccountRepositoryImpl implements AccountRepository {
     }
 
     @Override
-    public boolean add(LoginUser user) {
-        return authenticationMapper.insert(AuthenticationEntity.from(user)) > 0;
-    }
+    @Transactional
+    public boolean save(UserAccount user) {
+        boolean success;
+        if (this.exists(user.username())) {
+            success = 0 < this.authenticationMapper
+                    .update(AuthenticationEntity.from(user));
+        } else {
+            success = 0 < this.authenticationMapper
+                    .insert(AuthenticationEntity.from(user));
+        }
 
-    @Override
-    public boolean set(LoginUser user) {
-        return authenticationMapper.update(AuthenticationEntity.from(user)) > 0;
+        if (!success)
+            return false;
+
+        // グループの紐付け情報も保存する
+        List<Integer> groupIds = user.assignedGroups().stream()
+                .map(UserGroup::getId)
+                .toList();
+        userGroupRepository.updateUserGroupMapping(user.username(), groupIds);
+
+        return true;
     }
 
     @Override
@@ -95,6 +73,6 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public boolean exists(String username) {
-        return authenticationMapper.countByUsername(username) > 0;
+        return authenticationMapper.exists(username);
     }
 }

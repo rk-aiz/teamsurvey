@@ -6,8 +6,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Authority {
-    ADMIN("管理者"),
-    USER("ユーザー");
+
+    USER("ユーザー"),
+    ADMIN("管理者");
 
     private final String label;
 }

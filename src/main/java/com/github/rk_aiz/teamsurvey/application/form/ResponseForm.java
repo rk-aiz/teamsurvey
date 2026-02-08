@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 
-import com.github.rk_aiz.teamsurvey.domain.model.LoginUser;
+import com.github.rk_aiz.teamsurvey.domain.model.UserAccount;
 import com.github.rk_aiz.teamsurvey.domain.model.Response;
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
 
@@ -22,7 +22,7 @@ public class ResponseForm {
     /** 各設問への回答詳細リスト */
     private List<ResponseDetailForm> details;
 
-    public static ResponseForm fromSurvey(Survey survey, LoginUser loginUser) {
+    public static ResponseForm fromSurvey(Survey survey, String username) {
 
         ResponseForm form = new ResponseForm();
         List<ResponseDetailForm> details = survey
@@ -32,7 +32,7 @@ public class ResponseForm {
                 .toList();
 
         form.setSurveyId(survey.getId());
-        form.setUsername(loginUser.getUsername());
+        form.setUsername(username);
         form.setDetails(details);
 
         return form;
@@ -43,7 +43,6 @@ public class ResponseForm {
         Response response = new Response();
         BeanUtils.copyProperties(this, response);
 
-        
         response.setResponseDetails(this.getDetails()
                 .stream()
                 .map(detailForm -> detailForm.toModel(survey.getQuestionById(detailForm.getQuestionId())))

@@ -1,6 +1,7 @@
 package com.github.rk_aiz.teamsurvey.domain.service.impl;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -50,13 +51,8 @@ public class SurveyServiceImpl implements SurveyService {
      */
     @Override
     public Survey findSurveyById(Integer surveyId) throws IllegalArgumentException {
-        Survey survey = surveyRepository.findById(surveyId);
-
-        if (survey == null) {
-            throw new IllegalArgumentException("指定されたアンケートが見つかりません: " + surveyId);
-        }
-
-        return survey;
+        return Optional.ofNullable(surveyId).map(surveyRepository::findById)
+                .orElseThrow(() -> new IllegalArgumentException("指定されたアンケートが見つかりません: " + surveyId));
     }
 
     /**
@@ -89,10 +85,32 @@ public class SurveyServiceImpl implements SurveyService {
 
         // DB上のステータスがDRAFTの場合のみ、設問構成を更新
         if (currentDbSurvey.getStatus() == SurveyStatus.DRAFT) {
-            questionService.removeQuestionBySurveyId(survey.getId());
-            for (Question question : survey.getQuestions()) {
-                Optional.ofNullable(question).ifPresent(questionService::saveQuestion);
-            }
+
+            // 1. 削除対象の特定と削除
+            // 現在DBに登録されている設問IDリスト
+            List<Integer> currentQuestionIds = currentDbSurvey.getQuestions().stream()
+                    .map(Question::getId)
+                    .toList();
+
+            // 今回のリクエストに含まれる設問IDリスト(新規追加分はIDがnullなので除外)
+            List<Integer> keepingQuestionIds = survey.getQuestions().stream()
+                    .filter(Objects::nonNull)
+                    .map(Question::getId)
+                    .filter(Objects::nonNull)
+                    .toList();
+
+            // DBにはあるがリクエストにはないIDを削除
+            currentQuestionIds.stream()
+                    .filter(id -> !keepingQuestionIds.contains(id))
+                    .forEach(questionService::removeQuestion);
+
+            // 2. 追加・更新
+            survey.getQuestions().stream()
+                    .filter(Objects::nonNull)
+                    .map(question -> {
+                        question.setSurveyId(survey.getId());
+                        return question;
+                    }).forEach(questionService::saveQuestion);
         }
 
         return survey;
@@ -130,9 +148,9 @@ public class SurveyServiceImpl implements SurveyService {
                 }
             }
             case DELETED -> {
-                // 修正: 「現在のステータス」が終了済みかどうかをチェックする
-                if (!survey.getStatus().isAtLeast(SurveyStatus.CLOSED)) {
-                    throw new ServiceRuleException("アンケート削除前に、終了に変更してください");
+                // 公開中以外（下書き or 終了）であれば削除可能とする
+                if (survey.getStatus() == SurveyStatus.PUBLISHED) {
+                    throw new ServiceRuleException("公開中のアンケートは削除できません。先にステータスを変更してください");
                 }
             }
             default -> throw new IllegalArgumentException("Unexpected value: " + newStatus);

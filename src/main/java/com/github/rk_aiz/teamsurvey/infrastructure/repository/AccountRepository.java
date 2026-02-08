@@ -2,21 +2,19 @@ package com.github.rk_aiz.teamsurvey.infrastructure.repository;
 
 import java.util.List;
 
-import com.github.rk_aiz.teamsurvey.domain.model.LoginUser;
+import com.github.rk_aiz.teamsurvey.domain.model.UserAccount;
 
 public interface AccountRepository {
 
-    List<LoginUser> findAll();
+    // List<UserAccount> findAll();
 
-    LoginUser findByUsername(String username);
+    UserAccount findByUsername(String username);
 
-    List<LoginUser> findWithPaging(long offset, int pageSize);
+    List<UserAccount> findWithPaging(long offset, int pageSize);
 
     long count();
 
-    boolean add(LoginUser user);
-
-    boolean set(LoginUser user);
+    boolean save(UserAccount user);
 
     boolean remove(String username);
 

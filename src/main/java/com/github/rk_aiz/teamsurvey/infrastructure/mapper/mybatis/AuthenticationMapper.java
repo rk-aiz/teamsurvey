@@ -26,5 +26,5 @@ public interface AuthenticationMapper {
 
     long countEnabledAdmins();
 
-    int countByUsername(@Param("username") String username);
+    boolean exists(@Param("username") String username);
 }

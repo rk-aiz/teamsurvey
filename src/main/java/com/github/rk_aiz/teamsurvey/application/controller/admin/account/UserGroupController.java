@@ -1,22 +1,20 @@
 package com.github.rk_aiz.teamsurvey.application.controller.admin.account;
 
-import org.springframework.data.domain.Page;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.validation.SmartValidator;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.github.rk_aiz.teamsurvey.application.form.AccountForm;
 import com.github.rk_aiz.teamsurvey.application.form.UserGroupForm;
-import com.github.rk_aiz.teamsurvey.domain.model.LoginUser;
 import com.github.rk_aiz.teamsurvey.domain.service.AccountService;
 import com.github.rk_aiz.teamsurvey.domain.service.UserGroupService;
 
@@ -42,7 +40,7 @@ public class UserGroupController {
     private final SmartValidator validator;
 
     /**
-     * ユーザーグループ情報を保存します
+     * ユーザーグループ情報を保存します TODO : システムグループ関連の処理、UIの変更など
      */
     @PostMapping("/save")
     public String save(
@@ -53,21 +51,39 @@ public class UserGroupController {
             @PageableDefault(size = 20) Pageable pageable) {
 
         if (result.hasErrors()) {
-            for (ObjectError error : result.getAllErrors()) {
-                log.error(error.getDefaultMessage());
-            }
             model.addAttribute("users", accountService.findWithPaging(pageable));
             model.addAttribute("userGroups", userGroupService.findAll());
-            model.addAttribute("showGroupModal", true);
             return "admin/account/list";
         }
 
-        if (userGroupService.save(form.toModel())) {
-            redirectAttributes.addFlashAttribute(MESSAGE, "グループを保存しました。");
-        } else {
-            redirectAttributes.addFlashAttribute("errorMessage", "保存に失敗しました。");
+        try {
+            if (userGroupService.save(form.toModel())) {
+                redirectAttributes.addFlashAttribute(MESSAGE, "グループを保存しました。");
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "保存に失敗しました。");
+            }
+        } catch (DuplicateKeyException e) {
+            result.rejectValue("groupName", "error.groupName", e.getMessage());
+            model.addAttribute("users", accountService.findWithPaging(pageable));
+            model.addAttribute("userGroups", userGroupService.findAll());
+            return "admin/account/list";
+        } catch (Exception e) {
+            log.error("グループ保存エラー", e);
+            redirectAttributes.addFlashAttribute("errorMessage", "システムエラーが発生しました。");
         }
+        return REDIRECT_TO_LIST;
+    }
 
+    /**
+     * ユーザーグループを削除します
+     */
+    @PostMapping("/delete")
+    public String delete(@RequestParam("id") Integer groupId, RedirectAttributes redirectAttributes) {
+        if (userGroupService.delete(groupId)) {
+            redirectAttributes.addFlashAttribute(MESSAGE, "グループを削除しました。");
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "削除に失敗しました。");
+        }
         return REDIRECT_TO_LIST;
     }
 

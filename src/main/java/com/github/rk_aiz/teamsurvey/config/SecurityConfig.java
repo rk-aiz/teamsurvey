@@ -26,9 +26,7 @@ public class SecurityConfig {
                         .permitAll()
                         // 【管理者権限設定】 url : /admin/**は管理者しかアクセスできない
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
-                        // ★ここが重要：その他のリクエストはすべて認証が必要
-                        // これにより、/setting や /response などのコントローラーは
-                        // ログイン済みでないとアクセスできなくなるため、loginUserがnullになることはありません。
+                        // ★その他のリクエストはすべて認証が必要
                         .anyRequest().authenticated())
 
                 // ★フォームによるログイン設定

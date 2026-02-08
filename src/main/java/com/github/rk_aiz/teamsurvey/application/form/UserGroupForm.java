@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserGroupForm {
 
-    private Integer groupId;
+    private Integer id;
 
     @NotBlank(message = "グループ名は必須です")
     @Size(max = 50, message = "グループ名は{max}文字以内で入力してください")
@@ -26,10 +26,11 @@ public class UserGroupForm {
     @NotNull(message = "権限を指定してください")
     private Authority authority;
 
+    private boolean isSystemGroup;
+
     public UserGroup toModel() {
         UserGroup group = new UserGroup();
         BeanUtils.copyProperties(this, group);
-        // フォームに存在しないプロパティ（isSystemGroupなど）はデフォルト値または別途設定
         return group;
     }
 }

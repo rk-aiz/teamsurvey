@@ -64,8 +64,21 @@
 
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO surveys (title, created_at, updated_at) VALUES (#{title},
-        CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        INSERT INTO surveys (
+            title, 
+            status, 
+            result_visibility, 
+            deadline, 
+            created_at, 
+            updated_at
+        ) VALUES (
+            #{title},
+            #{status},
+            #{resultVisibility},
+            #{deadline},
+            CURRENT_TIMESTAMP, 
+            CURRENT_TIMESTAMP
+        )
     </insert>
 
     <update id="update"> 

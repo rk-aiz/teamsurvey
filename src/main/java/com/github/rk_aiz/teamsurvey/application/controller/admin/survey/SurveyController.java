@@ -1,6 +1,7 @@
 package com.github.rk_aiz.teamsurvey.application.controller.admin.survey;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -17,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.github.rk_aiz.teamsurvey.application.form.QuestionForm;
 import com.github.rk_aiz.teamsurvey.application.form.SurveyForm;
 import com.github.rk_aiz.teamsurvey.application.validation.SurveyValidationGroup;
+import com.github.rk_aiz.teamsurvey.domain.exception.ServiceRuleException;
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
 import com.github.rk_aiz.teamsurvey.domain.service.AnswerOptionService;
 import com.github.rk_aiz.teamsurvey.domain.service.SurveyService;
@@ -39,6 +42,7 @@ public class SurveyController {
 
     /** 定数 */
     private static final String MESSAGE = "message";
+    private static final String ERROR_MESSAGE = "errorMessage";
     private static final String REDIRECT_TO_LIST = "redirect:/admin/survey/list";
 
     /** DI */
@@ -65,18 +69,17 @@ public class SurveyController {
             Model model) {
 
         // 全件取得
-        List<Survey> allSurveys = surveyService.findAllSurveys();
-        model.addAttribute("surveys", allSurveys);
+        model.addAttribute(
+                "surveys",
+                this.surveyService.findAllSurveys());
 
         // IDが指定されている場合、詳細情報を取得（右カラム用）
-        if (id != null) {
-            try {
-                Survey selectedSurvey = surveyService.findSurveyById(id);
-                model.addAttribute("selectedSurvey", selectedSurvey);
-            } catch (IllegalArgumentException e) {
-                // 指定されたIDが見つからない場合は、詳細を表示せずに一覧のみ表示を継続
-                log.warn("指定されたアンケートIDが見つかりません: {}", id);
-            }
+        try {
+            Optional.ofNullable(id)
+                    .map(surveyService::findSurveyById)
+                    .ifPresent(survey -> model.addAttribute("selectedSurvey", survey));
+        } catch (IllegalArgumentException e) {
+            // 見つからない場合、何もしない
         }
 
         return "admin/survey/list";
@@ -96,14 +99,21 @@ public class SurveyController {
     }
 
     /**
-     * 編集画面を表示します（設問一覧も含む）
+     * 新規作成または編集画面を表示します（設問一覧も含む）
+     * IDが指定されない場合は新規作成として扱います
      */
-    @GetMapping("/edit/{id}")
-    public String edit(@PathVariable("id") Integer id, Model model) {
+    @GetMapping(value = { "/edit", "/edit/{id}" })
+    public String edit(@PathVariable(value = "id", required = false) Integer id, Model model) {
 
-        // Modelに追加 <- Formに変換 <- アンケート情報(エンティティ)の取得 <- id
-        model.addAttribute("surveyForm",
-                SurveyForm.from(surveyService.findSurveyById(id), false));
+        if (id != null) {
+            // 編集: 既存データを取得
+            model.addAttribute("surveyForm",
+                    SurveyForm.from(surveyService.findSurveyById(id), false));
+        } else {
+            // 新規: 空のFormを作成
+            model.addAttribute("surveyForm", SurveyForm.from(
+                    surveyService.getEmptySurvey(), true));
+        }
 
         // 回答パターンの選択肢（ドロップダウン用）
         model.addAttribute("answerOptions", answerOptionService.findAll());
@@ -129,30 +139,11 @@ public class SurveyController {
     }
 
     /**
-     * 新規作成
-     * 空のFormを作成し、編集画面へ遷移します
-     */
-    @GetMapping("/new")
-    public String create(
-            Model model) {
-
-        // アンケート情報の取得 -> クローン(ステータスはDRAFT) -> Formに変換
-        model.addAttribute("surveyForm", SurveyForm.from(
-                surveyService.getEmptySurvey(), true));
-
-        // 回答パターンの選択肢（ドロップダウン用）
-        model.addAttribute("answerOptions", answerOptionService.findAll());
-
-        // 編集画面へリダイレクト
-        return "/admin/survey/edit";
-    }
-
-    /**
      * Survey登録を実行します
      */
     @PostMapping("/save")
     public String save(
-            @ModelAttribute SurveyForm form,
+            @ModelAttribute SurveyForm surveyForm,
             @RequestParam(value = "groupIds", required = false) List<Integer> groupIds,
             BindingResult bindingResult,
             Model model,
@@ -160,9 +151,9 @@ public class SurveyController {
 
         // ステータスに応じてバリデーショングループを切り替えてバリデーション
         validator.validate(
-                form,
+                surveyForm,
                 bindingResult,
-                SurveyValidationGroup.getValidationGroup(form.getStatus()));
+                SurveyValidationGroup.getValidationGroup(surveyForm.getStatus()));
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("answerOptions", answerOptionService.findAll());
@@ -170,10 +161,9 @@ public class SurveyController {
             return "admin/survey/edit";
         }
 
-        // サービス層で保存処理（新規・更新・セキュリティチェック・削除同期すべて含む）
-        Survey newSurvey = surveyService.saveSurvey(form.toModel());
+        Survey newSurvey = surveyService.saveSurvey(surveyForm.toModel());
 
-        if (form.isNew()) {
+        if (surveyForm.isNew()) {
             redirectAttributes.addFlashAttribute(MESSAGE, "新しいアンケートが追加されました");
         } else {
             redirectAttributes.addFlashAttribute(MESSAGE, "アンケートを更新しました");
@@ -221,16 +211,22 @@ public class SurveyController {
     public String changeStatus(
             @PathVariable("id") Integer id,
             @RequestParam("status") SurveyStatus status,
+            @RequestHeader(value = "Referer", required = false) String referer,
             RedirectAttributes redirectAttributes) {
 
         try {
-            surveyService.tryChangeStatusById(id, status);
-        } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute(MESSAGE, e.getMessage());
-            return "redirect:/admin/survey/detail/" + id;
+            if (surveyService.tryChangeStatusById(id, status))
+                redirectAttributes.addFlashAttribute(MESSAGE, "ステータスを変更しました");
+        } catch (ServiceRuleException e) {
+            redirectAttributes.addFlashAttribute(ERROR_MESSAGE, e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute(ERROR_MESSAGE, "システムエラーが発生しました。");
         }
 
-        redirectAttributes.addFlashAttribute(MESSAGE, "ステータスを変更しました");
+        if (referer != null && !referer.isEmpty()) {
+            return "redirect:" + referer;
+        }
+
         return "redirect:/admin/survey/detail/" + id;
     }
 

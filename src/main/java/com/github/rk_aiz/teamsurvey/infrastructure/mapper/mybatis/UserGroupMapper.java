@@ -14,10 +14,12 @@ public interface UserGroupMapper {
 
     UserGroupEntity selectById(@Param("id") Integer id);
 
+    boolean existsByGroupName(@Param("groupName") String groupName);
+
     List<UserGroupEntity> selectByUsername(@Param("username") String username);
 
     int insert(UserGroupEntity userGroup);
-    
+
     int update(UserGroupEntity userGroup);
 
     int delete(@Param("id") Integer id);

@@ -46,13 +46,18 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
     }
 
     @Override
-    public boolean add(UserGroup group) {
-        return userGroupMapper.insert(UserGroupEntity.from(group)) > 0;
+    public boolean existsByGroupName(String groupName) {
+        return this.userGroupMapper.existsByGroupName(groupName);
     }
 
     @Override
-    public boolean set(UserGroup group) {
-        return userGroupMapper.update(UserGroupEntity.from(group)) > 0;
+    public boolean save(UserGroup userGroup) {
+
+        if (userGroup.getId() == null) {
+            return userGroupMapper.insert(UserGroupEntity.from(userGroup)) > 0;
+        } else {
+            return userGroupMapper.update(UserGroupEntity.from(userGroup)) > 0;
+        }
     }
 
     @Override
@@ -61,10 +66,10 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
     }
 
     @Override
-    public boolean updateUserGroupMapping(String username, List<Integer> groupIds) {
+    public void updateUserGroupMapping(String username, List<Integer> groupIds) {
         // 現在のグループIDリストを取得
         List<Integer> currentGroupIds = this.findByUsername(username).stream()
-                .map(UserGroup::getGroupId)
+                .map(UserGroup::getId)
                 .sorted()
                 .toList();
 
@@ -76,7 +81,7 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
 
         // 変更がないなら即return
         if (currentGroupIds.equals(newGroupIds)) {
-            return false;
+            return;
         }
 
         // 現在のDBから全削除
@@ -91,6 +96,5 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
                 this.userGroupMappingMapper.insertBulk(username, batch);
             }
         }
-        return true;
     }
 }

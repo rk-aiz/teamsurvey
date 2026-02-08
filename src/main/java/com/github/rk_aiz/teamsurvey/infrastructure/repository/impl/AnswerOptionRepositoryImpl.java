@@ -2,6 +2,7 @@ package com.github.rk_aiz.teamsurvey.infrastructure.repository.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -39,7 +40,8 @@ public class AnswerOptionRepositoryImpl implements AnswerOptionRepository {
 
     @Override
     public AnswerOption findById(Integer id) {
-        return this.answerPatternMapper.selectById(id).toModel();
+        return Optional.ofNullable(this.answerPatternMapper.selectById(id)).map(AnswerPatternEntity::toModel)
+                .orElse(null);
     }
 
     @Override

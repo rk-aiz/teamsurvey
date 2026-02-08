@@ -12,7 +12,7 @@
             <!-- 左カラム: 操作・ナビゲーション (col-lg-2) -->
             <div class="col-lg-2">
                 <div class="d-grid gap-2 mb-4">
-                    <a th:href="@{/admin/survey/new}" class="btn btn-primary shadow-sm">
+                    <a th:href="@{/admin/survey/edit}" class="btn btn-primary shadow-sm">
                         <i class="bi bi-plus-lg"></i> 新規作成
                     </a>
                 </div>
@@ -42,11 +42,6 @@
                         <h5 class="card-title mb-0">アンケート一覧</h5>
                     </div>
                     <div class="list-group list-group-flush overflow-auto" style="max-height: 70vh;">
-                        <!-- メッセージ表示 -->
-                        <div th:if="${message}" class="alert alert-success m-2 py-2 small" th:text="${message}"></div>
-                        <div th:if="${errorMessage}" class="alert alert-danger m-2 py-2 small"
-                            th:text="${errorMessage}"></div>
-
                         <!-- 一覧ループ -->
                         <a th:each="survey : ${surveys}" th:href="@{/admin/survey/list(id=${survey.id})}"
                             class="list-group-item list-group-item-action py-3 survey-item"
@@ -113,20 +108,69 @@
                             </div>
                         </div>
 
-                        <div class="d-flex gap-2">
+                        <div class="d-flex gap-2 mb-3">
                             <a th:href="@{/admin/survey/detail/{id}(id=${selectedSurvey.id})}"
-                                class="btn btn-outline-primary">
+                                class="btn btn-sm btn-outline-primary">
                                 <i class="bi bi-eye"></i> 詳細画面を開く
-                            </a>
-                            <a th:href="@{/admin/survey/edit/{id}(id=${selectedSurvey.id})}"
-                                class="btn btn-outline-primary">
-                                <i class="bi bi-pencil"></i> 編集
                             </a>
                             <!-- TODO 回答パターンスナップショットの関係で、複製機能は一時凍結
                             <a th:href="@{/admin/survey/copy/{id}(id=${selectedSurvey.id})}"
                                 class="btn btn-outline-secondary">
                                 <i class="bi bi-copy"></i> 複製
                             </a> -->
+                        </div>
+
+                        <!-- ステータス変更・削除アクション -->
+                        <div class="card bg-light border-0">
+                            <div class="card-body p-3">
+                                <h6 class="card-subtitle mb-2 text-muted small">アクション</h6>
+                                <div class="d-flex flex-wrap gap-2 align-items-center">
+                                    <!-- 編集 -->
+                                    <a th:href="@{/admin/survey/edit/{id}(id=${selectedSurvey.id})}"
+                                        class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-pencil"></i> 編集
+                                    </a>
+                                    <!-- 公開 -->
+                                    <form th:if="${selectedSurvey.status.name() == 'DRAFT'}"
+                                        th:action="@{/admin/survey/status/{id}(id=${selectedSurvey.id})}" method="post">
+                                        <input type="hidden" name="status" value="PUBLISHED">
+                                        <button type="submit" class="btn btn-sm btn-success"
+                                            onclick="return confirm('回答受付状態にしますか？')">
+                                            <i class="bi bi-send"></i> 公開する
+                                        </button>
+                                    </form>
+                                    <!-- 終了 -->
+                                    <form th:if="${selectedSurvey.status.name() == 'PUBLISHED'}"
+                                        th:action="@{/admin/survey/status/{id}(id=${selectedSurvey.id})}" method="post">
+                                        <input type="hidden" name="status" value="CLOSED">
+                                        <button type="submit" class="btn btn-sm btn-secondary"
+                                            onclick="return confirm('回答受付を終了しますか？')">
+                                            <i class="bi bi-stop-circle"></i> 締め切る
+                                        </button>
+                                    </form>
+                                    <!-- 再公開 -->
+                                    <form th:if="${selectedSurvey.status.name() == 'CLOSED'}"
+                                        th:action="@{/admin/survey/status/{id}(id=${selectedSurvey.id})}" method="post">
+                                        <input type="hidden" name="status" value="PUBLISHED">
+                                        <button type="submit" class="btn btn-sm btn-success"
+                                            onclick="return confirm('再公開しますか？')">
+                                            <i class="bi bi-arrow-repeat"></i> 再公開
+                                        </button>
+                                    </form>
+
+                                    <!-- 削除 (DRAFT or CLOSED) -->
+                                    <form
+                                        th:if="${selectedSurvey.status.name() == 'DRAFT' or selectedSurvey.status.name() == 'CLOSED'}"
+                                        th:action="@{/admin/survey/status/{id}(id=${selectedSurvey.id})}" method="post"
+                                        class="ms-auto">
+                                        <input type="hidden" name="status" value="DELETED">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                            onclick="return confirm('本当に削除しますか？この操作は取り消せません。')">
+                                            <i class="bi bi-trash"></i> 削除
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

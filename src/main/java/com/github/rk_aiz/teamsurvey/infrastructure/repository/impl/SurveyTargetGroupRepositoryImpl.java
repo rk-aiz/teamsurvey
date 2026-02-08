@@ -18,14 +18,12 @@ public class SurveyTargetGroupRepositoryImpl implements SurveyTargetGroupReposit
 
     @Override
     public List<Integer> findByGroupId(Integer groupId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findByGroupId'");
+        return this.surveyTargetGroupMapper.selectSurveyIdByGroupId(groupId);
     }
 
     @Override
     public List<Integer> findBySurveyId(Integer surveyId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findBySurveyId'");
+        return this.surveyTargetGroupMapper.selectGroupIdBySurveyId(surveyId);
     }
 
     @Override
@@ -39,7 +37,7 @@ public class SurveyTargetGroupRepositoryImpl implements SurveyTargetGroupReposit
     }
 
     @Override
-    public boolean updateTargetGroups(Integer surveyId, List<Integer> groupIds) {
+    public void updateTargetGroups(Integer surveyId, List<Integer> groupIds) {
 
         // 現在のグループIDリストを取得
         List<Integer> currentGroupIds = this.findBySurveyId(surveyId).stream()
@@ -54,7 +52,7 @@ public class SurveyTargetGroupRepositoryImpl implements SurveyTargetGroupReposit
 
         // 変更がないなら即return
         if (currentGroupIds.equals(newGroupIds)) {
-            return false;
+            return;
         }
 
         if (!currentGroupIds.isEmpty()) {
@@ -66,7 +64,6 @@ public class SurveyTargetGroupRepositoryImpl implements SurveyTargetGroupReposit
                 this.surveyTargetGroupMapper.insertBulk(surveyId, batch);
             }
         }
-        return true;
     }
 
 }

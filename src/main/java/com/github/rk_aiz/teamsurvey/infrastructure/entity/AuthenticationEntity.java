@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 
-import com.github.rk_aiz.teamsurvey.domain.model.LoginUser;
+import com.github.rk_aiz.teamsurvey.domain.model.UserAccount;
 import com.github.rk_aiz.teamsurvey.domain.model.UserGroup;
 
 import lombok.AllArgsConstructor;
@@ -23,9 +23,9 @@ public class AuthenticationEntity {
     private String username;
     /** パスワード */
     private String password;
-    /** 回答パターン（結合用） */
+    /** メールアドレス */
     private String email;
-    /** 質問詳細 */
+    /** 表示名 */
     private String displayName;
     /** 作成日時 */
     private LocalDateTime createdAt;
@@ -33,31 +33,28 @@ public class AuthenticationEntity {
     private LocalDateTime updatedAt;
     /** 有効フラグ */
     private boolean enabled;
-    
+
     private List<UserGroup> assignedGroups;
-    
 
     /**
      * Entity -> Domain Model 変換
      */
-    public LoginUser toModel() {
-        LoginUser user = new LoginUser(
+    public UserAccount toModel() {
+        return new UserAccount(
                 this.username,
                 this.password,
+                this.email,
+                this.displayName,
                 this.createdAt,
                 this.updatedAt,
                 this.enabled,
-                new ArrayList<>()
-        );
-        user.setEmail(this.email);
-        user.setDisplayName(this.displayName);
-        return user;
+                this.getAssignedGroups());
     }
 
     /**
      * Domain Model -> Entity 変換
      */
-    public static AuthenticationEntity from(LoginUser model) {
+    public static AuthenticationEntity from(UserAccount model) {
         AuthenticationEntity entity = new AuthenticationEntity();
         BeanUtils.copyProperties(model, entity);
         return entity;

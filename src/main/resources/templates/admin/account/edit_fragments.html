@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+    <!-- アカウント編集/新規作成フォーム -->
+    <form th:fragment="account-form" th:action="@{/admin/account/save}" method="post" th:object="${accountForm}"
+        id="accountForm">
+        <input type="hidden" th:field="*{isNew}" />
+
+        <!-- バリデーションエラー以外のメッセージ表示用 -->
+        <div th:if="${errorMessage}" class="alert alert-danger p-2" th:text="${errorMessage}"></div>
+
+        <!-- 編集時はユーザー名変更不可 -->
+        <div class="row mb-3">
+            <label for="username" class="col-sm-3 col-form-label">ユーザー名</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" th:field="*{username}" th:disabled="${!accountForm.isNew}"
+                    th:errorclass="is-invalid">
+                <input type="hidden" th:field="*{username}" th:if="${!accountForm.isNew}" />
+                <div class="invalid-feedback"></div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label for="displayName" class="col-sm-3 col-form-label">表示名</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" th:field="*{displayName}" th:errorclass="is-invalid">
+                <div class="invalid-feedback"></div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label for="email" class="col-sm-3 col-form-label">メールアドレス</label>
+            <div class="col-sm-9">
+                <input type="email" class="form-control" th:field="*{email}" th:errorclass="is-invalid">
+                <div class="invalid-feedback"></div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label for="password" class="col-sm-3 col-form-label">パスワード</label>
+            <div class="col-sm-9">
+                <input type="password" class="form-control" th:field="*{password}" placeholder="変更する場合のみ入力"
+                    th:if="${!accountForm.isNew}" th:errorclass="is-invalid">
+                <input type="password" class="form-control" th:field="*{password}" th:if="${accountForm.isNew}" required
+                    th:errorclass="is-invalid">
+                <div class="invalid-feedback"></div>
+            </div>
+        </div>
+        <div class="collapse" id="passwordConfirmationCollapse">
+            <div class="row mb-3">
+                <label for="passwordConfirmation" class="col-sm-3 col-form-label">パスワード（確認）</label>
+                <div class="col-sm-9">
+                    <input type="password" class="form-control" th:field="*{passwordConfirmation}"
+                        th:errorclass="is-invalid">
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-sm-9 offset-sm-3">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" th:field="*{enabled}" th:disabled="${isLastAdmin}">
+                    <label class="form-check-label" for="enabled">有効アカウント</label>
+                    <!-- disabledの場合値が送信されないため、hiddenでtrueを送る（最後の管理者は有効のまま維持するため） -->
+                    <input type="hidden" name="enabled" value="true" th:if="${isLastAdmin}" />
+                    <div th:if="${isLastAdmin}" class="form-text text-danger small">
+                        有効な管理者が残り1名のため、無効化できません。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 所属グループ選択 -->
+        <div class="row mb-3">
+            <label class="col-sm-3 col-form-label">所属グループ</label>
+            <div class="col-sm-9">
+                <div class="card p-2 bg-light" style="max-height: 150px; overflow-y: auto;">
+                    <div th:if="${#lists.isEmpty(userGroups)}" class="text-muted small">
+                        グループが登録されていません
+                    </div>
+                    <div th:each="group : ${userGroups}" class="form-check">
+                        <input class="form-check-input" type="checkbox" th:field="*{groupIds}" th:value="${group.id}"
+                            th:id="${'group_' + group.id}">
+                        <label class="form-check-label" th:for="${'group_' + group.id}"
+                            th:text="${group.groupName}">Group Name</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-end">
+            <button type="submit" class="btn btn-primary px-5">保存</button>
+        </div>
+    </form>
+
+</body>
+
+</html>

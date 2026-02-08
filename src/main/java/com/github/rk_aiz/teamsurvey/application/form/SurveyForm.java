@@ -3,6 +3,7 @@ package com.github.rk_aiz.teamsurvey.application.form;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import jakarta.validation.Valid;
@@ -74,9 +75,9 @@ public class SurveyForm {
 
         form.setNew(isNew);
 
-        Optional.ofNullable(model.getQuestions()).ifPresent(questions -> 
-        		form.setQuestionForms(questions.stream().map(QuestionForm::from).toList()));
-        
+        Optional.ofNullable(model.getQuestions())
+                .ifPresent(questions -> form.setQuestionForms(questions.stream().map(QuestionForm::from).toList()));
+
         return form;
     }
 
@@ -88,21 +89,20 @@ public class SurveyForm {
         // questionsは型が違うため除外してコピー
         BeanUtils.copyProperties(this, survey, "questionForms");
 
-        //リストの順番通りにdisplayOrderをセット
+        // リストの順番通りにdisplayOrderをセット
         int order = 1;
         for (QuestionForm qf : this.getQuestionForms()) {
-        	qf.setDisplayOrder(order++);
+            qf.setDisplayOrder(order++);
         }
-        
+
         // List<QuestionForm> -> List<Question> へ変換して、セッターに渡す
-        Optional.ofNullable(this.getQuestionForms()).ifPresent(forms ->
-        		survey.setQuestions(
-        				forms.stream()
-        				.map(QuestionForm::toModel)
-        				.filter(Optional::isPresent)
-        				.map(Optional::get)
-        				.toList()));
-        
+        Optional.ofNullable(this.getQuestionForms()).ifPresent(qForms -> survey.setQuestions(
+                qForms.stream()
+                        .filter(Objects::nonNull)
+                        .map(QuestionForm::toModel)
+                        .filter(Objects::nonNull) // toModelがnullを返す可能性があるため、ここでもフィルタリングする
+                        .toList()));
+
         return survey;
     }
 }

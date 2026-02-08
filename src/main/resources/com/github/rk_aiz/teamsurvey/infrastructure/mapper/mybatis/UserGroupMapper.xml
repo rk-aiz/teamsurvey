@@ -24,17 +24,20 @@
 		RIGHT JOIN user_group_mappings map ON ug.id = map.group_id
 		WHERE map.username = #{username}
 	</select>
+
+    <select id="existsByGroupName" resultType="boolean">
+        SELECT EXISTS (SELECT 1 FROM user_groups
+        WHERE group_name = #{groupName})
+    </select>
 	
 	<!--  新規ユーザーグループを登録 -->
     <insert id="insert">
         INSERT INTO user_groups (
             group_name,
-            authority,
-			is_system_group
+            authority
         ) VALUES (
 			#{groupName},
-			#{authority}::authority
-			#{isSystemGroup}
+			#{authority}::role
         )
     </insert>
 	
@@ -42,7 +45,7 @@
     <update id="update">
         UPDATE user_groups 
             SET group_name = #{groupName}, 
-                authority = #{authority}::authority
+                authority = #{authority}::role
         WHERE id = #{id}
     </update>
 

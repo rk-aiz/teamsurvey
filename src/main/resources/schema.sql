@@ -166,7 +166,7 @@ CREATE TABLE response_details (
 -- アンケートと対象グループの紐づけ
 CREATE TABLE survey_target_groups (
 	survey_id INTEGER NOT NULL REFERENCES surveys(id) ON DELETE CASCADE,
-	group_id INTEGER NOT NULL REFERENCES user_groups(id),
+	group_id INTEGER NOT NULL REFERENCES user_groups(id) ON DELETE CASCADE,
 	PRIMARY KEY (survey_id, group_id)
 );
 

@@ -84,7 +84,7 @@ public class QuestionRepositoryImpl implements QuestionRepository {
 
     @Override
     public boolean removeBySurveyId(@Param("surveyId") Integer surveyId) {
-    	return this.questionMapper.deleteBySurveyId(surveyId) > 0;
+        return this.questionMapper.deleteBySurveyId(surveyId) > 0;
     }
-    
+
 }

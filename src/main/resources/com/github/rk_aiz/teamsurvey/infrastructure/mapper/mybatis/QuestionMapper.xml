@@ -72,7 +72,7 @@
     
     <delete id="deleteBySurveyId">
         DELETE FROM questions 
-        WHERE surveyId = #{surveyId} 
+        WHERE survey_id = #{surveyId} 
     </delete>
 
 </mapper>
