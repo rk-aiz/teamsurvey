@@ -12,7 +12,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class TeamSurveyConfig implements WebMvcConfigurer {
 
-	// 設定を補完する情報のことをリゾルバ(resolver)と呼ぶ
+	// リゾルバリストに必要なリゾルバを追加
 	@Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
 

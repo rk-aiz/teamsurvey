@@ -2,11 +2,12 @@ package com.github.rk_aiz.teamsurvey.application.form;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
-import com.github.rk_aiz.teamsurvey.application.validation.AccountFormCheck;
+import java.util.Optional;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+
+import com.github.rk_aiz.teamsurvey.application.validation.AccountFormCheck;
 
 @AccountFormCheck // カスタムバリデーションを適用
 public record AccountForm(
@@ -32,7 +33,7 @@ public record AccountForm(
 
         List<Integer> groupIds,
 
-        boolean isNew) {
+        Boolean isNew) {
 
     /**
      * コンパクトコンストラクタ
@@ -51,6 +52,10 @@ public record AccountForm(
      * Thymeleaf等でプロパティとしてアクセスするためにGetterを追加
      */
     public boolean getIsNew() {
-        return isNew;
+        return Optional.ofNullable(isNew).orElse(false);
+    }
+    
+    public Boolean isNew() {
+    	return Optional.ofNullable(isNew).orElse(false);
     }
 }

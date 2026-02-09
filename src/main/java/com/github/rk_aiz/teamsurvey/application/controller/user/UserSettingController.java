@@ -48,7 +48,7 @@ public class UserSettingController {
     @PostMapping("/save")
     public String saveSetting(
             @AuthenticationPrincipal LoginUser loginUser,
-            @Validated @ModelAttribute AccountForm form,
+            @Validated @ModelAttribute AccountForm accountForm,
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
 
@@ -59,9 +59,9 @@ public class UserSettingController {
         // Serviceの専用メソッドを呼び出す
         boolean success = accountService.updateProfile(
                 loginUser.getUsername(),
-                form.displayName(),
-                form.email(),
-                form.password());
+                accountForm.displayName(),
+                accountForm.email(),
+                accountForm.password());
 
         if (success) {
             redirectAttributes.addFlashAttribute(MESSAGE, "アカウント設定を更新しました。");
