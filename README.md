@@ -4,25 +4,6 @@
 
     社内やチーム内での利用を想定した、オンラインアンケートシステムです。
     管理者がアンケートを作成・配布し、ユーザーが回答、結果を集計する一連のフローを提供します。
-    Docker環境での容易な構築と、レイヤードアーキテクチャによる保守性の高い設計を採用しています。
-
-### セットアップ (Setup)
-
-Docker環境があれば、以下の手順でアプリケーションとデータベース、ドキュメント生成ツールを起動できます。
-
-```bash
-# 1. リポジトリのクローン
-git clone https://github.com/rk-aiz/teamsurvey.git
-cd teamsurvey
-
-# 2. コンテナのビルド＆起動
-docker compose up -d
-
-# 3. アクセス
-# アプリケーション: http://localhost:8080
-# DB定義書: docs/schema/index.html (ローカルファイルとして閲覧)
-
-```
 
 ## ディレクトリ構造 (Directory Structure)
 
@@ -52,7 +33,7 @@ teamsurvey/
 
 ## 技術スタック (Tech Stack)
 
-- **Java 21** / **Spring Boot 4.01**
+- **Java 21** / **Spring Boot 4.02**
 - **PostgreSQL 18**
 - **MyBatis**
 - **Thymeleaf**
@@ -62,10 +43,8 @@ teamsurvey/
 
 本プロジェクトの要件定義や設計ついては、以下のドキュメントを参照してください。
 
-- **[データベース定義書](./docs/schema/index.html)**
-- SchemaSpyによる自動生成ドキュメント
+- **[要件定義書](./docs/要件定義書.md)**
 
-- **[設計思想とアピールポイント](./docs/design/architecture.md)**
-- レイヤードアーキテクチャの採用理由
-- 管理者/ユーザー機能の分離設計
-- 効率的なDBアクセスの工夫
+- **[基本設計書](./docs/design/基本設計書.xlsx)**
+
+- **[データベース定義書](./docs/schema/DB定義書.xlsx)**

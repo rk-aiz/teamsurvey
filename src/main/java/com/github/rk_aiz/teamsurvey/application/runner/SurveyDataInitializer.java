@@ -101,9 +101,24 @@ public class SurveyDataInitializer implements CommandLineRunner {
         // Q1(Order 1): 簡単(Order 4), Q2(Order 2): いいえ(Order 2)
         createResponse(1, "admin", Map.of(1, 4, 2, 2));
 
-        // 2. Survey ID=7 (春のお花見イベント参加確認) by admin
-        // Q1(Order 1): はい(Order 1), Q2(Order 2): "ビールが飲みたいです。"
-        createResponse(7, "admin", Map.of(1, 1, 2, "ビールが飲みたいです。"));
+        // user2: 参加、焼き鳥希望
+        createResponse(7, "user2", Map.of(1, 1, 2, "焼き鳥が食べたいです！"));
+        // user3: 不参加
+        createResponse(7, "user3", Map.of(1, 2, 2, ""));
+        // user4: 参加、アレルギーあり
+        createResponse(7, "user4", Map.of(1, 1, 2, "甲殻類アレルギーがあります。エビ・カニは避けていただけると助かります。"));
+        // user5: 参加、デザート希望
+        createResponse(7, "user5", Map.of(1, 1, 2, "食後のデザートに甘いものが欲しいです。"));
+        // user6: 不参加
+        createResponse(7, "user6", Map.of(1, 2, 2, ""));
+        // user7: 参加、ピザ希望
+        createResponse(7, "user7", Map.of(1, 1, 2, "ピザとかジャンクなものが食べたいです。"));
+        // user8: 参加、特になし
+        createResponse(7, "user8", Map.of(1, 1, 2, "特にありません。楽しみにしてます！"));
+        // user9: 不参加
+        createResponse(7, "user9", Map.of(1, 2, 2, ""));
+        // user10: 参加、寿司希望
+        createResponse(7, "user10", Map.of(1, 1, 2, "お寿司があると嬉しいです。"));
 
         // 3. Survey ID=8 (開発ツール...) by user
         // Q1(Order 1): スマホ(1), ノートPC(2) -> List.of(1, 2)

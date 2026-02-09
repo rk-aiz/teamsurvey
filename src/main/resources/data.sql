@@ -300,13 +300,6 @@ INSERT INTO response_details (response_id, question_id, answer_pattern_item_id) 
 -- Q2: いいえ(7)
 INSERT INTO response_details (response_id, question_id, answer_pattern_item_id) VALUES (2, 2, 7);
 
--- 2. Survey ID=7 (春のお花見イベント参加確認) by admin
-INSERT INTO responses (id, survey_id, username, status, created_at, updated_at) VALUES (7, 7, 'admin', 'VALID', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
--- Q12: はい(6)
-INSERT INTO response_details (response_id, question_id, answer_pattern_item_id) VALUES (7, 12, 6);
--- Q13: 自由記述
-INSERT INTO response_details (response_id, question_id, answer_text) VALUES (7, 13, 'ビールが飲みたいです。');
-
 -- 3. Survey ID=8 (開発ツールと技術関心に関する調査) by user
 INSERT INTO responses (id, survey_id, username, status, created_at, updated_at) VALUES (9, 8, 'user', 'VALID', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 -- Q14: スマホ(61), ノートPC(62)
