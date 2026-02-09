@@ -64,7 +64,7 @@ public class SurveyForm {
     private List<UserGroup> targetGroups = new ArrayList<>();
 
     /** 新規判定 */
-    private boolean isNew;
+    private Boolean isNew;
 
     /**
      * Model -> Form
@@ -73,7 +73,7 @@ public class SurveyForm {
         SurveyForm form = new SurveyForm();
         BeanUtils.copyProperties(model, form, "questions");
 
-        form.setNew(isNew);
+        form.setIsNew(isNew);
 
         Optional.ofNullable(model.getQuestions())
                 .ifPresent(questions -> form.setQuestionForms(questions.stream().map(QuestionForm::from).toList()));
@@ -104,5 +104,17 @@ public class SurveyForm {
                         .toList()));
 
         return survey;
+    }
+    
+    public boolean getIsNew() {
+        return Optional.ofNullable(isNew).orElse(false);
+    }
+    
+    public boolean getNew() {
+        return Optional.ofNullable(isNew).orElse(false);
+    }
+    
+    public Boolean isNew() {
+    	return Optional.ofNullable(isNew).orElse(false);
     }
 }

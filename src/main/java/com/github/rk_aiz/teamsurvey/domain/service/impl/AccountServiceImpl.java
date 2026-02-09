@@ -126,7 +126,7 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     public boolean updateProfile(String username, String displayName, String email, String rawPassword) {
-
+    	
         // 更新時のポリシー検証
         this.validateUpdatePolicy(username);
 
@@ -193,12 +193,14 @@ public class AccountServiceImpl implements AccountService {
      * 更新時のポリシー検証
      */
     private void validateUpdatePolicy(String username) {
+    	
         if (!this.accountRepository.exists(username)) {
             throw new ServiceRuleException("更新対象のアカウントが存在しません。ページをリロードしてください。");
         }
     }
 
     private void validateDisablePolicy(String username) {
+    	
         // ★最後の管理者を無効化しようとした場合はブロック
         if (isLastAdmin(username)) {
             throw new ServiceRuleException("管理者アカウントを全て無効にすることはできません");
@@ -209,6 +211,7 @@ public class AccountServiceImpl implements AccountService {
      * パスワードポリシーの検証
      */
     private void validatePasswordPolicy(String rawPassword) {
+    	
         if (rawPassword.length() < 8) {
             throw new ServiceRuleException("パスワードは8文字以上で設定してください。");
         }
