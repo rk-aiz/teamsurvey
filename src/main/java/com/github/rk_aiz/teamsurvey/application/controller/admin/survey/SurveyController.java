@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +27,7 @@ import com.github.rk_aiz.teamsurvey.domain.service.SurveyService;
 import com.github.rk_aiz.teamsurvey.domain.service.SurveyTargetGroupService;
 import com.github.rk_aiz.teamsurvey.domain.service.UserGroupService;
 import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
+import com.github.rk_aiz.teamsurvey.util.ServletUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +45,9 @@ public class SurveyController {
     /** 定数 */
     private static final String MESSAGE = "message";
     private static final String ERROR_MESSAGE = "errorMessage";
-    private static final String REDIRECT_TO_LIST = "redirect:/admin/survey/list";
+    private static final String SURVEY_LIST = "/admin/survey/list";
+    private static final String SURVEY_DETAIL = "/admin/survey/detail";
+    private static final String SURVEY_EDIT = "/admin/survey/edit";
 
     /** DI */
     private final SurveyService surveyService;
@@ -57,7 +61,7 @@ public class SurveyController {
      */
     @GetMapping
     public String survey() {
-        return "redirect:/admin/survey/list";
+        return ServletUtils.redirect(SURVEY_LIST);
     }
 
     /**
@@ -82,7 +86,7 @@ public class SurveyController {
             // 見つからない場合、何もしない
         }
 
-        return "admin/survey/list";
+        return SURVEY_LIST;
     }
 
     /**
@@ -95,14 +99,14 @@ public class SurveyController {
         model.addAttribute("survey", surveyService.findSurveyById(id));
         model.addAttribute("userGroups", userGroupService.findAll());
 
-        return "admin/survey/detail";
+        return SURVEY_DETAIL;
     }
 
     /**
      * 新規作成または編集画面を表示します（設問一覧も含む）
      * IDが指定されない場合は新規作成として扱います
      */
-    @GetMapping(value = { "/edit", "/edit/{id}" })
+    @GetMapping(value = { "/new", "/edit/{id}" })
     public String edit(@PathVariable(value = "id", required = false) Integer id, Model model) {
 
         if (id != null) {
@@ -119,7 +123,7 @@ public class SurveyController {
         model.addAttribute("answerOptions", answerOptionService.findAll());
         model.addAttribute("userGroups", userGroupService.findAll());
 
-        return "admin/survey/edit";
+        return SURVEY_EDIT;
     }
 
     /**
@@ -135,7 +139,7 @@ public class SurveyController {
         // 回答パターンの選択肢（ドロップダウン用）
         model.addAttribute("answerOptions", answerOptionService.findAll());
 
-        return "admin/survey/edit";
+        return SURVEY_EDIT;
     }
 
     /**
@@ -158,7 +162,7 @@ public class SurveyController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("answerOptions", answerOptionService.findAll());
             model.addAttribute("userGroups", userGroupService.findAll());
-            return "admin/survey/edit";
+            return SURVEY_EDIT;
         }
 
         Survey newSurvey = surveyService.saveSurvey(surveyForm.toModel());
@@ -173,7 +177,7 @@ public class SurveyController {
         surveyTargetGroupService.save(newSurvey.getId(), groupIds);
 
         // PRGパターン
-        return "redirect:/admin/survey/detail/" + newSurvey.getId();
+        return ServletUtils.redirect(SURVEY_DETAIL, newSurvey.getId());
     }
 
     /**
@@ -185,7 +189,7 @@ public class SurveyController {
         form.getQuestionForms().add(new QuestionForm());
         model.addAttribute("answerOptions", answerOptionService.findAll());
         model.addAttribute("userGroups", userGroupService.findAll());
-        return "admin/survey/edit";
+        return SURVEY_EDIT;
     }
 
     /**
@@ -201,7 +205,7 @@ public class SurveyController {
         }
         model.addAttribute("answerOptions", answerOptionService.findAll());
         model.addAttribute("userGroups", userGroupService.findAll());
-        return "admin/survey/edit";
+        return SURVEY_EDIT;
     }
 
     /**
@@ -223,11 +227,11 @@ public class SurveyController {
             redirectAttributes.addFlashAttribute(ERROR_MESSAGE, "システムエラーが発生しました。");
         }
 
-        if (referer != null && !referer.isEmpty()) {
+        if (StringUtils.hasText(referer)) {
             return "redirect:" + referer;
         }
 
-        return "redirect:/admin/survey/detail/" + id;
+        return ServletUtils.redirect(SURVEY_DETAIL, id);
     }
 
     /**
@@ -243,6 +247,6 @@ public class SurveyController {
         surveyTargetGroupService.save(id, groupIds);
 
         redirectAttributes.addFlashAttribute(MESSAGE, "対象グループを更新しました");
-        return "redirect:/admin/survey/detail/" + id;
+        return ServletUtils.redirect(SURVEY_DETAIL, id);
     }
 }

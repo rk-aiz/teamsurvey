@@ -105,16 +105,16 @@ public class SurveyForm {
 
         return survey;
     }
-    
+
     public boolean getIsNew() {
         return Optional.ofNullable(isNew).orElse(false);
     }
-    
+
     public boolean getNew() {
         return Optional.ofNullable(isNew).orElse(false);
     }
-    
-    public Boolean isNew() {
-    	return Optional.ofNullable(isNew).orElse(false);
+
+    public boolean isNew() {
+        return Optional.ofNullable(isNew).orElse(false);
     }
 }

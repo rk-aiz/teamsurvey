@@ -6,6 +6,9 @@ package com.github.rk_aiz.teamsurvey.util;
  */
 public class StringUtils {
 
+    private StringUtils() {
+    }
+
     /**
      * 文字列がnullでも空文字(空白含む)でもないことを判定します。
      * 
