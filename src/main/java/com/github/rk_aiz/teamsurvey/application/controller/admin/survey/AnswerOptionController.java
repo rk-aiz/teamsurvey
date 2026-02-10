@@ -1,7 +1,10 @@
 package com.github.rk_aiz.teamsurvey.application.controller.admin.survey;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -10,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -47,7 +51,9 @@ public class AnswerOptionController {
      * 回答パターン編集フォームフラグメントを取得
      */
     @GetMapping("/form")
-    public String getFormFragment(@RequestParam(required = false) Integer id, Model model) {
+    public String getFormFragment(
+            @RequestParam(name = "id", required = false) Integer id,
+            Model model) {
 
         AnswerOptionForm form = new AnswerOptionForm();
         if (id != null) {
@@ -68,20 +74,20 @@ public class AnswerOptionController {
      * 成功時は一覧フラグメント、失敗時はエラー付きフォームフラグメントを返す
      */
     @PostMapping("/save")
-    public String saveAjax(
-            @Validated @ModelAttribute AnswerOptionForm form,
-            BindingResult bindingResult,
-            Model model) {
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> save(
+            @Validated @RequestBody AnswerOptionForm form,
+            BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
-            return "admin/survey/pattern_fragments :: form";
+            Map<String, String> errors = new HashMap<>();
+            bindingResult.getFieldErrors().forEach(e -> errors.put(e.getField(), e.getDefaultMessage()));
+            return ResponseEntity.badRequest().body(errors);
         }
 
         answerOptionService.save(form.toModel());
 
-        // 保存成功時は一覧を返す
-        model.addAttribute("answerOptions", answerOptionService.findAll());
-        return "admin/survey/pattern_fragments :: list";
+        return ResponseEntity.ok(Map.of(MESSAGE, "回答パターンを保存しました。"));
     }
 
     /**

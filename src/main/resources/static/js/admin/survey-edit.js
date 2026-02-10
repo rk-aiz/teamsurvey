@@ -172,10 +172,37 @@ function submitPatternForm(event) {
     const form = event.target;
     const formData = new FormData(form);
 
+    // FormData -> JSON 変換 (ネストされた items[] に対応)
+    const data = {};
+    const items = [];
+
+    formData.forEach((value, key) => {
+        // items[index].field の形式を解析
+        const itemMatch = key.match(/^items\[(\d+)\]\.(.+)$/);
+        if (itemMatch) {
+            const index = parseInt(itemMatch[1]);
+            const field = itemMatch[2];
+            if (!items[index]) items[index] = {};
+            items[index][field] = value;
+        } else {
+            data[key] = value;
+        }
+    });
+
+    // 配列の空要素を詰めてセット
+    data.items = items.filter((i) => i !== undefined && i !== null);
+
+    // 数値型への変換 (必要に応じて)
+    if (data.id) data.id = parseInt(data.id);
+    data.items.forEach((item) => {
+        if (item.itemId) item.itemId = parseInt(item.itemId);
+        if (item.itemOrder) item.itemOrder = parseInt(item.itemOrder);
+    });
+
     // CSRFトークンの取得
     const token = document.querySelector('meta[name="_csrf"]')?.content;
     const header = document.querySelector('meta[name="_csrf_header"]')?.content;
-    const headers = {};
+    const headers = { "Content-Type": "application/json" };
     if (token && header) {
         headers[header] = token;
     }
@@ -183,22 +210,42 @@ function submitPatternForm(event) {
     fetch("/admin/pattern/fragment/save", {
         method: "POST",
         headers: headers,
-        body: formData,
-    })
-        .then((response) => response.text())
-        .then((html) => {
-            // レスポンスが一覧フラグメントかフォームフラグメント(エラー時)かで分岐したいが、
-            // 簡易的にHTMLを入れ替えて、フォームがなければ成功とみなす
-            editorContent.innerHTML = html;
+        body: JSON.stringify(data),
+    }).then(async (response) => {
+        if (response.ok) {
+            // 成功時: 一覧を再ロードしてメイン画面も更新
+            loadPatternList();
+            refreshMainSelectBoxes();
+        } else {
+            // エラー時: バリデーションエラーを表示
+            const errors = await response.json();
 
-            // 保存成功（一覧画面に戻った）場合、メイン画面のセレクトボックスを更新する
-            if (!editorContent.querySelector("form")) {
-                refreshMainSelectBoxes();
-            } else {
-                // エラー等でフォームが再表示された場合もSortableを有効化
-                initSortable();
-            }
-        });
+            // 既存のエラー表示をクリア
+            form.querySelectorAll(".is-invalid").forEach((el) =>
+                el.classList.remove("is-invalid"),
+            );
+            form.querySelectorAll(".invalid-feedback").forEach(
+                (el) => (el.textContent = ""),
+            );
+
+            // エラーメッセージの反映
+            Object.keys(errors).forEach((field) => {
+                // name="items[0].itemText" のようなフィールドを検索
+                const input = form.querySelector(`[name="${field}"]`);
+                if (input) {
+                    input.classList.add("is-invalid");
+                    // inputの直後、あるいは親要素内の .invalid-feedback を探す
+                    const feedback =
+                        input.parentElement.querySelector(
+                            ".invalid-feedback",
+                        ) || input.nextElementSibling;
+                    if (feedback) {
+                        feedback.textContent = errors[field];
+                    }
+                }
+            });
+        }
+    });
 }
 
 // メイン画面のセレクトボックスを更新する（ページリロードなしで反映）
