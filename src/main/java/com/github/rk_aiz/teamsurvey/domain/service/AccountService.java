@@ -19,8 +19,8 @@ public interface AccountService {
     boolean deleteAccountByUsername(String username);
 
     /**
-     * ユーザー自身のプロフィール（表示名、メール、パスワード）を更新します。
-     * パスワードは入力がある場合（null/空文字以外）のみ更新されます。
+     * ユーザー自身のプロフィール(表示名、メール、パスワード)を更新します。
+     * パスワードは入力がある場合(null/空文字以外)のみ更新されます。
      */
     boolean updateProfile(String username, String displayName, String email, String rawPassword);
 }

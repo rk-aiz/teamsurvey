@@ -100,7 +100,7 @@ public class AccountController {
     }
 
     /**
-     * アカウント情報を保存（新規登録・更新）します
+     * アカウント情報を保存(新規登録・更新)します
      */
     @PostMapping("/save")
     @ResponseBody
@@ -126,7 +126,7 @@ public class AccountController {
                 return ResponseEntity.internalServerError().body(Map.of(ERROR_MESSAGE, "保存に失敗しました。"));
             }
         } catch (ServiceRuleException e) {
-            // ビジネスルール違反（重複など）はクライアントエラー(400)として返す
+            // ビジネスルール違反(重複など)はクライアントエラー(400)として返す
             return ResponseEntity.badRequest().body(Map.of(ERROR_MESSAGE, e.getMessage()));
         } catch (Exception e) {
             log.error("アカウント保存エラー", e);
@@ -143,7 +143,7 @@ public class AccountController {
             if (accountService.deleteAccountByUsername(username)) {
                 redirectAttributes.addFlashAttribute(MESSAGE, "アカウントを削除しました。");
             } else {
-                redirectAttributes.addFlashAttribute(ERROR_MESSAGE, "削除に失敗しました。（最後の管理者は削除できません）");
+                redirectAttributes.addFlashAttribute(ERROR_MESSAGE, "削除に失敗しました。(最後の管理者は削除できません)");
             }
         } catch (Exception e) {
             log.error("アカウント削除エラー", e);

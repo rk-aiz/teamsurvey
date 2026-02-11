@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 item.style.display = "none"; // 非表示
             }
 
-            // 詳細リンクのURLパラメータを更新（リロード後もフィルタ状態を維持するため）
+            // 詳細リンクのURLパラメータを更新(リロード後もフィルタ状態を維持するため)
             const url = new URL(item.href);
             if (status === "ALL") {
                 url.searchParams.delete("status");
@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
-     * URLのクエリパラメータを更新する（リロードなし）
+     * URLのクエリパラメータを更新する(リロードなし)
      */
     function updateUrl(status) {
         const newUrl = new URL(window.location);

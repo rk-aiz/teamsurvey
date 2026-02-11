@@ -17,7 +17,7 @@ public class AccountFormValidator implements ConstraintValidator<AccountFormChec
 
         // 1. パスワード必須チェック (新規時のみ)
         if (form.isNew() && (form.password() == null || form.password().isBlank())) {
-            context.disableDefaultConstraintViolation(); // デフォルトのエラー（クラスレベル）を無効化
+            context.disableDefaultConstraintViolation(); // デフォルトのエラー(クラスレベル)を無効化
             context.buildConstraintViolationWithTemplate("パスワードは必須です")
                     .addPropertyNode("password") // "password" フィールドにエラーを紐づける
                     .addConstraintViolation();
@@ -28,7 +28,7 @@ public class AccountFormValidator implements ConstraintValidator<AccountFormChec
         if (form.password() != null && !form.password().isBlank()) {
             if (!form.password().equals(form.passwordConfirmation())) {
                 context.disableDefaultConstraintViolation();
-                context.buildConstraintViolationWithTemplate("パスワード（確認）が一致しません")
+                context.buildConstraintViolationWithTemplate("パスワード(確認)が一致しません")
                         .addPropertyNode("passwordConfirmation") // "passwordConfirmation" フィールドにエラーを紐づける
                         .addConstraintViolation();
                 isValid = false;

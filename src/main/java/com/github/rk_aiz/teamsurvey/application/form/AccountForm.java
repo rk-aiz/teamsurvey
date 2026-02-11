@@ -18,7 +18,7 @@ public record AccountForm(
         /** パスワード */
         @Size(min = 8, max = 255, message = "パスワードは{min}文字以上、{max}文字以内で入力してください") String password,
 
-        /** パスワード（確認） */
+        /** パスワード(確認) */
         String passwordConfirmation,
         /** 表示名 */
         @Size(max = 50, message = "表示名は{max}文字以内で入力してください") @NotBlank(message = "表示名は必須です") String displayName,
@@ -42,7 +42,7 @@ public record AccountForm(
     public AccountForm {
         enabled = enabled != null && enabled;
 
-        // 空文字の場合はnullに変換して、@Sizeチェックをスキップさせる（更新時の「変更なし」に対応）
+        // 空文字の場合はnullに変換して、@Sizeチェックをスキップさせる(更新時の「変更なし」に対応)
         password = (password != null && password.isEmpty()) ? null : password;
         passwordConfirmation = (passwordConfirmation != null && passwordConfirmation.isEmpty()) ? null
                 : passwordConfirmation;
@@ -54,8 +54,8 @@ public record AccountForm(
     public boolean getIsNew() {
         return Optional.ofNullable(isNew).orElse(false);
     }
-    
+
     public Boolean isNew() {
-    	return Optional.ofNullable(isNew).orElse(false);
+        return Optional.ofNullable(isNew).orElse(false);
     }
 }

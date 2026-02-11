@@ -62,8 +62,8 @@ INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALU
 
 -- パターン9: 認知経路 (ID=9)
 INSERT INTO answer_patterns (id, pattern_name) VALUES (9, '認知経路');
-INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (9, 'Web検索（Google/Yahoo!など）', 1);
-INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (9, 'SNS（X/Instagram/Facebookなど）', 2);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (9, 'Web検索(Google/Yahoo!など)', 1);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (9, 'SNS(X/Instagram/Facebookなど)', 2);
 INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (9, '知人・友人の紹介', 3);
 INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (9, 'テレビ・CM', 4);
 INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (9, 'Web広告・バナー', 5);
@@ -146,7 +146,7 @@ INSERT INTO surveys (title, status, result_visibility, created_at, updated_at)
 VALUES ('サービス満足度調査', 'PUBLISHED', 'ALL_USER', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Q3 (ID=3)
--- パターンID=2 (Yes/No) を再利用（文脈に合わせて解釈）
+-- パターンID=2 (Yes/No) を再利用(文脈に合わせて解釈)
 INSERT INTO questions (id, survey_id, question_text, question_type, is_required, answer_pattern_id, display_order)
 VALUES (3, 2, '今回のサービスを利用して満足しましたか？', 'RADIO', TRUE, 2, 1);
 
@@ -222,7 +222,7 @@ INSERT INTO surveys (title, status, result_visibility, created_at, updated_at)
 VALUES ('キャリア・昇進に関するアンケート', 'PUBLISHED', 'ADMIN_ONLY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO questions (id, survey_id, question_text, question_type, is_required, answer_pattern_id, display_order)
-VALUES (10, 6, '将来、管理職（マネージャー）を目指したいですか？', 'RADIO', TRUE, 2, 1);
+VALUES (10, 6, '将来、管理職(マネージャー)を目指したいですか？', 'RADIO', TRUE, 2, 1);
 
 INSERT INTO questions (id, survey_id, question_text, question_type, is_required, answer_pattern_id, display_order)
 VALUES (11, 6, '現在の評価制度やキャリアパスに満足していますか？', 'RADIO', TRUE, 3, 2);
@@ -246,16 +246,16 @@ INSERT INTO surveys (title, status, result_visibility, created_at, updated_at)
 VALUES ('開発ツールと技術関心に関する調査', 'PUBLISHED', 'ADMIN_ONLY', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO questions (id, survey_id, question_text, question_type, is_required, answer_pattern_id, display_order)
-VALUES (14, 8, '業務で主に使用しているデバイス・環境をすべて教えてください（複数選択可）', 'CHECKBOX', TRUE, 13, 1);
+VALUES (14, 8, '業務で主に使用しているデバイス・環境をすべて教えてください(複数選択可)', 'CHECKBOX', TRUE, 13, 1);
 
 INSERT INTO questions (id, survey_id, question_text, question_type, is_required, answer_pattern_id, display_order)
-VALUES (15, 8, '現在の業務で感じている課題を選択してください（複数選択可）', 'CHECKBOX', TRUE, 15, 2);
+VALUES (15, 8, '現在の業務で感じている課題を選択してください(複数選択可)', 'CHECKBOX', TRUE, 15, 2);
 
 INSERT INTO questions (id, survey_id, question_text, question_type, is_required, answer_pattern_id, display_order)
-VALUES (16, 8, '今後スキルアップしたい分野は？（複数選択可）', 'CHECKBOX', FALSE, 14, 3);
+VALUES (16, 8, '今後スキルアップしたい分野は？(複数選択可)', 'CHECKBOX', FALSE, 14, 3);
 
 INSERT INTO questions (id, survey_id, question_text, question_type, is_required, answer_pattern_id, display_order)
-VALUES (17, 8, '技術情報の主な入手元は？（複数選択可）', 'CHECKBOX', TRUE, 9, 4);
+VALUES (17, 8, '技術情報の主な入手元は？(複数選択可)', 'CHECKBOX', TRUE, 9, 4);
 
 INSERT INTO survey_target_groups (survey_id, group_id) VALUES (8, 2); -- エンジニア
 

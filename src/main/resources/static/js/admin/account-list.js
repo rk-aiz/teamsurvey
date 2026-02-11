@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // FormData -> JSON Object 変換
             const data = {};
             formData.forEach((value, key) => {
-                // Springのフォーム用hiddenフィールド（_で始まるもの）は除外
+                // Springのフォーム用hiddenフィールド(_で始まるもの)は除外
                 if (key.startsWith("_")) return;
 
                 // groupIds は配列として処理 (accountForm用)
@@ -117,9 +117,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 const myModal = new bootstrap.Modal(accountModalEl);
                 myModal.show();
 
-                // モーダルが閉じられた時に一覧に戻る（URLパラメータクリア）
+                // モーダルが閉じられた時に一覧に戻る(URLパラメータクリア)
                 accountModalEl.addEventListener("hidden.bs.modal", function () {
-                    // 現在のパス（クエリパラメータなし）を取得して遷移
+                    // 現在のパス(クエリパラメータなし)を取得して遷移
                     const path = window.location.pathname;
                     window.location.href = path;
                 });
@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Modal initialization failed:", error);
     }
 
-    // 3. フラッシュメッセージの表示（リロード後の表示用）
+    // 3. フラッシュメッセージの表示(リロード後の表示用)
     const actionMessage = sessionStorage.getItem("actionMessage");
     if (actionMessage) {
         const container = document.getElementById("flash-message-container");
@@ -159,7 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const authSelect = form.querySelector('select[name="authority"]');
             if (authSelect) {
                 authSelect.value = authority;
-                // システムグループの場合は操作不可にする（値は送信される）
+                // システムグループの場合は操作不可にする(値は送信される)
                 if (isSystemGroup) {
                     authSelect.style.pointerEvents = "none";
                     authSelect.style.backgroundColor = "#e9ecef"; // Bootstrap disabled color
@@ -247,7 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         passwordInput.addEventListener("input", updateVisibility);
-        // 初期状態の反映（バリデーションエラー時など値が入っている場合に対応）
+        // 初期状態の反映(バリデーションエラー時など値が入っている場合に対応)
         updateVisibility();
     }
 });

@@ -248,7 +248,7 @@ function submitPatternForm(event) {
     });
 }
 
-// メイン画面のセレクトボックスを更新する（ページリロードなしで反映）
+// メイン画面のセレクトボックスを更新する(ページリロードなしで反映)
 function refreshMainSelectBoxes() {
     fetchAnswerOptions().then((data) => {
         if (!data) return;

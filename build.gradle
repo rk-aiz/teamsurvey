@@ -35,10 +35,6 @@ dependencies {
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
-	testImplementation 'org.springframework.boot:spring-boot-starter-thymeleaf-test'
-	testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
-	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	
 	// Page, Pagable
 	// Source: https://mvnrepository.com/artifact/org.springframework.data/spring-data-commons
@@ -57,10 +53,16 @@ dependencies {
 	// Spring Security と Thymeleafの連携用ライブラリ
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-thymeleaf-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    
 	// MyBatisのテスト用ライブラリ
     testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:4.0.1' 
     
-    // H2データベース（テスト実行時のみ使用）
+    // H2データベース(テスト実行時のみ使用)
     testRuntimeOnly 'com.h2database:h2'
 }
 

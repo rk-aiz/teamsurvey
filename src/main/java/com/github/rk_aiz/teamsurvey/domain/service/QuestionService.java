@@ -15,12 +15,12 @@ public interface QuestionService {
     /** 指定されたIDの質問を取得します */
     Question findQuestionById(Integer id);
 
-    /** 質問を保存（新規・更新）します */
+    /** 質問を保存(新規・更新)します */
     boolean saveQuestion(Question question);
 
     /** 質問を削除します */
     boolean removeQuestion(Integer id);
-    
+
     /** 指定されたアンケートIDに紐づく質問を削除します */
     boolean removeQuestionBySurveyId(Integer surveyId);
 }

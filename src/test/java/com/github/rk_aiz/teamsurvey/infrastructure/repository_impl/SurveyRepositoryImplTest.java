@@ -1,11 +1,16 @@
 package com.github.rk_aiz.teamsurvey.infrastructure.repository_impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -94,7 +99,7 @@ class SurveyRepositoryImplTest {
     void add_SavesSurveyAndQuestions() {
         Survey newSurvey = Survey.builder()
                 .title("New Survey")
-                .questions(new HashMap<>())
+                .questions(new ArrayList<>())
                 .build();
 
         Question newQuestion = new SingleChoiceQuestion(); // ID is null
@@ -121,7 +126,7 @@ class SurveyRepositoryImplTest {
         Survey existingSurvey = Survey.builder()
                 .id(1)
                 .title("Updated Survey")
-                .questions(new HashMap<>())
+                .questions(new ArrayList<>())
                 .build();
 
         Question existingQuestion = new SingleChoiceQuestion();

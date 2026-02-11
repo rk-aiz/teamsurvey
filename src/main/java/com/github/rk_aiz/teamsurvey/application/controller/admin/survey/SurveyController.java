@@ -77,7 +77,7 @@ public class SurveyController {
                 "surveys",
                 this.surveyService.findAllSurveys());
 
-        // IDが指定されている場合、詳細情報を取得（右カラム用）
+        // IDが指定されている場合、詳細情報を取得(右カラム用)
         try {
             Optional.ofNullable(id)
                     .map(surveyService::findSurveyById)
@@ -90,7 +90,7 @@ public class SurveyController {
     }
 
     /**
-     * 詳細画面を表示します（設問一覧も含む）
+     * 詳細画面を表示します(設問一覧も含む)
      */
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable("id") Integer id, Model model) {
@@ -103,7 +103,7 @@ public class SurveyController {
     }
 
     /**
-     * 新規作成または編集画面を表示します（設問一覧も含む）
+     * 新規作成または編集画面を表示します(設問一覧も含む)
      * IDが指定されない場合は新規作成として扱います
      */
     @GetMapping(value = { "/new", "/edit/{id}" })
@@ -119,7 +119,7 @@ public class SurveyController {
                     surveyService.getEmptySurvey(), true));
         }
 
-        // 回答パターンの選択肢（ドロップダウン用）
+        // 回答パターンの選択肢(ドロップダウン用)
         model.addAttribute("answerOptions", answerOptionService.findAll());
         model.addAttribute("userGroups", userGroupService.findAll());
 
@@ -136,7 +136,7 @@ public class SurveyController {
         model.addAttribute("surveyForm", SurveyForm.from(
                 surveyService.findSurveyAsDraftCopy(id), true));
 
-        // 回答パターンの選択肢（ドロップダウン用）
+        // 回答パターンの選択肢(ドロップダウン用)
         model.addAttribute("answerOptions", answerOptionService.findAll());
 
         return SURVEY_EDIT;
@@ -235,7 +235,7 @@ public class SurveyController {
     }
 
     /**
-     * 対象グループのみを更新します（詳細画面からの呼び出し）
+     * 対象グループのみを更新します(詳細画面からの呼び出し)
      */
     @PostMapping("/target/{id}")
     public String updateTargetGroups(

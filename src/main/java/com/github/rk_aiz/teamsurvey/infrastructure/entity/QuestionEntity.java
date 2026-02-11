@@ -22,7 +22,7 @@ public class QuestionEntity {
     private Integer id;
     /** 対象アンケート */
     private Integer surveyId;
-    /** 回答パターン（結合用） */
+    /** 回答パターン(結合用) */
     private Integer answerPatternId;
     /** 質問詳細 */
     private String text;

@@ -67,7 +67,7 @@
                         <div th:unless="${#lists.isEmpty(qa.optionStats)}">
                             <div class="row align-items-center">
                                 <div class="col-md-7">
-                                    <!-- 総選択数を計算（CHECKBOX用） -->
+                                    <!-- 総選択数を計算(CHECKBOX用) -->
                                     <div th:each="opt : ${qa.optionStats}" class="mb-3"
                                         th:with="totalSelected=${#aggregates.sum(qa.optionStats.![count])},
                                                   isCheckbox=${qa.question.type.name() == 'CHECKBOX'},
@@ -110,7 +110,7 @@
                                     const type = /*[[${qa.question.type}]]*/ 'RADIO';
                                     const answerCount = /*[[${qa.answerCount}]]*/ 0;
 
-                                    // CHECKBOX（複数選択）の場合は棒グラフ、それ以外（RADIO）は円グラフ
+                                    // CHECKBOX(複数選択)の場合は棒グラフ、それ以外(RADIO)は円グラフ
                                     const chartType = (type === 'CHECKBOX') ? 'bar' : 'pie';
 
                                     const chartOptions = {
@@ -118,7 +118,7 @@
                                         plugins: {
                                             legend: {
                                                 position: 'bottom',
-                                                display: (chartType === 'pie') // 棒グラフの場合は凡例を非表示（ラベルで分かるため）
+                                                display: (chartType === 'pie') // 棒グラフの場合は凡例を非表示(ラベルで分かるため)
                                             }
                                         }
                                     };
@@ -127,7 +127,7 @@
                                         chartOptions.scales = {
                                             y: {
                                                 beginAtZero: true,
-                                                max: answerCount, // Y軸の最大値を回答者数に設定（これでバーの長さが割合と一致する）
+                                                max: answerCount, // Y軸の最大値を回答者数に設定(これでバーの長さが割合と一致する)
                                                 ticks: { stepSize: 1 }
                                             }
                                         };

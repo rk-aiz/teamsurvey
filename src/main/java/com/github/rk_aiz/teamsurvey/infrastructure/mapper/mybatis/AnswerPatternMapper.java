@@ -37,8 +37,9 @@ public interface AnswerPatternMapper {
 
     /**
      * 指定されたIDのパターンをスナップショットとして複製します
+     * 
      * @param originalId 元のパターンID
-     * @return 新しいパターンエンティティ（IDのみセットされた状態を想定、またはvoidでkeyProperty利用）
+     * @return 新しいパターンエンティティ(IDのみセットされた状態を想定、またはvoidでkeyProperty利用)
      */
     void copyAsSnapshot(AnswerPatternEntity entity); // entity.newId にIDが入る想定
 

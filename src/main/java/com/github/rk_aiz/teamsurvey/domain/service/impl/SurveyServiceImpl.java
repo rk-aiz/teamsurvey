@@ -148,7 +148,7 @@ public class SurveyServiceImpl implements SurveyService {
                 }
             }
             case DELETED -> {
-                // 公開中以外（下書き or 終了）であれば削除可能とする
+                // 公開中以外(下書き or 終了)であれば削除可能とする
                 if (survey.getStatus() == SurveyStatus.PUBLISHED) {
                     throw new ServiceRuleException("公開中のアンケートは削除できません。先にステータスを変更してください");
                 }

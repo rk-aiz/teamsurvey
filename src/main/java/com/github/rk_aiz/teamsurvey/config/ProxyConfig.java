@@ -57,7 +57,7 @@ public class ProxyConfig {
         return bean;
     }
 
-    // 2. Spring標準のForwardedHeaderFilterを手動登録（注入したヘッダーを読み取らせるため）
+    // 2. Spring標準のForwardedHeaderFilterを手動登録(注入したヘッダーを読み取らせるため)
     @Bean
     public FilterRegistrationBean<ForwardedHeaderFilter> forwardedHeaderFilter() {
         FilterRegistrationBean<ForwardedHeaderFilter> bean = new FilterRegistrationBean<>();

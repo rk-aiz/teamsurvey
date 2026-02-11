@@ -47,7 +47,7 @@
         </div>
         <div class="collapse" id="passwordConfirmationCollapse">
             <div class="row mb-3">
-                <label for="passwordConfirmation" class="col-sm-3 col-form-label">パスワード（確認）</label>
+                <label for="passwordConfirmation" class="col-sm-3 col-form-label">パスワード(確認)</label>
                 <div class="col-sm-9">
                     <input type="password" class="form-control" th:field="*{passwordConfirmation}"
                         th:errorclass="is-invalid">
@@ -60,7 +60,7 @@
                 <div class="form-check">
                     <input type="checkbox" class="form-check-input" th:field="*{enabled}" th:disabled="${isLastAdmin}">
                     <label class="form-check-label" for="enabled">有効アカウント</label>
-                    <!-- disabledの場合値が送信されないため、hiddenでtrueを送る（最後の管理者は有効のまま維持するため） -->
+                    <!-- disabledの場合値が送信されないため、hiddenでtrueを送る(最後の管理者は有効のまま維持するため) -->
                     <input type="hidden" name="enabled" value="true" th:if="${isLastAdmin}" />
                     <div th:if="${isLastAdmin}" class="form-text text-danger small">
                         有効な管理者が残り1名のため、無効化できません。

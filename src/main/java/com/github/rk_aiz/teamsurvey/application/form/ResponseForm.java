@@ -45,7 +45,9 @@ public class ResponseForm {
 
         response.setResponseDetails(this.getDetails()
                 .stream()
-                .map(detailForm -> detailForm.toModel(survey.getQuestionById(detailForm.getQuestionId())))
+                .flatMap(detailForm -> survey.getQuestionById(detailForm.getQuestionId())
+                        .map(detailForm::toModel)
+                        .stream())
                 .toList());
 
         return response;

@@ -59,7 +59,7 @@ public class AggregationController {
     }
 
     /**
-     * 詳細画面を表示します（設問一覧も含む）
+     * 詳細画面を表示します(設問一覧も含む)
      */
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable("id") Integer id, Model model) {

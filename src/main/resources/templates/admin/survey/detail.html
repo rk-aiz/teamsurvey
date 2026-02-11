@@ -9,7 +9,7 @@
 <body>
     <main layout:fragment="content">
         <style>
-            /* プレビュー時のdisabled要素の視認性向上（ダークモード対応） */
+            /* プレビュー時のdisabled要素の視認性向上(ダークモード対応) */
             .survey-preview .form-control:disabled {
                 background-color: var(--bs-secondary-bg);
                 color: var(--bs-body-color);
@@ -76,7 +76,7 @@
                     <form th:action="@{/admin/survey/status/{id}(id=${survey.id})}" method="post">
                         <input type="hidden" name="status" value="PUBLISHED">
                         <button type="submit" onclick="return confirm('回答受付状態にしますか？')" class="btn btn-success">
-                            公開する（回答受付状態）
+                            公開する(回答受付状態)
                         </button>
                     </form>
                 </th:block>
@@ -121,7 +121,7 @@
         </div>
 
         <hr>
-        <h3>アンケート内容（プレビュー）</h3>
+        <h3>アンケート内容(プレビュー)</h3>
         <div class="survey-preview">
             <div th:each="question, stat : ${survey.questions}" class="card mb-3 p-3">
                 <div class="d-flex align-items-start" style="font-weight: bold; margin-bottom: 10px;">

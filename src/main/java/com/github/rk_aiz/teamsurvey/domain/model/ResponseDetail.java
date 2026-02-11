@@ -3,7 +3,7 @@ package com.github.rk_aiz.teamsurvey.domain.model;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.github.rk_aiz.teamsurvey.domain.model.question.Question;
@@ -49,7 +49,7 @@ public class ResponseDetail {
      * 単一選択の回答を数値(ID)として取得します。
      */
     public Integer getSingleChoiceResponse() {
-        return parseId(getRawData());
+        return parseId(getRawData()).orElse(null);
     }
 
     public void setMultiChoiceResponses(List<Integer> itemIds) {
@@ -68,21 +68,21 @@ public class ResponseDetail {
 
         return Arrays.stream(this.getRawData().split(","))
                 .map(this::parseId)
-                .filter(Objects::nonNull)
+                .flatMap(Optional::stream)
                 .toList();
     }
 
     /**
-     * 文字列を数値(ID)に変換します。変換できない場合はnullを返します。
+     * 文字列を数値(ID)に変換します。変換できない場合はOptional.empty()を返します。
      */
-    private Integer parseId(String value) {
+    private Optional<Integer> parseId(String value) {
         if (value == null) {
-            return null;
+            return Optional.empty();
         }
         try {
-            return Integer.valueOf(value.trim());
+            return Optional.of(Integer.valueOf(value.trim()));
         } catch (NumberFormatException e) {
-            return null;
+            return Optional.empty();
         }
     }
 }

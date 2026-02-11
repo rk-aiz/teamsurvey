@@ -19,7 +19,7 @@ import com.github.rk_aiz.teamsurvey.domain.model.LoginUser;
 @ControllerAdvice
 public class GlobalControllerAdvice {
 
-    // application.properties から app.name を取得（未設定時のデフォルトは "TeamSurvey"）
+    // application.properties から app.name を取得(未設定時のデフォルトは "TeamSurvey")
     @Value("${app.name:TeamSurvey}")
     private String appName;
 

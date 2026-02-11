@@ -90,23 +90,23 @@ CREATE TABLE user_groups (
 	group_name VARCHAR(100) NOT NULL,
 	-- グループに紐づく権限
 	authority role NOT NULL DEFAULT 'USER',
-	-- システム上必須のグループかどうか（削除不可フラグ）
+	-- システム上必須のグループかどうか(削除不可フラグ)
 	is_system_group BOOLEAN NOT NULL DEFAULT FALSE
 );
 
--- 回答パターン（親）テーブル
+-- 回答パターン(親)テーブル
 -- TODO: 登録前に「同じ選択肢のパターン」がないか検索すると、ユーザーフレンドリーかもしれない
 CREATE TABLE answer_patterns (
 	id serial PRIMARY KEY,
     -- 同じ名称は回答パターン選択項目が分かりずらくなる、重複を避けるなどの理由で許可しない
-	pattern_name VARCHAR(100) NOT NULL, -- 管理用名称（例：5段階評価、Yes/No）
+	pattern_name VARCHAR(100) NOT NULL, -- 管理用名称(例：5段階評価、Yes/No)
 	is_deleted BOOLEAN NOT NULL DEFAULT FALSE, -- 論理削除フラグ
 	is_snapshot BOOLEAN NOT NULL DEFAULT FALSE -- スナップショットフラグ
 );
--- テンプレート（スナップショット以外）のみ名称の重複を禁止する
+-- テンプレート(スナップショット以外)のみ名称の重複を禁止する
 CREATE UNIQUE INDEX answer_patterns_name_idx ON answer_patterns (pattern_name) WHERE is_snapshot = FALSE;
 
--- 回答パターンの選択肢（子）テーブル
+-- 回答パターンの選択肢(子)テーブル
 CREATE TABLE answer_pattern_items (
 	id serial PRIMARY KEY,
 	answer_pattern_id INTEGER NOT NULL REFERENCES answer_patterns(id) ON DELETE CASCADE,
@@ -137,7 +137,7 @@ CREATE TABLE questions (
 	is_deleted BOOLEAN NOT NULL DEFAULT FALSE
 );
 
--- 回答ヘッダーテーブル（誰がいつ回答したか）
+-- 回答ヘッダーテーブル(誰がいつ回答したか)
 CREATE TABLE responses (
 	id serial PRIMARY KEY,
 	survey_id INTEGER NOT NULL REFERENCES surveys(id) ON DELETE CASCADE,
@@ -153,7 +153,7 @@ CREATE TABLE responses (
 	updated_at timestamp without time zone
 );
 
--- 回答明細テーブル（どの設問にどう答えたか）
+-- 回答明細テーブル(どの設問にどう答えたか)
 CREATE TABLE response_details (
 	id serial PRIMARY KEY,
 	response_id INTEGER NOT NULL REFERENCES responses(id) ON DELETE CASCADE,
@@ -170,7 +170,7 @@ CREATE TABLE survey_target_groups (
 	PRIMARY KEY (survey_id, group_id)
 );
 
--- ユーザーとグループの紐付け（多対多）
+-- ユーザーとグループの紐付け(多対多)
 CREATE TABLE user_group_mappings (
 	username VARCHAR(50) NOT NULL REFERENCES authentications(username) ON DELETE CASCADE,
 	group_id INTEGER NOT NULL REFERENCES user_groups(id) ON DELETE CASCADE,

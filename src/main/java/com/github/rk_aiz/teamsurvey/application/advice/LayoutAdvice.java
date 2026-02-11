@@ -16,7 +16,7 @@ public class LayoutAdvice {
                 .anyMatch(a -> a.getAuthority().equals("ADMIN"))) {
             return "admin/admin_layout";
         }
-        // デフォルト（未ログイン含む）はユーザーレイアウト
+        // デフォルト(未ログイン含む)はユーザーレイアウト
         return "user/user_layout";
     }
 }

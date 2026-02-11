@@ -63,7 +63,7 @@ public class SurveyDataInitializer implements CommandLineRunner {
         // ID=8: 開発ツールと技術関心に関する調査
         publishSurvey(8);
 
-        // 回答データの生成（スナップショット化されたパターンIDに追従して登録）
+        // 回答データの生成(スナップショット化されたパターンIDに追従して登録)
         createTestResponses();
 
         log.info("初期データのアンケートステータス更新が完了しました。");
@@ -71,7 +71,7 @@ public class SurveyDataInitializer implements CommandLineRunner {
 
     private boolean publishSurvey(Integer id) {
         try {
-            // 公開処理（ここでスナップショット化ロジックが走る）
+            // 公開処理(ここでスナップショット化ロジックが走る)
             surveyService.tryChangeStatusById(id, SurveyStatus.PUBLISHED);
             log.info("Survey ID={} を公開しました。", id);
             return true;
@@ -153,7 +153,7 @@ public class SurveyDataInitializer implements CommandLineRunner {
     @SuppressWarnings("unchecked")
     private void createResponse(Integer surveyId, String username, Map<Integer, Object> answers) {
         try {
-            // 最新のアンケート情報を取得（スナップショット化された回答パターンを含む）
+            // 最新のアンケート情報を取得(スナップショット化された回答パターンを含む)
             Survey survey = surveyService.findSurveyById(surveyId);
             UserAccount user = accountService.findAccountByUsername(username);
 

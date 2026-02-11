@@ -4,9 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 import com.github.rk_aiz.teamsurvey.domain.model.question.Question;
 import com.github.rk_aiz.teamsurvey.domain.type.ResultVisibility;
@@ -50,14 +49,14 @@ public class Survey {
 
     /** アンケートに紐づく質問リスト */
     @Builder.Default
-    private Map<Integer, Question> questions = new HashMap<>();
+    private List<Question> questions = new ArrayList<>();
 
     /** 公開対象グループリスト */
     @Builder.Default
     private List<UserGroup> targetGroups = new ArrayList<>();
 
     /**
-     * 集計結果が公開期間に入っているか（締め切りを過ぎているか）を判定します。
+     * 集計結果が公開期間に入っているか(締め切りを過ぎているか)を判定します。
      * 
      * @return true: 公開期間中, false: まだ公開期間ではない
      */
@@ -75,7 +74,7 @@ public class Survey {
     }
 
     /**
-     * このアンケートを複製して新しいアンケート（下書き状態）を作成します。
+     * このアンケートを複製して新しいアンケート(下書き状態)を作成します。
      * 
      * @return 複製された新しいSurvey
      */
@@ -95,7 +94,7 @@ public class Survey {
     }
 
     /**
-     * このアンケートが公開可能な状態か（設問設定などに不備がないか）を判定します。
+     * このアンケートが公開可能な状態か(設問設定などに不備がないか)を判定します。
      * 
      * @return true: 公開可能
      */
@@ -115,20 +114,7 @@ public class Survey {
     }
 
     public void setQuestions(Collection<Question> questions) {
-        this.questions = new HashMap<>();
-        // Mapに変換してセットする
-        for (Question q : questions) {
-            if (q != null)
-                this.questions.put(q.getId(), q);
-        }
-    }
-
-    public void setQuestions(Map<Integer, Question> questions) {
-        if (questions == null) {
-            this.questions = new HashMap<>();
-            return;
-        }
-        this.questions = questions;
+        this.questions = questions != null ? new ArrayList<>(questions) : new ArrayList<>();
     }
 
     /**
@@ -136,23 +122,22 @@ public class Survey {
      */
     public Collection<Question> getQuestions() {
         if (this.questions == null) {
-            this.setQuestions(new HashMap<>());
+            this.setQuestions(new ArrayList<>());
         }
-        return this.questions.values()
-                .stream()
-                .sorted(Comparator.comparingInt(q -> q.getDisplayOrder()))
-                .toList();
+        return this.questions;
     }
 
     /**
      * 設問リストを返します。nullの場合は空のリストを作成して返します。
      */
-    public Question getQuestionById(Integer questionId) {
+    public Optional<Question> getQuestionById(Integer questionId) {
         if (this.questions == null) {
-            return null;
+            return Optional.empty();
         }
 
-        return this.questions.get(questionId);
+        return this.questions.stream()
+                .filter(q -> q.getId() != null && q.getId().equals(questionId))
+                .findFirst();
     }
 
     /**

@@ -14,7 +14,7 @@ import com.github.rk_aiz.teamsurvey.application.form.LoginForm;
 public class LoginController {
 
     /**
-     * トップページ（ログイン画面）を表示します。
+     * トップページ(ログイン画面)を表示します。
      * すでにログインしている場合はメニュー画面へリダイレクトします。
      */
     @GetMapping

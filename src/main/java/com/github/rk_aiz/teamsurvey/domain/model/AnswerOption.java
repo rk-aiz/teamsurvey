@@ -23,7 +23,7 @@ public class AnswerOption {
     private List<OptionItem> items = new ArrayList<>();
 
     /**
-     * この回答パターンが空（未設定）かどうかを判定します。
+     * この回答パターンが空(未設定)かどうかを判定します。
      */
     public boolean isEmpty() {
         return this instanceof EmptyAnswerOption;
