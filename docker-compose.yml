@@ -1,0 +1,39 @@
+services:
+    app:
+        build:
+            context: .
+            dockerfile: docker/app/Dockerfile
+        ports:
+            - "8081:8081"
+        environment:
+            # Spring Bootの設定を環境変数で上書き (PostgreSQLへの接続設定)
+            SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/teamsurveydb?stringtype=unspecified
+            SPRING_DATASOURCE_USERNAME: teamsurveyuser
+            SPRING_DATASOURCE_PASSWORD: teamsurveypass
+            SPRING_DATASOURCE_DRIVER-CLASS-NAME: org.postgresql.Driver
+            # アプリ側での初期化を確実に無効化する（二重の安全策）
+            SPRING_SQL_INIT_MODE: never
+        depends_on:
+            db:
+                condition: service_healthy
+
+    db:
+        image: postgres:18
+        environment:
+            POSTGRES_DB: teamsurveydb
+            POSTGRES_USER: teamsurveyuser
+            POSTGRES_PASSWORD: teamsurveypass
+        ports:
+            - "5432:5432"
+        volumes:
+            - db_data:/var/lib/postgresql/data
+            # docker/db フォルダに初期化用SQLがあれば読み込む設定
+            - ./docker/db:/docker-entrypoint-initdb.d
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U teamsurveyuser -d teamsurveydb"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
+volumes:
+    db_data:
