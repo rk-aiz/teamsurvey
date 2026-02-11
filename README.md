@@ -1,9 +1,15 @@
 # TeamSurvey
 
+!Preview
+
 ### 概要 (Overview)
 
     社内やチーム内での利用を想定した、オンラインアンケートシステムです。
     管理者がアンケートを作成・配布し、ユーザーが回答、結果を集計する一連のフローを提供します。
+
+## Demo
+
+![TeamSurvey Demo](docs/preview.gif)
 
 ## ディレクトリ構造 (Directory Structure)
 
@@ -26,7 +32,7 @@ teamsurvey/
 │   ├── domain/ .................... [ドメイン層] Model
 │   └── infrastructure/ ............ [インフラ層] Entity, Mapper
 │
-├── compose.yaml ................... Docker Compose設定ファイル
+├── docker-compose.yml ................... Docker Compose設定ファイル
 └── build.gradle ........................ Gradle依存関係定義
 
 ```

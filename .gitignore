@@ -47,6 +47,8 @@ target/
 # OS生成ファイル
 .DS_Store
 Thumbs.db
+._DAV
 
 # ログなど
 *.log
+
