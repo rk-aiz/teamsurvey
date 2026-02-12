@@ -26,7 +26,7 @@ services:
         ports:
             - "5432:5432"
         volumes:
-            - db_data:/var/lib/postgresql/data
+            - db_data:/var/lib/postgresql
             # docker/db フォルダに初期化用SQLがあれば読み込む設定
             - ./docker/db:/docker-entrypoint-initdb.d
         healthcheck:

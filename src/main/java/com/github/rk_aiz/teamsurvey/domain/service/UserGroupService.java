@@ -12,4 +12,6 @@ public interface UserGroupService {
     boolean save(UserGroup userGroup);
 
     boolean delete(Integer groupId);
+
+    UserGroup getOrCreateSystemAdminGroup();
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.github.rk_aiz.teamsurvey.domain.model.UserAccount;
@@ -34,8 +35,21 @@ public class SurveyDataInitializer implements CommandLineRunner {
     private final ResponseService responseService;
     private final AccountService accountService;
 
+    @Value("${spring.sql.init.mode:embedded}")
+    private String sqlInitMode;
+
     @Override
     public void run(String... args) throws Exception {
+        // spring.sql.init.mode が never の場合は初期データ投入をスキップ
+        if ("never".equalsIgnoreCase(sqlInitMode)) {
+            log.info("spring.sql.init.mode is 'never'. Skipping Java data initialization.");
+            return;
+        }
+
+        initializeTestData();
+    }
+
+    private void initializeTestData() {
         log.info("初期データのアンケートステータス更新を開始します...");
 
         // ID=1: ITエンジニア意識調査

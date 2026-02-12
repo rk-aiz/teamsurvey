@@ -12,11 +12,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.github.rk_aiz.teamsurvey.application.mapper.AccountFormMapper;
 import com.github.rk_aiz.teamsurvey.domain.exception.ServiceRuleException;
 import com.github.rk_aiz.teamsurvey.domain.exception.SystemCriticalException;
 import com.github.rk_aiz.teamsurvey.domain.model.UserAccount;
 import com.github.rk_aiz.teamsurvey.domain.model.UserGroup;
 import com.github.rk_aiz.teamsurvey.domain.service.AccountService;
+import com.github.rk_aiz.teamsurvey.domain.service.UserGroupService;
 import com.github.rk_aiz.teamsurvey.domain.type.Authority;
 import com.github.rk_aiz.teamsurvey.infrastructure.repository.AccountRepository;
 import com.github.rk_aiz.teamsurvey.util.StringUtils;
@@ -31,6 +33,7 @@ public class AccountServiceImpl implements AccountService {
     /** DI */
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserGroupService userGroupService;
 
     @Override
     public Page<UserAccount> findWithPaging(Pageable pageable) {
@@ -189,6 +192,11 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.remove(username);
     }
 
+    @Override
+    public boolean existsAnyAccount() {
+        return accountRepository.count() > 0;
+    }
+
     /**
      * 更新時のポリシー検証
      */
@@ -216,4 +224,24 @@ public class AccountServiceImpl implements AccountService {
             throw new ServiceRuleException("パスワードは8文字以上で設定してください。");
         }
     }
+
+    @Override
+    public void createInitialAdmin(String username, String password) {
+        if (this.existsAnyAccount()) {
+            throw new ServiceRuleException("初回管理者アカウントは既に作成されています。");
+        }
+
+        UserAccount adminAccount = new UserAccount(
+                username,
+                passwordEncoder.encode(password),
+                null,
+                username,
+                LocalDateTime.now(),
+                LocalDateTime.now(),
+                true,
+                List.of(userGroupService.getOrCreateSystemAdminGroup()));
+
+        accountRepository.save(adminAccount);
+    }
+
 }

@@ -45,9 +45,9 @@ public class SurveyController {
     /** 定数 */
     private static final String MESSAGE = "message";
     private static final String ERROR_MESSAGE = "errorMessage";
-    private static final String SURVEY_LIST = "/admin/survey/list";
-    private static final String SURVEY_DETAIL = "/admin/survey/detail";
-    private static final String SURVEY_EDIT = "/admin/survey/edit";
+    private static final String SURVEY_LIST = "admin/survey/list";
+    private static final String SURVEY_DETAIL = "admin/survey/detail";
+    private static final String SURVEY_EDIT = "admin/survey/edit";
 
     /** DI */
     private final SurveyService surveyService;

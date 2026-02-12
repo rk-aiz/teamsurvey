@@ -41,8 +41,8 @@ dependencies {
     implementation 'org.springframework.data:spring-data-commons:4.0.2'
 
     // MapStruct
-    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
-    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+    implementation 'org.mapstruct:mapstruct:1.6.3'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
 
 	// Thymeleaf Layout
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'

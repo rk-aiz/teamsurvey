@@ -8,10 +8,16 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.github.rk_aiz.teamsurvey.application.form.LoginForm;
+import com.github.rk_aiz.teamsurvey.domain.service.AccountService;
+
+import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class LoginController {
+
+    private final AccountService accountService;
 
     /**
      * トップページ(ログイン画面)を表示します。
@@ -24,6 +30,12 @@ public class LoginController {
         if (principal != null) {
             return "redirect:/";
         }
+
+        // アカウントが1つも存在しない場合はセットアップ画面へリダイレクト
+        if (!accountService.existsAnyAccount()) {
+            return "redirect:/setup";
+        }
+
         return "login";
     }
 }

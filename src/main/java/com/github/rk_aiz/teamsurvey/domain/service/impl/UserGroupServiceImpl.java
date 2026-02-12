@@ -1,7 +1,6 @@
 package com.github.rk_aiz.teamsurvey.domain.service.impl;
 
 import java.util.List;
-import java.util.Objects;
 
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -62,5 +61,20 @@ public class UserGroupServiceImpl implements UserGroupService {
         }
 
         return userGroupRepository.remove(groupId);
+    }
+
+    @Override
+    public UserGroup getOrCreateSystemAdminGroup() {
+        return this.userGroupRepository.findAll().stream()
+                .filter(group -> group.getAuthority() == Authority.ADMIN && group.isSystemGroup())
+                .findFirst()
+                .orElseGet(() -> {
+                    UserGroup newGroup = new UserGroup();
+                    newGroup.setGroupName("システム管理者");
+                    newGroup.setAuthority(Authority.ADMIN);
+                    newGroup.setSystemGroup(true);
+                    this.save(newGroup);
+                    return newGroup;
+                });
     }
 }

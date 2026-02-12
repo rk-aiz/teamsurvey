@@ -23,4 +23,8 @@ public interface AccountService {
      * パスワードは入力がある場合(null/空文字以外)のみ更新されます。
      */
     boolean updateProfile(String username, String displayName, String email, String rawPassword);
+
+    boolean existsAnyAccount();
+
+    void createInitialAdmin(String username, String password);
 }
