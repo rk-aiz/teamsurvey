@@ -4,7 +4,7 @@ services:
             context: .
             dockerfile: docker/app/Dockerfile
         ports:
-            - "8081:8081"
+            - "8080:13800"
         environment:
             # Spring Bootの設定を環境変数で上書き (PostgreSQLへの接続設定)
             SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/teamsurveydb?stringtype=unspecified

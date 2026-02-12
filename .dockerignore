@@ -8,3 +8,5 @@ build
 *.jar
 bin/
 obj/
+schema.sql
+data.sql

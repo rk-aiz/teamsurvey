@@ -19,6 +19,9 @@ public record UserAccount(
         List<UserGroup> assignedGroups) {
 
     public boolean hasAutority(Authority authority) {
+        if (this.assignedGroups == null)
+            return false;
+
         return this.assignedGroups().stream()
                 .anyMatch(group -> group.getAuthority() == authority);
     }

@@ -22,7 +22,7 @@ public class SetupController {
     @GetMapping
     public String setup() {
         // 安全策: すでにアカウントがある場合はセットアップ画面にアクセスさせない
-        if (accountService.existsAnyAccount()) {
+        if (accountService.existsSystemAdmin()) {
             return "redirect:/auth";
         }
         return "setup";
@@ -35,7 +35,7 @@ public class SetupController {
             RedirectAttributes redirectAttributes) {
 
         // 安全策: 二重送信などでアカウントが既にできている場合
-        if (accountService.existsAnyAccount()) {
+        if (accountService.existsSystemAdmin()) {
             return "redirect:/auth";
         }
 

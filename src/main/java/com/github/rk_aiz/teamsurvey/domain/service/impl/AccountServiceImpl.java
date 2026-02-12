@@ -193,8 +193,9 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public boolean existsAnyAccount() {
-        return accountRepository.count() > 0;
+    public boolean existsSystemAdmin() {
+        return accountRepository.findAll().stream()
+                .anyMatch(user -> user.enabled() && user.hasAutority(Authority.ADMIN));
     }
 
     /**
@@ -227,7 +228,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void createInitialAdmin(String username, String password) {
-        if (this.existsAnyAccount()) {
+        if (this.existsSystemAdmin()) {
             throw new ServiceRuleException("初回管理者アカウントは既に作成されています。");
         }
 

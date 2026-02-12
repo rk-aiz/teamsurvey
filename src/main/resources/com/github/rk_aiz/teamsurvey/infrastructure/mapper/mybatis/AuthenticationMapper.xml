@@ -76,17 +76,25 @@
     </select>
 
 	<!--  認証情報一覧を取得 -->
-	<select id="selectAll" resultMap="AuthenticationResultMap">
+	<select id="selectAll" resultMap="AuthenticationWithUserGroupResultMap">
         SELECT 
-            username, 
-            password, 
-            email, 
-            display_name,
-            enabled,
-            created_at,
-            updated_at
-        FROM authentications
-        ORDER BY username
+            auth.username, 
+            auth.password, 
+            auth.email, 
+            auth.display_name,
+            auth.enabled,
+            auth.created_at,
+            auth.updated_at,
+            ug.id as group_id,
+            ug.group_name,
+            ug.authority,
+            ug.is_system_group
+        FROM authentications as auth
+        LEFT JOIN user_group_mappings as map
+        ON auth.username = map.username
+        LEFT JOIN user_groups as ug
+        ON map.group_id = ug.id
+        ORDER BY auth.username, map.group_id
 	</select>
 
 	<!--  ユーザー名で認証情報を検索 -->

@@ -24,7 +24,7 @@ public interface AccountService {
      */
     boolean updateProfile(String username, String displayName, String email, String rawPassword);
 
-    boolean existsAnyAccount();
-
     void createInitialAdmin(String username, String password);
+
+    boolean existsSystemAdmin();
 }

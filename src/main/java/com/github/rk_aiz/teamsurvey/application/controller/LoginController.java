@@ -31,8 +31,8 @@ public class LoginController {
             return "redirect:/";
         }
 
-        // アカウントが1つも存在しない場合はセットアップ画面へリダイレクト
-        if (!accountService.existsAnyAccount()) {
+        // システム管理者アカウントが1つも存在しない場合はセットアップ画面へリダイレクト
+        if (!accountService.existsSystemAdmin()) {
             return "redirect:/setup";
         }
 

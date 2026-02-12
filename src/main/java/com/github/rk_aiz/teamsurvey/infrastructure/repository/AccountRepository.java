@@ -6,7 +6,7 @@ import com.github.rk_aiz.teamsurvey.domain.model.UserAccount;
 
 public interface AccountRepository {
 
-    // List<UserAccount> findAll();
+    List<UserAccount> findAll();
 
     UserAccount findByUsername(String username);
 

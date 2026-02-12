@@ -22,6 +22,11 @@ public class AccountRepositoryImpl implements AccountRepository {
     private final UserGroupRepository userGroupRepository;
 
     @Override
+    public List<UserAccount> findAll() {
+        return authenticationMapper.selectAll().stream().map(AuthenticationEntity::toModel).toList();
+    }
+
+    @Override
     public UserAccount findByUsername(String username) {
         return authenticationMapper.selectByUsername(username).toModel();
     }
