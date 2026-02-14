@@ -16,10 +16,11 @@ import java.util.Collections;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.github.rk_aiz.teamsurvey.application.form.AnswerOptionForm;
@@ -28,12 +29,13 @@ import com.github.rk_aiz.teamsurvey.domain.service.AnswerOptionService;
 import tools.jackson.databind.ObjectMapper;
 
 @WebMvcTest(AnswerOptionController.class)
+@WithMockUser(username = "admin", roles = "ADMIN")
 class AnswerOptionControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @Mock
+    @MockitoBean
     private AnswerOptionService answerOptionService;
 
     @Autowired
@@ -67,8 +69,7 @@ class AnswerOptionControllerTest {
     void save_ValidForm_ReturnsOk() throws Exception {
         // Given
         AnswerOptionForm form = new AnswerOptionForm();
-        // TODO: AnswerOptionFormに必須項目がある場合は、ここで値をセットしてください
-        // form.setName("テストパターン");
+        form.setName("テストパターン");
 
         // When & Then: JSONをPOSTして検証
         mockMvc.perform(post("/admin/pattern/fragment/save")

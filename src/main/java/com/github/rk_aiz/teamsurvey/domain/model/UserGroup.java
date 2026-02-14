@@ -1,7 +1,8 @@
 package com.github.rk_aiz.teamsurvey.domain.model;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,18 +18,22 @@ public class UserGroup {
     private Authority authority;
     private boolean isSystemGroup;
 
+    /**
+     * このグループに割り当てられた権限リストを取得します。
+     * <p>
+     * ADMIN権限を持つ場合は、下位のUSER権限も自動的に付与されます。
+     * </p>
+     * 
+     * @return Spring Securityで使用する権限オブジェクトのリスト
+     */
     public List<GrantedAuthority> getAuthorityList() {
-        // 権限リスト
-        List<GrantedAuthority> authorities = new ArrayList<>();
-
-        // 列挙型からロールを取得
-        authorities.add(new SimpleGrantedAuthority(this.getAuthority().name()));
-
-        // ADMIN ロールの場合、USER権限も付与
-        if (this.getAuthority() == Authority.ADMIN) {
-            authorities.add(new SimpleGrantedAuthority(Authority.USER.name()));
-        }
-
-        return authorities;
+        return Optional.ofNullable(this.authority)
+                .stream()
+                .flatMap(auth -> auth == Authority.ADMIN
+                        ? Stream.of(auth, Authority.USER)
+                        : Stream.of(auth))
+                .map(auth -> new SimpleGrantedAuthority(auth.name()))
+                .map(GrantedAuthority.class::cast)
+                .toList();
     }
 }

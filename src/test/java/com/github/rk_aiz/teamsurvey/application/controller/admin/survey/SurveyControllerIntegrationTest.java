@@ -31,6 +31,11 @@ import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
 @Transactional // テストメソッド終了後にDBの変更をロールバック(他のテストに影響を与えないため)
 class SurveyControllerIntegrationTest {
 
+    private static final String LIST_REQUEST = "/admin/survey/list";
+    private static final String SAVE_REQUEST = "/admin/survey/save";
+    private static final String EDIT_REQUEST = "/admin/survey/edit";
+    private static final String DETAIL_REQUEST = "/admin/survey/detail";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -45,9 +50,9 @@ class SurveyControllerIntegrationTest {
         // Service -> Repository -> H2 Database まで貫通して実行されます。
         // test-data.sql で投入したデータが正しく取得できるか検証します。
 
-        mockMvc.perform(get("/admin/survey/list"))
+        mockMvc.perform(get(LIST_REQUEST))
                 .andExpect(status().isOk())
-                .andExpect(view().name("/admin/survey/list"))
+                .andExpect(view().name(SurveyController.SURVEY_LIST))
                 .andExpect(model().attributeExists("surveys"))
                 // リストのサイズが2件であることを検証
                 .andExpect(model().attribute("surveys", hasSize(2)))
@@ -65,7 +70,7 @@ class SurveyControllerIntegrationTest {
                 "INSERT INTO surveys (title, status, result_visibility, created_at, updated_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)",
                 "直接SQLで登録したアンケート", "DRAFT", "ADMIN_ONLY");
 
-        mockMvc.perform(get("/admin/survey/list"))
+        mockMvc.perform(get(LIST_REQUEST))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("surveys", hasItem(
                         hasProperty("title", is("直接SQLで登録したアンケート")))));
@@ -77,7 +82,7 @@ class SurveyControllerIntegrationTest {
     void save_AndThenList_ReturnsOk() throws Exception {
         // 1. コントローラーにPOSTして保存 (DRAFTステータス)
         // フォームから送信されるパラメータを .param() で再現します
-        mockMvc.perform(post("/admin/survey/save")
+        mockMvc.perform(post(SAVE_REQUEST)
                 .with(csrf()) // CSRFトークン
                 .param("title", "コントローラー結合テスト用アンケート")
                 .param("status", "DRAFT")
@@ -86,7 +91,7 @@ class SurveyControllerIntegrationTest {
                 .andExpect(status().is3xxRedirection()); // 成功すると詳細画面へリダイレクトされる
 
         // 2. 一覧画面を取得して、保存されたデータが存在するか確認
-        mockMvc.perform(get("/admin/survey/list"))
+        mockMvc.perform(get(LIST_REQUEST))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("surveys", hasItem(
                         allOf(
@@ -100,14 +105,14 @@ class SurveyControllerIntegrationTest {
     @WithMockUser(username = "admin", authorities = "ADMIN")
     void save_InvalidForm_ReturnsEditViewWithErrors() throws Exception {
         // When: タイトルが空のリクエストを送信
-        mockMvc.perform(post("/admin/survey/save")
+        mockMvc.perform(post(SAVE_REQUEST)
                 .with(csrf())
                 .param("title", "") // バリデーションエラーになる値(空文字)
                 .param("status", "DRAFT")
                 .param("resultVisibility", "ADMIN_ONLY")
                 .param("isNew", "true"))
                 .andExpect(status().isOk()) // リダイレクトされず、画面再表示(200)になるはず
-                .andExpect(view().name("/admin/survey/edit")) // 編集画面に戻る
+                .andExpect(view().name(SurveyController.SURVEY_EDIT)) // 編集画面に戻る
                 .andExpect(model().hasErrors()) // エラーが含まれていること
                 .andExpect(model().attributeHasFieldErrors("surveyForm", "title")); // titleフィールドにエラーがあること
     }
@@ -117,9 +122,11 @@ class SurveyControllerIntegrationTest {
     @WithMockUser(username = "admin", authorities = "ADMIN")
     void saveWithQuestions_AndThenDetail_ReturnsOk() throws Exception {
         // 1. 設問付きで保存 (TEXT形式とRADIO形式)
-        // AnswerPattern ID=1 は data.sql で投入済み ("難易度(5段階)")
+        jdbcTemplate.update(
+            "INSERT INTO answer_patterns (id, pattern_name) VALUES (?, ?)",
+        1, "難易度(5段階)");
 
-        var resultActions = mockMvc.perform(post("/admin/survey/save")
+        var resultActions = mockMvc.perform(post(SAVE_REQUEST)
                 .with(csrf())
                 .param("title", "設問付きアンケートテスト")
                 .param("status", "DRAFT")
@@ -142,7 +149,7 @@ class SurveyControllerIntegrationTest {
         // 2. 詳細画面を取得して検証
         mockMvc.perform(get(redirectedUrl))
                 .andExpect(status().isOk())
-                .andExpect(view().name("/admin/survey/detail"))
+                .andExpect(view().name(SurveyController.SURVEY_DETAIL))
                 .andExpect(model().attributeExists("survey"))
                 // Surveyの検証
                 .andExpect(model().attribute("survey", hasProperty("title", is("設問付きアンケートテスト"))))

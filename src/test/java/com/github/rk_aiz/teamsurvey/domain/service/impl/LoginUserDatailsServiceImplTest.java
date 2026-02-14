@@ -1,7 +1,13 @@
 package com.github.rk_aiz.teamsurvey.domain.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,15 +33,28 @@ class LoginUserDatailsServiceImplTest {
     void loadUserByUsername_ExistingUser_ReturnsUserDetails() {
         // Arrange
         String username = "testuser";
-        UserAccount mockUser = mock(UserAccount.class);
-        when(accountRepository.findByUsername(username).orElseThrow()).thenReturn(mockUser);
+        
+        // Mockではなく実インスタンスを使用する
+        // UserAccountはデータ保持が責務のRecord(値オブジェクト)であり、振る舞いを持たないためMock化するメリットが薄い
+        UserAccount user = new UserAccount(
+                username,
+                "password",
+                "test@example.com",
+                "Test User",
+                null, // createdAt (テストに関係ないためnull)
+                null, // updatedAt
+                true, // enabled
+                List.of() // assignedGroups
+        );
 
+        when(accountRepository.findByUsername(username)).thenReturn(Optional.of(user));
+        
         // Act
         UserDetails result = loginUserDatailsService.loadUserByUsername(username);
 
         // Assert
         assertNotNull(result);
-        assertEquals(mockUser.username(), result.getUsername());
+        assertEquals(username, result.getUsername());
         verify(accountRepository).findByUsername(username);
     }
 
@@ -43,7 +62,7 @@ class LoginUserDatailsServiceImplTest {
     void loadUserByUsername_NonExistingUser_ThrowsUsernameNotFoundException() {
         // Arrange
         String username = "unknown";
-        when(accountRepository.findByUsername(username)).thenReturn(null);
+        when(accountRepository.findByUsername(username)).thenReturn(Optional.empty());
 
         // Act & Assert
         UsernameNotFoundException exception = assertThrows(UsernameNotFoundException.class, () -> {

@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.SmartValidator;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,9 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.github.rk_aiz.teamsurvey.application.constant.WebConst;
 import com.github.rk_aiz.teamsurvey.application.form.AnswerOptionForm;
 import com.github.rk_aiz.teamsurvey.domain.model.AnswerOption;
 import com.github.rk_aiz.teamsurvey.domain.service.AnswerOptionService;
+import com.github.rk_aiz.teamsurvey.util.ServletUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,8 @@ import lombok.extern.slf4j.Slf4j;
 public class AnswerOptionController {
 
     /** 定数 */
-    private static final String MESSAGE = "message";
+    private static final ServletUtils.Fragment PATTERN_FRAGMENTS = ServletUtils
+            .fragment("admin/survey/pattern_fragments");
 
     /** DI */
     private final AnswerOptionService answerOptionService;
@@ -42,7 +44,7 @@ public class AnswerOptionController {
     @GetMapping("/list")
     public String getListFragment(Model model) {
         model.addAttribute("answerOptions", answerOptionService.findAll());
-        return "admin/survey/pattern_fragments :: list";
+        return PATTERN_FRAGMENTS.target("list");
     }
 
     /**
@@ -64,7 +66,7 @@ public class AnswerOptionController {
         }
 
         model.addAttribute("answerOptionForm", form);
-        return "admin/survey/pattern_fragments :: form";
+        return PATTERN_FRAGMENTS.target("form");
     }
 
     /**
@@ -85,7 +87,7 @@ public class AnswerOptionController {
 
         answerOptionService.save(form.toModel());
 
-        return ResponseEntity.ok(Map.of(MESSAGE, "回答パターンを保存しました。"));
+        return ResponseEntity.ok(Map.of(WebConst.MESSAGE, "回答パターンを保存しました。"));
     }
 
     /**

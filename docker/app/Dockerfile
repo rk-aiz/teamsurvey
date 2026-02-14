@@ -7,7 +7,7 @@ COPY . .
 RUN gradle bootJar -x test --no-daemon
 
 # 実行ステージ
-# 実行用には軽量なJRE 21 (Alpine Linux版など) を使用
+# 実行用には軽量なJRE 21 (Alpine Linux版) を使用
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 # ビルドステージで生成されたJARファイルをコピー
@@ -15,7 +15,7 @@ WORKDIR /app
 # ここでは生成されたJARを app.jar としてコピーします
 COPY --from=build /app/build/libs/*.jar app.jar
 
-# ポート8081を公開 (docker-compose.ymlの設定に合わせる)
-EXPOSE 8081
+# ポート13500を公開 (docker-compose.ymlの設定に合わせる)
+EXPOSE 13500
 
 ENTRYPOINT ["java", "-jar", "app.jar"]

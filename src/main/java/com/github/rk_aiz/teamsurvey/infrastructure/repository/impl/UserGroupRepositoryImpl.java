@@ -29,6 +29,7 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
                 .stream().map(UserGroupEntity::toModel).toList();
     }
 
+    // TODO : Optionalに変更
     @Override
     public UserGroup findById(Integer groupId) {
         return userGroupMapper.selectById(groupId).toModel();

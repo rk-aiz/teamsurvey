@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.beans.BeanUtils;
 
 import com.github.rk_aiz.teamsurvey.domain.model.AnswerOption;
-import com.github.rk_aiz.teamsurvey.domain.model.AnswerOption.OptionItem;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

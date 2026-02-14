@@ -10,8 +10,9 @@ build
 bin/
 obj/
 
-schema.sql
-data.sql
+**/application-local.properties
+**/schema.sql
+**/data.sql
 
 node_modules/
 docs/

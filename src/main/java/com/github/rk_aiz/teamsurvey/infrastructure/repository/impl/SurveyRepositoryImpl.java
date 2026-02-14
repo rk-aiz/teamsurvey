@@ -31,20 +31,21 @@ public class SurveyRepositoryImpl implements SurveyRepository {
         return this.surveyMapper.selectAll().stream().map(SurveyEntity::toModel).toList();
     }
 
+    // TODO : Optionalを返す
     @Override
     public Survey findById(Integer id) {
         // 1. Header取得
-        SurveyEntity entity = this.surveyMapper.selectById(id);
+        SurveyEntity entity = surveyMapper.selectById(id);
         if (entity == null)
             return null;
 
         Survey survey = entity.toModel();
 
         // 2. Questions取得
-        survey.setQuestions(this.questionRepository.findBySurveyId(id));
+        survey.setQuestions(questionRepository.findBySurveyId(id));
 
         // 3. Groups取得
-        survey.setTargetGroups(this.userGroupRepository.findBySurveyId(id));
+        survey.setTargetGroups(userGroupRepository.findBySurveyId(id));
 
         return survey;
     }

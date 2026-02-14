@@ -1,34 +1,5 @@
 
 
-/* アンケートと、各設問を保存するテーブル
-surveys
-questions
-answer_patterns
-answer_pattern_items
-*/
-
-/* ユーザーがアンケートに回答(返答)したときに保存するテーブル
-responses
-response_details
-*/
-
--- テーブルが存在したら削除する
-DROP TABLE IF EXISTS surveys CASCADE;
-DROP TABLE IF EXISTS questions CASCADE;
-DROP TABLE IF EXISTS answer_patterns CASCADE;
-DROP TABLE IF EXISTS answer_pattern_items CASCADE;
-DROP TABLE IF EXISTS responses CASCADE;
-DROP TABLE IF EXISTS response_details CASCADE;
-DROP TABLE IF EXISTS authentications CASCADE;
-DROP TABLE IF EXISTS survey_target_groups CASCADE;
-DROP TABLE IF EXISTS user_group_mappings CASCADE;
-DROP TABLE IF EXISTS user_groups CASCADE;
-DROP TYPE IF EXISTS role CASCADE;
-DROP TYPE IF EXISTS question_type CASCADE;
-DROP TYPE IF EXISTS result_visibility CASCADE;
-DROP TYPE IF EXISTS survey_status CASCADE;
-DROP TYPE IF EXISTS response_status CASCADE;
-
 -- 権限用のENUM型
 CREATE TYPE role AS ENUM ('ADMIN', 'USER');
 

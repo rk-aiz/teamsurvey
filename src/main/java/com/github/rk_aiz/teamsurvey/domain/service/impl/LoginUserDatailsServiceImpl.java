@@ -31,6 +31,8 @@ public class LoginUserDatailsServiceImpl implements UserDetailsService {
                     username + " => 指定しているユーザー名は存在しません");
         });
 
+        // TODO : UserAccount.isEnabled == false の処理
+
         Collection<? extends GrantedAuthority> authorities = loginUser
                 .assignedGroups()
                 .stream()

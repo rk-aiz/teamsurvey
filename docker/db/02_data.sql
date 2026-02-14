@@ -126,39 +126,66 @@ INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALU
 INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (15, 'ツールの使い方が難しい', 6);
 INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (15, '特に課題はない', 7);
 
+-- パターン16: エンジニア職種 (ID=16)
+INSERT INTO answer_patterns (id, pattern_name) VALUES (16, 'エンジニア職種');
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (16, 'バックエンド', 1);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (16, 'フロントエンド', 2);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (16, 'インフラ/SRE', 3);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (16, 'モバイルアプリ', 4);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (16, 'AI/データサイエンス', 5);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (16, 'PM/ディレクター', 6);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (16, 'その他', 7);
+
+-- パターン17: プログラミング言語 (ID=17)
+INSERT INTO answer_patterns (id, pattern_name) VALUES (17, 'プログラミング言語');
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (17, 'Java', 1);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (17, 'Python', 2);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (17, 'JavaScript/TypeScript', 3);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (17, 'C#', 4);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (17, 'PHP', 5);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (17, 'Go', 6);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (17, 'Ruby', 7);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (17, 'C/C++', 8);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (17, 'Rust', 9);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (17, 'Kotlin/Swift', 10);
+INSERT INTO answer_pattern_items (answer_pattern_id, item_text, item_order) VALUES (17, 'その他', 11);
+
 -- 1件目のデータ登録
--- 1件目: 複数の質問を持つアンケート (ID=1)
+-- 1件目: エンジニアスキル・キャリア調査 (ラジオ、チェックボックス、テキストの組み合わせ)
 INSERT INTO surveys (title, status, result_visibility, created_at, updated_at)
-VALUES ('ITエンジニア意識調査', 'PUBLISHED', 'TARGET_GROUP', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+VALUES ('【サンプル】エンジニアスキル・キャリア調査', 'PUBLISHED', 'ALL_USER', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- Q1 (ID=1)
--- パターンID=1 (難易度) を使用
+-- Q1 職種 (RADIO)
 INSERT INTO questions (id, survey_id, question_text, question_type, is_required, answer_pattern_id, display_order)
-VALUES (1, 1, 'Javaは難しいですか?', 'RADIO', TRUE, 1, 1);
+VALUES (1, 1, 'あなたの主な職種を教えてください', 'RADIO', TRUE, 16, 1);
 
--- Q2 (ID=2)
--- パターンID=2 (Yes/No) を使用
+-- Q2 経験言語 (CHECKBOX)
 INSERT INTO questions (id, survey_id, question_text, question_type, is_required, answer_pattern_id, display_order)
-VALUES (2, 1, 'Spring Frameworkは好きですか?', 'RADIO', FALSE, 2, 2);
+VALUES (2, 1, '業務・個人開発で経験のある言語をすべて選択してください', 'CHECKBOX', TRUE, 17, 2);
 
--- 2件目: 全種類の回答形式を含むアンケート (ID=2)
+-- Q3 満足度 (RADIO)
+INSERT INTO questions (id, survey_id, question_text, question_type, is_required, answer_pattern_id, display_order)
+VALUES (3, 1, '現在の仕事の満足度を教えてください', 'RADIO', TRUE, 3, 3);
+
+-- Q4 自由記述 (TEXT)
+INSERT INTO questions (id, survey_id, question_text, question_type, is_required, answer_pattern_id, display_order)
+VALUES (4, 1, '今後挑戦したい技術やキャリアについて自由に記述してください', 'TEXT', FALSE, NULL, 4);
+
+-- 2件目: 社内イベントに関するアンケート
 INSERT INTO surveys (title, status, result_visibility, created_at, updated_at)
-VALUES ('サービス満足度調査', 'PUBLISHED', 'ALL_USER', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+VALUES ('【サンプル】社内イベントに関するアンケート', 'PUBLISHED', 'TARGET_GROUP', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- Q3 (ID=3)
--- パターンID=2 (Yes/No) を再利用(文脈に合わせて解釈)
+-- Q5 (Yes/No)
 INSERT INTO questions (id, survey_id, question_text, question_type, is_required, answer_pattern_id, display_order)
-VALUES (3, 2, '今回のサービスを利用して満足しましたか？', 'RADIO', TRUE, 2, 1);
+VALUES (5, 2, '先日の社内イベントに参加しましたか？', 'RADIO', TRUE, 2, 1);
 
--- Q4 (ID=4)
--- パターンID=3 (満足度) を使用
+-- Q6 (満足度)
 INSERT INTO questions (id, survey_id, question_text, question_type, is_required, answer_pattern_id, display_order)
-VALUES (4, 2, 'サービスの品質を5段階で評価してください', 'RADIO', TRUE, 3, 2);
+VALUES (6, 2, 'イベントの満足度を教えてください', 'RADIO', TRUE, 3, 2);
 
--- Q5 (ID=5)
--- 自由記述なのでパターンIDはNULL
+-- Q7 (自由記述)
 INSERT INTO questions (id, survey_id, question_text, question_type, is_required, answer_pattern_id, display_order)
-VALUES (5, 2, 'その他、ご意見・ご要望があればご記入ください', 'TEXT', FALSE, NULL, 3);
+VALUES (7, 2, '次回のイベントへの要望があればご記入ください', 'TEXT', FALSE, NULL, 3);
 
 -- PostgreSQL特有の処理
 -- IDを指定してINSERTした場合、自動採番のシーケンスが進まないため、
