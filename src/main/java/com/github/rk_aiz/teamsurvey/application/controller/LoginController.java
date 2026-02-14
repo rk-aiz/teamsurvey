@@ -32,7 +32,7 @@ public class LoginController {
         }
 
         // システム管理者アカウントが1つも存在しない場合はセットアップ画面へリダイレクト
-        if (!accountService.existsSystemAdmin()) {
+        if (!accountService.existsAdmin()) {
             return "redirect:/setup";
         }
 

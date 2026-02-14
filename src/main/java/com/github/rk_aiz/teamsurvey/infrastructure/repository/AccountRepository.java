@@ -1,6 +1,7 @@
 package com.github.rk_aiz.teamsurvey.infrastructure.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.github.rk_aiz.teamsurvey.domain.model.UserAccount;
 
@@ -8,7 +9,7 @@ public interface AccountRepository {
 
     List<UserAccount> findAll();
 
-    UserAccount findByUsername(String username);
+    Optional<UserAccount> findByUsername(String username);
 
     List<UserAccount> findWithPaging(long offset, int pageSize);
 

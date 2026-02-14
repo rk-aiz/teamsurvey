@@ -1,5 +1,7 @@
 package com.github.rk_aiz.teamsurvey.application.controller.user;
 
+import javax.security.auth.login.AccountNotFoundException;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,10 +36,13 @@ public class UserSettingController {
     public String showSetting(
             @AuthenticationPrincipal LoginUser loginUser,
             Model model,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes) throws AccountNotFoundException {
 
         // DBから最新のユーザー情報を取得
-        UserAccount latestAccount = accountService.findAccountByUsername(loginUser.getUsername());
+        UserAccount latestAccount = accountService
+                .findAccountByUsername(loginUser.getUsername())
+                .orElseThrow(AccountNotFoundException::new);
+
         model.addAttribute(
                 "accountForm",
                 accountMapper.toForm(latestAccount, false));

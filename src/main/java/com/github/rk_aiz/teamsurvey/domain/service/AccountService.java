@@ -1,5 +1,7 @@
 package com.github.rk_aiz.teamsurvey.domain.service;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -12,7 +14,7 @@ public interface AccountService {
 
     public boolean isLastAdmin(String username);
 
-    UserAccount findAccountByUsername(String username);
+    Optional<UserAccount> findAccountByUsername(String username);
 
     boolean saveAccount(UserAccount inputUser, String rawPassword, boolean isNew);
 
@@ -24,7 +26,7 @@ public interface AccountService {
      */
     boolean updateProfile(String username, String displayName, String email, String rawPassword);
 
-    void createInitialAdmin(String username, String password);
+    void createInitialAdmin(UserAccount userAccount);
 
-    boolean existsSystemAdmin();
+    boolean existsAdmin();
 }

@@ -31,7 +31,7 @@
     </select>
 	
 	<!--  新規ユーザーグループを登録 -->
-    <insert id="insert">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO user_groups (
             group_name,
             authority

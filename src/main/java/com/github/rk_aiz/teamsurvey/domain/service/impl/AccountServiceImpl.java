@@ -12,7 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.github.rk_aiz.teamsurvey.application.mapper.AccountFormMapper;
 import com.github.rk_aiz.teamsurvey.domain.exception.ServiceRuleException;
 import com.github.rk_aiz.teamsurvey.domain.exception.SystemCriticalException;
 import com.github.rk_aiz.teamsurvey.domain.model.UserAccount;
@@ -57,7 +56,8 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public boolean isLastAdmin(String username) {
         // 1. ユーザー情報の取得
-        UserAccount user = accountRepository.findByUsername(username);
+        UserAccount user = accountRepository.findByUsername(username)
+                .orElse(null);
 
         // 2. ユーザーが存在しない、または既に無効化されている場合は false
         if (user == null || !user.enabled()) {
@@ -77,7 +77,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public UserAccount findAccountByUsername(String username) {
+    public Optional<UserAccount> findAccountByUsername(String username) {
         return accountRepository.findByUsername(username);
     }
 
@@ -145,7 +145,10 @@ public class AccountServiceImpl implements AccountService {
                 email,
                 displayName,
                 true,
-                this.accountRepository.findByUsername(username).assignedGroups());
+                accountRepository
+                        .findByUsername(username)
+                        .map(account -> account.assignedGroups())
+                        .orElse(null));
     }
 
     /**
@@ -159,8 +162,7 @@ public class AccountServiceImpl implements AccountService {
             boolean isEnabled,
             List<UserGroup> userGroups) {
 
-        Optional<UserAccount> currentAccount = Optional
-                .ofNullable(this.accountRepository.findByUsername(username));
+        Optional<UserAccount> currentAccount = accountRepository.findByUsername(username);
 
         String encodedPassword = Optional.ofNullable(rawPassword)
                 .filter(StringUtils::hasText)
@@ -193,7 +195,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public boolean existsSystemAdmin() {
+    public boolean existsAdmin() {
         return accountRepository.findAll().stream()
                 .anyMatch(user -> user.enabled() && user.hasAutority(Authority.ADMIN));
     }
@@ -227,22 +229,18 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void createInitialAdmin(String username, String password) {
-        if (this.existsSystemAdmin()) {
-            throw new ServiceRuleException("初回管理者アカウントは既に作成されています。");
+    public void createInitialAdmin(UserAccount account) {
+        if (this.existsAdmin()) {
+            throw new ServiceRuleException("管理者アカウントは既に作成されています。");
         }
 
-        UserAccount adminAccount = new UserAccount(
-                username,
-                passwordEncoder.encode(password),
-                null,
-                username,
-                LocalDateTime.now(),
-                LocalDateTime.now(),
+        saveAccountCore(
+                account.username(),
+                account.password(),
+                account.email(),
+                account.displayName(),
                 true,
                 List.of(userGroupService.getOrCreateSystemAdminGroup()));
-
-        accountRepository.save(adminAccount);
     }
 
 }

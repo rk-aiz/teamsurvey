@@ -21,7 +21,7 @@ public interface UserGroupRepository {
 
     boolean existsByGroupName(String groupName);
 
-    boolean save(UserGroup group);
+    void save(UserGroup group);
 
     boolean remove(Integer groupId);
 

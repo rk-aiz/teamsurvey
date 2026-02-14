@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import javax.security.auth.login.AccountNotFoundException;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -71,9 +73,9 @@ public class AccountController {
             @PageableDefault(size = 20) Pageable pageable, Model model) {
 
         // ページネーション付きで取得
-        Page<UserAccount> users = this.accountService.findWithPaging(pageable);
+        Page<UserAccount> users = accountService.findWithPaging(pageable);
         model.addAttribute("users", users);
-        model.addAttribute("userGroups", this.userGroupService.findAll());
+        model.addAttribute("userGroups", userGroupService.findAll());
         model.addAttribute("userGroupForm", new UserGroupForm());
 
         // モーダル表示用の処理
@@ -87,10 +89,13 @@ public class AccountController {
             // 編集
             try {
                 model.addAttribute("accountForm",
-                        accountFormMapper.toForm(this.accountService.findAccountByUsername(username), false));
+                        accountService
+                                .findAccountByUsername(username)
+                                .map(account -> accountFormMapper.toForm(account, false))
+                                .orElseThrow(AccountNotFoundException::new));
                 model.addAttribute("isLastAdmin", accountService.isLastAdmin(username));
                 model.addAttribute("showModal", true);
-            } catch (IllegalArgumentException | NoSuchElementException e) {
+            } catch (IllegalArgumentException | NoSuchElementException | AccountNotFoundException e) {
                 log.warn("指定されたユーザーが見つかりません: {}", username);
             }
         }

@@ -1,6 +1,7 @@
 package com.github.rk_aiz.teamsurvey.infrastructure.repository.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,8 +28,10 @@ public class AccountRepositoryImpl implements AccountRepository {
     }
 
     @Override
-    public UserAccount findByUsername(String username) {
-        return authenticationMapper.selectByUsername(username).toModel();
+    public Optional<UserAccount> findByUsername(String username) {
+        return Optional
+                .ofNullable(authenticationMapper.selectByUsername(username))
+                .map(entity -> entity.toModel());
     }
 
     @Override
@@ -61,6 +64,9 @@ public class AccountRepositoryImpl implements AccountRepository {
         List<Integer> groupIds = user.assignedGroups().stream()
                 .map(UserGroup::getId)
                 .toList();
+
+        
+
         userGroupRepository.updateUserGroupMapping(user.username(), groupIds);
 
         return true;

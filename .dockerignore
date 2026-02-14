@@ -3,10 +3,15 @@
 build
 .idea
 .vscode
+.settings
 *.log
 *.class
 *.jar
 bin/
 obj/
+
 schema.sql
 data.sql
+
+node_modules/
+docs/

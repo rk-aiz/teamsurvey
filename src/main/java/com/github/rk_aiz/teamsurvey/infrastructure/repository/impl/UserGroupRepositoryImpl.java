@@ -2,6 +2,7 @@ package com.github.rk_aiz.teamsurvey.infrastructure.repository.impl;
 
 import java.util.List;
 
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Repository;
 
 import com.github.rk_aiz.teamsurvey.domain.model.UserGroup;
@@ -51,13 +52,24 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
     }
 
     @Override
-    public boolean save(UserGroup userGroup) {
+    public void save(UserGroup userGroup) {
+        UserGroupEntity entity = UserGroupEntity.from(userGroup);
 
+        int change = 0;
         if (userGroup.getId() == null) {
-            return userGroupMapper.insert(UserGroupEntity.from(userGroup)) > 0;
+            change = userGroupMapper.insert(entity);
         } else {
-            return userGroupMapper.update(UserGroupEntity.from(userGroup)) > 0;
+            change = userGroupMapper.update(entity);
         }
+
+        if (change == 0) {
+            throw new IncorrectResultSizeDataAccessException(
+                    "ユーザーグループの保存が行われませんでした。", 1, 0);
+        }
+
+        System.out.println(entity.getId());
+
+        userGroup.setId(entity.getId());
     }
 
     @Override

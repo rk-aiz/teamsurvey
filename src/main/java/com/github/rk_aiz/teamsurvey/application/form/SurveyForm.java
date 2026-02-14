@@ -100,14 +100,6 @@ public class SurveyForm {
             survey.setQuestions(this.getQuestionForms()
                     .stream().map(QuestionForm::toModel).toList());
         }
-        // Optional.ofNullable(this.getQuestionForms()).ifPresent(qForms ->
-        // survey.setQuestions(
-        // qForms.stream()
-        // .filter(Objects::nonNull)
-        // .map(QuestionForm::toModel)
-        // .filter(Objects::nonNull) // toModelがnullを返す可能性があるため、ここでもフィルタリングする
-        // .toList()));
-        System.out.println(survey.getQuestions().size());
 
         return survey;
     }

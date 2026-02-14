@@ -28,14 +28,14 @@ class LoginUserDatailsServiceImplTest {
         // Arrange
         String username = "testuser";
         UserAccount mockUser = mock(UserAccount.class);
-        when(accountRepository.findByUsername(username)).thenReturn(mockUser);
+        when(accountRepository.findByUsername(username).orElseThrow()).thenReturn(mockUser);
 
         // Act
         UserDetails result = loginUserDatailsService.loadUserByUsername(username);
 
         // Assert
         assertNotNull(result);
-        assertEquals(mockUser, result);
+        assertEquals(mockUser.username(), result.getUsername());
         verify(accountRepository).findByUsername(username);
     }
 

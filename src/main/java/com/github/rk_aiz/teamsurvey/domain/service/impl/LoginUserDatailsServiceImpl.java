@@ -26,12 +26,10 @@ public class LoginUserDatailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        UserAccount loginUser = accountRepository.findByUsername(username);
-
-        if (loginUser == null) {
+        UserAccount loginUser = accountRepository.findByUsername(username).orElseThrow(() -> {
             throw new UsernameNotFoundException(
                     username + " => 指定しているユーザー名は存在しません");
-        }
+        });
 
         Collection<? extends GrantedAuthority> authorities = loginUser
                 .assignedGroups()

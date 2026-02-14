@@ -28,7 +28,7 @@ public class UserGroupServiceImpl implements UserGroupService {
     }
 
     @Override
-    public boolean save(UserGroup userGroup) {
+    public void save(UserGroup userGroup) {
 
         if (userGroup.getId() == null) {
             // 新規登録時のチェック
@@ -48,7 +48,8 @@ public class UserGroupServiceImpl implements UserGroupService {
                 throw new ServiceRuleException("システムグループは権限の変更はできません");
             }
         }
-        return this.userGroupRepository.save(userGroup);
+
+        userGroupRepository.save(userGroup);
     }
 
     @Override
@@ -73,7 +74,7 @@ public class UserGroupServiceImpl implements UserGroupService {
                     newGroup.setGroupName("システム管理者");
                     newGroup.setAuthority(Authority.ADMIN);
                     newGroup.setSystemGroup(true);
-                    this.save(newGroup);
+                    save(newGroup);
                     return newGroup;
                 });
     }

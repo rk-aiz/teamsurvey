@@ -21,15 +21,41 @@
                             まだ管理者が登録されていません。<br>
                             最初の管理者アカウントを作成してください。
                         </p>
-                        <form th:action="@{/setup}" method="post">
+                        <form th:action="@{/setup}" method="post" th:object="${accountForm}">
+                            <input type="hidden" th:field="*{isNew}" />
+
                             <div class="mb-3">
                                 <label for="username" class="form-label">ユーザー名 (ログインID)</label>
-                                <input type="text" class="form-control" id="username" name="username" required
-                                    autofocus>
+                                <input type="text" class="form-control" th:field="*{username}"
+                                    th:errorclass="is-invalid" autofocus>
+                                <div class="invalid-feedback" th:errors="*{username}"></div>
+                                <div class="form-text">英数字と記号(._-)が使用可能です。</div>
                             </div>
+
+                            <div class="mb-3">
+                                <label for="displayName" class="form-label">表示名</label>
+                                <input type="text" class="form-control" th:field="*{displayName}"
+                                    th:errorclass="is-invalid">
+                                <div class="invalid-feedback" th:errors="*{displayName}"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">メールアドレス</label>
+                                <input type="email" class="form-control" th:field="*{email}" th:errorclass="is-invalid">
+                                <div class="invalid-feedback" th:errors="*{email}"></div>
+                            </div>
+
                             <div class="mb-3">
                                 <label for="password" class="form-label">パスワード</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
+                                <input type="password" class="form-control" th:field="*{password}"
+                                    th:errorclass="is-invalid">
+                                <div class="invalid-feedback" th:errors="*{password}"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="passwordConfirmation" class="form-label">パスワード(確認)</label>
+                                <input type="password" class="form-control" th:field="*{passwordConfirmation}"
+                                    th:errorclass="is-invalid">
+                                <div class="invalid-feedback" th:errors="*{passwordConfirmation}"></div>
                             </div>
                             <div class="d-grid">
                                 <button type="submit" class="btn btn-primary">アカウント作成</button>

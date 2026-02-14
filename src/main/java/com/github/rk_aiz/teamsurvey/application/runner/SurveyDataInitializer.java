@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.security.auth.login.AccountNotFoundException;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -157,19 +159,19 @@ public class SurveyDataInitializer implements CommandLineRunner {
     }
 
     /**
-     * 回答登録ヘルパー
+     * 回答登録ヘルパー TODO : 整理
      * 
      * @param surveyId アンケートID
      * @param username 回答者ユーザー名
      * @param answers  Key:設問の表示順(displayOrder), Value:回答内容(Integer=ItemOrder,
      *                 String=Text, List=MultiItemOrder)
      */
-    @SuppressWarnings("unchecked")
     private void createResponse(Integer surveyId, String username, Map<Integer, Object> answers) {
         try {
             // 最新のアンケート情報を取得(スナップショット化された回答パターンを含む)
             Survey survey = surveyService.findSurveyById(surveyId);
-            UserAccount user = accountService.findAccountByUsername(username);
+            UserAccount user = accountService.findAccountByUsername(username)
+                    .orElseThrow(AccountNotFoundException::new);
 
             Response response = responseService.createNewResponseBySurvey(survey, user);
             response.setStatus(ResponseStatus.VALID);

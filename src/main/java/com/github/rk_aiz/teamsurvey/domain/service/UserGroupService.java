@@ -9,7 +9,7 @@ public interface UserGroupService {
     /** 全てのユーザーグループを取得します */
     List<UserGroup> findAll();
 
-    boolean save(UserGroup userGroup);
+    void save(UserGroup userGroup);
 
     boolean delete(Integer groupId);
 
