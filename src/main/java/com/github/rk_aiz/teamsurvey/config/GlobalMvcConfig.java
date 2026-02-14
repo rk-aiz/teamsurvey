@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 //全てのコントローラーに対して共通処理を行う
 @Configuration
-public class TeamSurveyConfig implements WebMvcConfigurer {
+public class GlobalMvcConfig implements WebMvcConfigurer {
 
 	// リゾルバリストに必要なリゾルバを追加
 	@Override

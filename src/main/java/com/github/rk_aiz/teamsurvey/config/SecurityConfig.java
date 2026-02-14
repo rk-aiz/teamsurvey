@@ -24,6 +24,9 @@ public class SecurityConfig {
                         .requestMatchers("/auth", "/setup", "/favicon.svg").permitAll()
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                         .permitAll()
+                        // Actuatorの保護: healthは公開、それ以外はADMIN権限が必要
+                        .requestMatchers("/actuator/health").permitAll()
+                        .requestMatchers("/actuator/**").hasAuthority("ADMIN")
                         // 【管理者権限設定】 url : /admin/**は管理者しかアクセスできない
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
                         // ★その他のリクエストはすべて認証が必要
