@@ -27,10 +27,10 @@ teamsurvey/
 │   └── design/ .................... 設計等の詳細資料
 │
 ├── src/main/java/com/github/rk_aiz/teamsurvey/
-│   ├── presentation/ .............. [Web層] Controller, Form
-│   ├── application/ ............... [アプリ層] Service (ユースケース)
-│   ├── domain/ .................... [ドメイン層] Model
-│   └── infrastructure/ ............ [インフラ層] Entity, Mapper
+│   ├── presentation/ .............. [Web層] View
+│   ├── application/ ............... [アプリ層] Controller, Form
+│   ├── domain/ .................... [ドメイン層] Service, Domain Object
+│   └── infrastructure/ ............ [インフラ層] Repository, Mapper
 │
 ├── docker-compose.yml ................... Docker Compose設定ファイル
 └── build.gradle ........................ Gradle依存関係定義
@@ -39,8 +39,8 @@ teamsurvey/
 
 ## 技術スタック (Tech Stack)
 
-- **Java 21** / **Spring Boot 4.02**
-- **PostgreSQL 18**
+- **Java 21** / **Spring Boot 4**
+- **PostgreSQL 16**
 - **MyBatis**
 - **Thymeleaf**
 - **Docker** / **Docker Compose**
