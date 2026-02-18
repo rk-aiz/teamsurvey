@@ -1,7 +1,5 @@
 # TeamSurvey
 
-!Preview
-
 ### 概要 (Overview)
 
     社内やチーム内での利用を想定した、オンラインアンケートシステムです。
