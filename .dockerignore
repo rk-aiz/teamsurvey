@@ -11,6 +11,7 @@ bin/
 obj/
 
 **/application-local.properties
+**/application-codeserver.properties
 **/schema.sql
 **/data.sql
 

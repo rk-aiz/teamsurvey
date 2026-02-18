@@ -26,7 +26,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.github.rk_aiz.teamsurvey.domain.type.ResultVisibility;
 import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
 
-@SpringBootTest // アプリケーション全体のコンテキストを起動(H2 DBを使用)
+// H2データベースをPostgreSQL互換モードで起動するように設定を追加
+@SpringBootTest(properties = {
+        "spring.datasource.url=jdbc:h2:mem:testdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"
+})
 @AutoConfigureMockMvc // MockMvcを自動設定して、HTTPリクエストをシミュレート可能にする
 @Transactional // テストメソッド終了後にDBの変更をロールバック(他のテストに影響を与えないため)
 class SurveyControllerIntegrationTest {
@@ -45,6 +48,7 @@ class SurveyControllerIntegrationTest {
     @Test
     @DisplayName("アンケート一覧画面が正常に表示されること(DB接続あり)")
     @WithMockUser(username = "admin", authorities = "ADMIN")
+    @Sql(scripts = "/test-schema.sql")
     @Sql(scripts = "/test-data.sql") // テスト実行前にSQLを実行してデータを初期化
     void list_ReturnsOk() throws Exception {
         // Service -> Repository -> H2 Database まで貫通して実行されます。
