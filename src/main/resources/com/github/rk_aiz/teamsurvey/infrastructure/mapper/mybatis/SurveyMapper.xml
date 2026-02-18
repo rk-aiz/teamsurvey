@@ -73,8 +73,8 @@
             updated_at
         ) VALUES (
             #{title},
-            #{status},
-            #{resultVisibility},
+            #{status}::survey_status,
+            #{resultVisibility}::result_visibility,
             #{deadline},
             CURRENT_TIMESTAMP, 
             CURRENT_TIMESTAMP
@@ -84,7 +84,7 @@
     <update id="update"> 
         UPDATE surveys 
         SET title = #{title}, 
-            status = #{status},
+            status = #{status}::survey_status,
             result_visibility = #{resultVisibility}::result_visibility,
             deadline = #{deadline},
             updated_at = CURRENT_TIMESTAMP 
