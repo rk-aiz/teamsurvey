@@ -67,7 +67,7 @@
     <update id="update">
         UPDATE responses
             SET survey_id = #{surveyId},
-            status = #{status}::response_status, 
+            status = #{status}, 
             updated_at = CURRENT_TIMESTAMP
 		WHERE id = #{id}
     </update>

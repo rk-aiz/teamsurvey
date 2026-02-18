@@ -73,8 +73,8 @@
             updated_at
         ) VALUES (
             #{title},
-            #{status}::survey_status,
-            #{resultVisibility}::result_visibility,
+            #{status},
+            #{resultVisibility},
             #{deadline},
             CURRENT_TIMESTAMP, 
             CURRENT_TIMESTAMP

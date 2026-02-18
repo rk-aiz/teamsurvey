@@ -46,7 +46,7 @@
             #{surveyId},
             #{answerPatternId},
             #{text},
-            #{type}::question_type,
+            #{type},
             #{required},
             #{displayOrder},
             #{isDeleted}
@@ -58,7 +58,7 @@
             SET survey_id = #{surveyId}, 
                 answer_pattern_id = #{answerPatternId},
                 question_text = #{text}, 
-                question_type = #{type}::question_type, 
+                question_type = #{type}, 
                 is_required = #{required}, 
                 display_order = #{displayOrder}, 
                 is_deleted = #{isDeleted}
