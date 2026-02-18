@@ -2,18 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.SurveyMapper">
 
-    <!-- マッピング定義
-    <resultMap id="SurveyResultMap" type="com.github.rk_aiz.teamsurvey.infrastructure.entity.SurveyEntity">
-        <id property="id" column="id" />
-        <result property="title" column="title" />
-        <result property="status" column="status" />
-        <result property="resultVisibility" column="result_visibility" />
-        <result property="deadline" column="deadline" />
-        <result property="createdAt" column="created_at" />
-        <result property="updatedAt" column="updated_at" />
-    </resultMap> 
-    -->
-
     <!-- 全件取得: 軽量にする -->
     <select id="selectAll" resultType="com.github.rk_aiz.teamsurvey.infrastructure.entity.SurveyEntity">
         SELECT id, title, status, result_visibility, deadline,
@@ -84,8 +72,8 @@
     <update id="update"> 
         UPDATE surveys 
         SET title = #{title}, 
-            status = #{status}::survey_status,
-            result_visibility = #{resultVisibility}::result_visibility,
+            status = #{status},
+            result_visibility = #{resultVisibility},
             deadline = #{deadline},
             updated_at = CURRENT_TIMESTAMP 
         WHERE id = #{id} 
