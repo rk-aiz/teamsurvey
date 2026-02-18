@@ -15,5 +15,7 @@ obj/
 **/schema.sql
 **/data.sql
 
+src/test/
+
 node_modules/
 docs/

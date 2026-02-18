@@ -89,7 +89,9 @@ public class QuestionForm {
                 yield mcq;
             }
         };
-        BeanUtils.copyProperties(this, question);
+        // requiredがnull(未チェック)の場合にcopyPropertiesでエラーになるのを防ぐため、除外して手動設定する
+        BeanUtils.copyProperties(this, question, "required");
+        question.setRequired(Boolean.TRUE.equals(this.required));
         return question;
     }
 
