@@ -45,6 +45,27 @@ teamsurvey/
 - **Thymeleaf**
 - **Docker** / **Docker Compose**
 
+## 使い方 (Usage)
+
+Dockerを使用して、ローカル環境で簡単にアプリケーションを起動できます。
+
+### 起動手順
+
+1. プロジェクトのルートディレクトリで以下のコマンドを実行し、コンテナをビルド・起動します。
+    ```bash
+    docker-compose up -d --build
+    ```
+2. 起動後、ブラウザで以下のURLにアクセスしてください。
+    - [http://localhost:9876](http://localhost:9876)
+
+### 停止手順
+
+以下のコマンドを実行して、コンテナを停止・削除します。
+
+```bash
+docker-compose down
+```
+
 ## ドキュメント (Documentation)
 
 本プロジェクトの要件定義や設計ついては、以下のドキュメントを参照してください。

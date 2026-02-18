@@ -1,3 +1,4 @@
+
 -- アンケート本体のテーブル作成
 CREATE TABLE surveys (
 	-- id : 内部管理用ID (主キー)
@@ -5,9 +6,9 @@ CREATE TABLE surveys (
 	-- title (アンケートタイトル)
 	title VARCHAR(255) NOT NULL,
 	-- status (ステータス)
-	status survey_status NOT NULL DEFAULT 'DRAFT',
+	status VARCHAR(20) NOT NULL DEFAULT 'DRAFT',
 	-- result_visibility (集計結果の公開範囲)
-	result_visibility result_visibility NOT NULL DEFAULT 'ADMIN_ONLY',
+	result_visibility VARCHAR(20) NOT NULL DEFAULT 'ADMIN_ONLY',
 	-- deadline (回答締め切り日時) NULLの場合は無期限
 	deadline timestamp without time zone,
 	-- created_at (作成日)
@@ -41,7 +42,7 @@ CREATE TABLE user_groups (
 	id serial PRIMARY KEY,
 	group_name VARCHAR(100) NOT NULL,
 	-- グループに紐づく権限
-	authority role NOT NULL DEFAULT 'USER',
+	authority VARCHAR(20) NOT NULL DEFAULT 'USER',
 	-- システム上必須のグループかどうか(削除不可フラグ)
 	is_system_group BOOLEAN NOT NULL DEFAULT FALSE
 );
@@ -80,7 +81,7 @@ CREATE TABLE questions (
 	-- question_text (質問文)
 	question_text text,
 	-- mode (回答形式)
-	question_type question_type NOT NULL,
+	question_type VARCHAR(20) NOT NULL,
 	-- is_required (必須回答かどうか)
 	is_required BOOLEAN NOT NULL DEFAULT FALSE,
 	-- display_order (表示順)
@@ -98,7 +99,7 @@ CREATE TABLE responses (
 	-- 匿名回答時の識別子 (例: "ip:192.168.1.1", "session:xyz...", "cookie:abc...")
 	trace_id VARCHAR(255),
 	-- status : 回答の状態 (有効、無効、テストなど)
-	status response_status NOT NULL DEFAULT 'UNVERIFIED',
+	status VARCHAR(20) NOT NULL DEFAULT 'UNVERIFIED',
 	-- created_at (作成日)
 	created_at timestamp without time zone,
 	-- updated_at (更新日: 再回答された日時)
