@@ -37,7 +37,7 @@
             authority
         ) VALUES (
 			#{groupName},
-			#{authority}::role
+			#{authority}
         )
     </insert>
 	
@@ -45,7 +45,7 @@
     <update id="update">
         UPDATE user_groups 
             SET group_name = #{groupName}, 
-                authority = #{authority}::role
+                authority = #{authority}
         WHERE id = #{id}
     </update>
 

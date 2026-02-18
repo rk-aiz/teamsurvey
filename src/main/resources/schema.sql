@@ -23,28 +23,6 @@ DROP TABLE IF EXISTS authentications CASCADE;
 DROP TABLE IF EXISTS survey_target_groups CASCADE;
 DROP TABLE IF EXISTS user_group_mappings CASCADE;
 DROP TABLE IF EXISTS user_groups CASCADE;
-DROP TYPE IF EXISTS role CASCADE;
-DROP TYPE IF EXISTS question_type CASCADE;
-DROP TYPE IF EXISTS result_visibility CASCADE;
-DROP TYPE IF EXISTS survey_status CASCADE;
-DROP TYPE IF EXISTS response_status CASCADE;
-
--- 権限用のENUM型
-CREATE TYPE role AS ENUM ('ADMIN', 'USER');
-
--- 質問に対する回答タイプのENUM型
-CREATE TYPE question_type AS ENUM (
-	'RADIO', 'CHECKBOX', 'TEXT');
-
--- 集計結果の公開範囲ENUM型
-CREATE TYPE result_visibility AS ENUM ('ADMIN_ONLY', 'TARGET_GROUP', 'ALL_USER');
-
--- アンケートステータスENUM型
-CREATE TYPE survey_status AS ENUM ('DRAFT', 'PUBLISHED', 'CLOSED', 'DELETED');
-
--- 回答ステータスENUM型
-CREATE TYPE response_status AS ENUM ('UNVERIFIED', 'VALID', 'DUPLICATE', 'INVALID', 'TEST');
-
 
 -- アンケート本体のテーブル作成
 CREATE TABLE surveys (
@@ -53,9 +31,9 @@ CREATE TABLE surveys (
 	-- title (アンケートタイトル)
 	title VARCHAR(255) NOT NULL,
 	-- status (ステータス)
-	status survey_status NOT NULL DEFAULT 'DRAFT',
+	status VARCHAR(20) NOT NULL DEFAULT 'DRAFT',
 	-- result_visibility (集計結果の公開範囲)
-	result_visibility result_visibility NOT NULL DEFAULT 'ADMIN_ONLY',
+	result_visibility VARCHAR(20) NOT NULL DEFAULT 'ADMIN_ONLY',
 	-- deadline (回答締め切り日時) NULLの場合は無期限
 	deadline timestamp without time zone,
 	-- created_at (作成日)
@@ -89,7 +67,7 @@ CREATE TABLE user_groups (
 	id serial PRIMARY KEY,
 	group_name VARCHAR(100) NOT NULL,
 	-- グループに紐づく権限
-	authority role NOT NULL DEFAULT 'USER',
+	authority VARCHAR(20) NOT NULL DEFAULT 'USER',
 	-- システム上必須のグループかどうか(削除不可フラグ)
 	is_system_group BOOLEAN NOT NULL DEFAULT FALSE
 );
@@ -128,7 +106,7 @@ CREATE TABLE questions (
 	-- question_text (質問文)
 	question_text text,
 	-- mode (回答形式)
-	question_type question_type NOT NULL,
+	question_type VARCHAR(20) NOT NULL,
 	-- is_required (必須回答かどうか)
 	is_required BOOLEAN NOT NULL DEFAULT FALSE,
 	-- display_order (表示順)
@@ -146,7 +124,7 @@ CREATE TABLE responses (
 	-- 匿名回答時の識別子 (例: "ip:192.168.1.1", "session:xyz...", "cookie:abc...")
 	trace_id VARCHAR(255),
 	-- status : 回答の状態 (有効、無効、テストなど)
-	status response_status NOT NULL DEFAULT 'UNVERIFIED',
+	status VARCHAR(20) NOT NULL DEFAULT 'UNVERIFIED',
 	-- created_at (作成日)
 	created_at timestamp without time zone,
 	-- updated_at (更新日: 再回答された日時)

@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,9 +48,9 @@ class SurveyControllerIntegrationTest {
 
     @Test
     @DisplayName("アンケート一覧画面が正常に表示されること(DB接続あり)")
-    @WithMockUser(username = "admin", authorities = "ADMIN")
     @Sql(scripts = "/test-schema.sql")
     @Sql(scripts = "/test-data.sql") // テスト実行前にSQLを実行してデータを初期化
+    @WithMockUser(username = "admin", authorities = "ADMIN")
     void list_ReturnsOk() throws Exception {
         // Service -> Repository -> H2 Database まで貫通して実行されます。
         // test-data.sql で投入したデータが正しく取得できるか検証します。
@@ -68,6 +69,8 @@ class SurveyControllerIntegrationTest {
     @Test
     @DisplayName("テストクラス内で直接SQL(DML)を実行する例")
     @WithMockUser(username = "admin", authorities = "ADMIN")
+    @Sql(scripts = "/test-schema.sql")
+    @Sql(scripts = "/test-data.sql") // テスト実行前にSQLを実行してデータを初期化
     void directSql_ReturnsOk() throws Exception {
         // JdbcTemplateを使って直接INSERT文を実行
         jdbcTemplate.update(
@@ -82,6 +85,8 @@ class SurveyControllerIntegrationTest {
 
     @Test
     @DisplayName("コントローラー経由で保存し、その結果を一覧で確認する(一連のフロー)")
+    @Sql(scripts = "/test-schema.sql")
+    @Sql(scripts = "/test-data.sql")
     @WithMockUser(username = "admin", authorities = "ADMIN")
     void save_AndThenList_ReturnsOk() throws Exception {
         // 1. コントローラーにPOSTして保存 (DRAFTステータス)
@@ -106,6 +111,8 @@ class SurveyControllerIntegrationTest {
 
     @Test
     @DisplayName("バリデーションエラー(タイトル未入力)時にエラーメッセージが表示されること")
+    @Sql(scripts = "/test-schema.sql")
+    @Sql(scripts = "/test-data.sql")
     @WithMockUser(username = "admin", authorities = "ADMIN")
     void save_InvalidForm_ReturnsEditViewWithErrors() throws Exception {
         // When: タイトルが空のリクエストを送信
@@ -123,6 +130,8 @@ class SurveyControllerIntegrationTest {
 
     @Test
     @DisplayName("設問付きでアンケートを保存し、詳細画面で内容を確認する")
+    @Sql(scripts = "/test-schema.sql")
+    @Sql(scripts = "/test-data.sql")
     @WithMockUser(username = "admin", authorities = "ADMIN")
     void saveWithQuestions_AndThenDetail_ReturnsOk() throws Exception {
         // 1. 設問付きで保存 (TEXT形式とRADIO形式)
