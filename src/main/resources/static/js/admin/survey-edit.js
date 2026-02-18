@@ -41,6 +41,32 @@ function updatePatternPreview(selectElement) {
     }
 }
 
+// 設問アイテムのイベントリスナーを初期化する
+function initQuestionItem(item) {
+    // name属性に .type や .answerOption.answerOptionId が含まれるselect要素を取得
+    const typeSelect = item.querySelector('select[name*=".type"]');
+    const patternSelect = item.querySelector('select[name*=".answerOptionId"]');
+    const patternContainer = item.querySelector(".pattern-container");
+
+    if (typeSelect && patternSelect && patternContainer) {
+        function updatePatternState() {
+            if (typeSelect.disabled) return;
+            if (typeSelect.value === "TEXT") {
+                patternSelect.value = "";
+                patternContainer.style.display = "none";
+            } else {
+                patternContainer.style.display = "block";
+            }
+        }
+        typeSelect.addEventListener("change", updatePatternState);
+        updatePatternState();
+
+        patternSelect.addEventListener("change", function () {
+            updatePatternPreview(this);
+        });
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function () {
     // --- 対象グループ設定関連 ---
     const groupCheckboxes = document.querySelectorAll(
@@ -93,37 +119,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // --- 設問タイプと回答パターンの連動 ---
-    const questionItems = document.querySelectorAll(".question-item");
-    questionItems.forEach(function (item) {
-        // name属性に .type や .answerOption.answerOptionId が含まれるselect要素を取得
-        const typeSelect = item.querySelector('select[name*=".type"]');
-        const patternSelect = item.querySelector(
-            'select[name*=".answerOptionId"]',
-        );
-        const patternContainer = item.querySelector(".pattern-container");
-
-        if (typeSelect && patternSelect && patternContainer) {
-            function updatePatternState() {
-                // アンケートが公開中などで編集不可(disabled)の場合はJSで操作しない
-                if (typeSelect.disabled) return;
-
-                if (typeSelect.value === "TEXT") {
-                    patternSelect.value = ""; // パターンなし(空)に強制変更
-                    patternContainer.style.display = "none"; // 非表示
-                } else {
-                    patternContainer.style.display = "block"; // 表示
-                }
-            }
-            typeSelect.addEventListener("change", updatePatternState);
-            // 初期表示時にも適用
-            updatePatternState();
-
-            // 回答パターン変更時にプレビューを更新
-            patternSelect.addEventListener("change", function () {
-                updatePatternPreview(this);
-            });
-        }
-    });
+    // 既存の設問に対して初期化を実行
+    document.querySelectorAll(".question-item").forEach(initQuestionItem);
 
     // --- Offcanvas関連 ---
     const patternEditor = document.getElementById("patternEditor");
@@ -357,6 +354,32 @@ function moveDown(btn) {
     }
 }
 
+// --- 設問の追加・削除用スクリプト ---
+
+function addQuestion() {
+    const container = document.getElementById("question-list");
+    const template = document.getElementById("question-template");
+    if (container && template) {
+        const clone = template.content.cloneNode(true);
+        // 追加された要素を取得するために、コンテナの最後の子要素として追加後に取得する手もあるが、
+        // cloneはDocumentFragmentなので、追加前に要素を特定するのは少し手間。
+        // ここでは追加後に updateIndices を呼び、最後の要素に対して initQuestionItem を呼ぶ。
+        container.appendChild(clone);
+        updateIndices();
+
+        const newItems = container.querySelectorAll(".question-item");
+        initQuestionItem(newItems[newItems.length - 1]);
+    }
+}
+
+function removeQuestion(btn) {
+    const item = btn.closest(".question-item");
+    if (item) {
+        item.remove();
+        updateIndices();
+    }
+}
+
 // Springが正しくバインドできるように name属性のインデックス[0], [1]... を振り直す関数
 function updateIndices() {
     const items = document.querySelectorAll(".question-item");
@@ -365,20 +388,40 @@ function updateIndices() {
         const label = item.querySelector(".q-number");
         if (label) label.textContent = index + 1;
 
-        // 2. 削除ボタンの value (サーバー側での削除用インデックス) を更新
-        const removeBtn = item.querySelector('button[name="removeQuestion"]');
-        if (removeBtn) removeBtn.value = index;
-
-        // 3. すべての input/select の name属性 (questionForms[x].field) を更新
+        // 2. すべての input/select の name属性 (questionForms[x].field) を更新
         const inputs = item.querySelectorAll('[name*="questionForms["]');
         inputs.forEach((input) => {
             const name = input.getAttribute("name");
-            // 正規表現で questionForms[数字] を新しい数字に置換
+            // 正規表現で questionForms[数字] または questionForms[] を新しい数字に置換
             const newName = name.replace(
-                /questionForms\[\d+\]/,
+                /questionForms\[\d*\]/,
                 `questionForms[${index}]`,
             );
             input.setAttribute("name", newName);
+        });
+
+        // 3. IDとLabelの整合性 (q_req_0, q_text_0, q_type_0, ans_pattern_0)
+        // 正規表現で末尾の _数字 または _TEMPLATE を _index に置換する
+        const idElements = item.querySelectorAll(
+            '[id^="q_"], [id^="ans_pattern_"]',
+        );
+        idElements.forEach((el) => {
+            el.id = el.id
+                .replace(/_\d+$/, `_${index}`)
+                .replace(/_TEMPLATE$/, `_${index}`);
+        });
+
+        const labels = item.querySelectorAll(
+            'label[for^="q_"], label[for^="ans_pattern_"]',
+        );
+        labels.forEach((label) => {
+            const forAttr = label.getAttribute("for");
+            label.setAttribute(
+                "for",
+                forAttr
+                    .replace(/_\d+$/, `_${index}`)
+                    .replace(/_TEMPLATE$/, `_${index}`),
+            );
         });
     });
 }

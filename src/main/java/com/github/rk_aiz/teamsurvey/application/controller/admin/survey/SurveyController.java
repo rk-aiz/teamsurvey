@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.github.rk_aiz.teamsurvey.application.form.QuestionForm;
-import com.github.rk_aiz.teamsurvey.application.form.SurveyForm;
 import com.github.rk_aiz.teamsurvey.application.constant.WebConst;
+import com.github.rk_aiz.teamsurvey.application.form.SurveyForm;
 import com.github.rk_aiz.teamsurvey.application.validation.SurveyValidationGroup;
 import com.github.rk_aiz.teamsurvey.domain.exception.ServiceRuleException;
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
+import com.github.rk_aiz.teamsurvey.domain.model.UserGroup;
 import com.github.rk_aiz.teamsurvey.domain.service.AnswerOptionService;
 import com.github.rk_aiz.teamsurvey.domain.service.SurveyService;
 import com.github.rk_aiz.teamsurvey.domain.service.SurveyTargetGroupService;
@@ -159,8 +159,16 @@ public class SurveyController {
                 SurveyValidationGroup.getValidationGroup(surveyForm.getStatus()));
 
         if (bindingResult.hasErrors()) {
+            List<UserGroup> allGroups = userGroupService.findAll();
+
+            if (groupIds != null) {
+                surveyForm.setTargetGroups(allGroups.stream()
+                        .filter(g -> groupIds.contains(g.getId()))
+                        .toList());
+            }
+
             model.addAttribute("answerOptions", answerOptionService.findAll());
-            model.addAttribute("userGroups", userGroupService.findAll());
+            model.addAttribute("userGroups", allGroups);
             return SURVEY_EDIT;
         }
 
@@ -177,34 +185,6 @@ public class SurveyController {
 
         // PRGパターン
         return ServletUtils.redirect(SURVEY_DETAIL, newSurvey.getId());
-    }
-
-    /**
-     * 設問追加ボタン押下時の処理
-     * params = "addQuestion" でボタンのname属性を判定します
-     */
-    @PostMapping(value = "/save", params = "addQuestion")
-    public String addQuestion(@ModelAttribute SurveyForm form, Model model) {
-        form.getQuestionForms().add(new QuestionForm());
-        model.addAttribute("answerOptions", answerOptionService.findAll());
-        model.addAttribute("userGroups", userGroupService.findAll());
-        return SURVEY_EDIT;
-    }
-
-    /**
-     * 設問削除ボタン押下時の処理
-     * params = "removeQuestion" でボタンのname属性を判定します
-     */
-    @PostMapping(value = "/save", params = "removeQuestion")
-    public String removeQuestion(@ModelAttribute SurveyForm form, @RequestParam("removeQuestion") int index,
-            Model model) {
-        // 指定されたインデックスの質問をリストから削除
-        if (index >= 0 && index < form.getQuestionForms().size()) {
-            form.getQuestionForms().remove(index);
-        }
-        model.addAttribute("answerOptions", answerOptionService.findAll());
-        model.addAttribute("userGroups", userGroupService.findAll());
-        return SURVEY_EDIT;
     }
 
     /**
