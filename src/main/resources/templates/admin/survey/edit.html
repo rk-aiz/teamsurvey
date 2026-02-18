@@ -83,86 +83,91 @@
 
             <!-- 設問リストのループ -->
             <!-- stat.index を使うことで、questionForms[0], questionForms[1]... という名前で送信できる -->
-            <div th:each="question, stat : *{questionForms}" class="question-item card mb-3 p-3 bg-light"
-                style="transition: background-color 0.3s;">
+            <div id="question-list">
+                <div th:each="question, stat : *{questionForms}" class="question-item card mb-3 p-3 bg-light"
+                    style="transition: background-color 0.3s;">
 
-                <!-- 設問IDとアンケートID (更新時に必要) -->
-                <input type="hidden" th:field="*{questionForms[__${stat.index}__].id}">
+                    <!-- 設問IDとアンケートID (更新時に必要) -->
+                    <input type="hidden" th:field="*{questionForms[__${stat.index}__].id}">
 
-                <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
-                    <div class="d-flex align-items-center gap-3">
-                        <h5 class="mb-0">Q<span class="q-number" th:text="${stat.count}">1</span></h5>
-                        <div class="form-check mb-0">
-                            <input type="checkbox" class="form-check-input"
-                                th:field="*{questionForms[__${stat.index}__].required}" th:id="${'q_req_' + stat.index}"
-                                th:disabled="${surveyForm.status.name() != 'DRAFT'}">
-                            <label class="form-check-label" th:for="${'q_req_' + stat.index}">必須</label>
+                    <div
+                        style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                        <div class="d-flex align-items-center gap-3">
+                            <h5 class="mb-0">Q<span class="q-number" th:text="${stat.count}">1</span></h5>
+                            <div class="form-check mb-0">
+                                <input type="checkbox" class="form-check-input"
+                                    th:field="*{questionForms[__${stat.index}__].required}"
+                                    th:id="${'q_req_' + stat.index}"
+                                    th:disabled="${surveyForm.status.name() != 'DRAFT'}">
+                                <label class="form-check-label" th:for="${'q_req_' + stat.index}">必須</label>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- 操作ボタン群 -->
-                    <div th:if="${surveyForm.status.name() == 'DRAFT'}">
-                        <button type="button" onclick="moveUp(this)" class="btn btn-sm btn-outline-secondary me-1">
-                            <i class="bi bi-arrow-up"></i>
-                        </button>
-                        <button type="button" onclick="moveDown(this)" class="btn btn-sm btn-outline-secondary me-2">
-                            <i class="bi bi-arrow-down"></i>
-                        </button>
-                        <button type="submit" name="removeQuestion" th:value="${stat.index}" formnovalidate
-                            class="btn btn-sm btn-outline-danger">
-                            削除
-                        </button>
-                    </div>
-
-                </div>
-
-                <!-- 設問文入力欄 -->
-                <div style="margin-bottom: 5px;">
-                    <!-- th:for と th:id で紐付ける -->
-                    <label th:for="${'q_text_' + stat.index}">設問文:</label><br>
-                    <textarea th:id="${'q_text_' + stat.index}" th:field="*{questionForms[__${stat.index}__].text}"
-                        class="form-control" rows="3" th:disabled="${surveyForm.status.name() != 'DRAFT'}"></textarea>
-
-                    <span th:if="${#fields.hasErrors('questionForms[__${stat.index}__].text')}"
-                        th:errors="*{questionForms[__${stat.index}__].text}" style="color:red;"></span>
-                </div>
-
-                <div style="display: flex; gap: 20px;">
-                    <div>
-                        <label th:for="${'q_type_' + stat.index}">タイプ:</label>
-                        <select th:id="${'q_type_' + stat.index}" class="form-select"
-                            th:field="*{questionForms[__${stat.index}__].type}"
-                            th:disabled="${surveyForm.status.name() != 'DRAFT'}">
-                            <option value="RADIO">単一選択 (RADIO)</option>
-                            <option value="CHECKBOX">複数選択 (CHECKBOX)</option>
-                            <option value="TEXT">自由記述 (TEXT)</option>
-                        </select>
-                    </div>
-
-                    <!-- 回答パターン選択 -->
-                    <div class="pattern-container">
-                        <label th:for="${'ans_pattern_' + stat.index}">回答パターン:</label>
-                        <div class="input-group">
-                            <select th:id="${'ans_pattern_' + stat.index}" class="form-select"
-                                th:field="*{questionForms[__${stat.index}__].answerOptionId}"
-                                th:classappend="${#fields.hasErrors('questionForms[__${stat.index}__].answerOptionId')} ? 'is-invalid'"
-                                th:disabled="${surveyForm.status.name() != 'DRAFT'}">
-                                <option value="">-- 選択してください --</option>
-                                <option th:each="ao : ${answerOptions}" th:value="${ao.answerOptionId}"
-                                    th:text="${ao.name}">
-                                </option>
-                            </select>
-                            <button class="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas"
-                                data-bs-target="#patternEditor" aria-controls="patternEditor">
-                                <i class="bi bi-pencil-square"></i>
+                        <!-- 操作ボタン群 -->
+                        <div th:if="${surveyForm.status.name() == 'DRAFT'}">
+                            <button type="button" onclick="moveUp(this)" class="btn btn-sm btn-outline-secondary me-1">
+                                <i class="bi bi-arrow-up"></i>
+                            </button>
+                            <button type="button" onclick="moveDown(this)"
+                                class="btn btn-sm btn-outline-secondary me-2">
+                                <i class="bi bi-arrow-down"></i>
+                            </button>
+                            <button type="button" onclick="removeQuestion(this)" class="btn btn-sm btn-outline-danger">
+                                削除
                             </button>
                         </div>
-                        <!--/*  バリデーションエラーメッセージの表示  */-->
-                        <div class="text-danger small mt-1"
-                            th:if="${#fields.hasErrors('questionForms[__${stat.index}__].answerOptionId')}"
-                            th:errors="*{questionForms[__${stat.index}__].answerOptionId}"></div>
-                        <!-- 選択肢プレビュー領域 -->
-                        <div class="pattern-preview text-muted small mt-1" style="word-break: break-all;"></div>
+
+                    </div>
+
+                    <!-- 設問文入力欄 -->
+                    <div style="margin-bottom: 5px;">
+                        <!-- th:for と th:id で紐付ける -->
+                        <label th:for="${'q_text_' + stat.index}">設問文:</label><br>
+                        <textarea th:id="${'q_text_' + stat.index}" th:field="*{questionForms[__${stat.index}__].text}"
+                            class="form-control" rows="3"
+                            th:disabled="${surveyForm.status.name() != 'DRAFT'}"></textarea>
+
+                        <span th:if="${#fields.hasErrors('questionForms[__${stat.index}__].text')}"
+                            th:errors="*{questionForms[__${stat.index}__].text}" style="color:red;"></span>
+                    </div>
+
+                    <div style="display: flex; gap: 20px;">
+                        <div>
+                            <label th:for="${'q_type_' + stat.index}">タイプ:</label>
+                            <select th:id="${'q_type_' + stat.index}" class="form-select"
+                                th:field="*{questionForms[__${stat.index}__].type}"
+                                th:disabled="${surveyForm.status.name() != 'DRAFT'}">
+                                <option value="RADIO">単一選択 (RADIO)</option>
+                                <option value="CHECKBOX">複数選択 (CHECKBOX)</option>
+                                <option value="TEXT">自由記述 (TEXT)</option>
+                            </select>
+                        </div>
+
+                        <!-- 回答パターン選択 -->
+                        <div class="pattern-container">
+                            <label th:for="${'ans_pattern_' + stat.index}">回答パターン:</label>
+                            <div class="input-group">
+                                <select th:id="${'ans_pattern_' + stat.index}" class="form-select"
+                                    th:field="*{questionForms[__${stat.index}__].answerOptionId}"
+                                    th:classappend="${#fields.hasErrors('questionForms[__${stat.index}__].answerOptionId')} ? 'is-invalid'"
+                                    th:disabled="${surveyForm.status.name() != 'DRAFT'}">
+                                    <option value="">-- 選択してください --</option>
+                                    <option th:each="ao : ${answerOptions}" th:value="${ao.answerOptionId}"
+                                        th:text="${ao.name}">
+                                    </option>
+                                </select>
+                                <button class="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas"
+                                    data-bs-target="#patternEditor" aria-controls="patternEditor">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                            </div>
+                            <!--/*  バリデーションエラーメッセージの表示  */-->
+                            <div class="text-danger small mt-1"
+                                th:if="${#fields.hasErrors('questionForms[__${stat.index}__].answerOptionId')}"
+                                th:errors="*{questionForms[__${stat.index}__].answerOptionId}"></div>
+                            <!-- 選択肢プレビュー領域 -->
+                            <div class="pattern-preview text-muted small mt-1" style="word-break: break-all;"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -170,7 +175,7 @@
             <!-- 追加ボタン -->
             <div class="mt-3" th:if="${surveyForm.status.name() == 'DRAFT'}">
                 <!-- name="addQuestion" が重要 -->
-                <button type="submit" name="addQuestion" class="btn btn-secondary">
+                <button type="button" onclick="addQuestion()" class="btn btn-secondary">
                     <i class="bi bi-plus-circle"></i> 設問を追加
                 </button>
             </div>
@@ -233,6 +238,59 @@
         <div th:unless="${surveyForm.isNew}">
             <a th:href="@{/admin/survey/detail/{id}(id=${surveyForm.id})}" class="btn btn-link">詳細に戻る</a>
         </div>
+
+        <!-- 新規設問追加用テンプレート -->
+        <template id="question-template">
+            <div class="question-item card mb-3 p-3 bg-light" style="transition: background-color 0.3s;">
+                <input type="hidden" name="questionForms[].id" value="">
+                <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                    <div class="d-flex align-items-center gap-3">
+                        <h5 class="mb-0">Q<span class="q-number"></span></h5>
+                        <div class="form-check mb-0">
+                            <input type="checkbox" class="form-check-input" name="questionForms[].required"
+                                id="q_req_TEMPLATE">
+                            <label class="form-check-label" for="q_req_TEMPLATE">必須</label>
+                        </div>
+                    </div>
+                    <div th:if="${surveyForm.status.name() == 'DRAFT'}">
+                        <button type="button" onclick="moveUp(this)" class="btn btn-sm btn-outline-secondary me-1"><i
+                                class="bi bi-arrow-up"></i></button>
+                        <button type="button" onclick="moveDown(this)" class="btn btn-sm btn-outline-secondary me-2"><i
+                                class="bi bi-arrow-down"></i></button>
+                        <button type="button" onclick="removeQuestion(this)"
+                            class="btn btn-sm btn-outline-danger">削除</button>
+                    </div>
+                </div>
+                <div style="margin-bottom: 5px;">
+                    <label for="q_text_TEMPLATE">設問文:</label><br>
+                    <textarea id="q_text_TEMPLATE" name="questionForms[].text" class="form-control" rows="3"></textarea>
+                </div>
+                <div style="display: flex; gap: 20px;">
+                    <div>
+                        <label for="q_type_TEMPLATE">タイプ:</label>
+                        <select id="q_type_TEMPLATE" class="form-select" name="questionForms[].type">
+                            <option value="RADIO">単一選択 (RADIO)</option>
+                            <option value="CHECKBOX">複数選択 (CHECKBOX)</option>
+                            <option value="TEXT">自由記述 (TEXT)</option>
+                        </select>
+                    </div>
+                    <div class="pattern-container">
+                        <label for="ans_pattern_TEMPLATE">回答パターン:</label>
+                        <div class="input-group">
+                            <select id="ans_pattern_TEMPLATE" class="form-select" name="questionForms[].answerOptionId">
+                                <option value="">-- 選択してください --</option>
+                                <option th:each="ao : ${answerOptions}" th:value="${ao.answerOptionId}"
+                                    th:text="${ao.name}"></option>
+                            </select>
+                            <button class="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas"
+                                data-bs-target="#patternEditor" aria-controls="patternEditor"><i
+                                    class="bi bi-pencil-square"></i></button>
+                        </div>
+                        <div class="pattern-preview text-muted small mt-1" style="word-break: break-all;"></div>
+                    </div>
+                </div>
+            </div>
+        </template>
 
         <!-- SortableJS (ドラッグ&ドロップ用ライブラリ) -->
         <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
