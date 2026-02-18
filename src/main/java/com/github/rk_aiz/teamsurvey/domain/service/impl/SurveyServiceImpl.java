@@ -40,7 +40,11 @@ public class SurveyServiceImpl implements SurveyService {
      */
     @Override
     public List<Survey> findAllSurveys() {
-        return surveyRepository.findAll();
+        return surveyRepository.findAll()
+                .stream()
+                .filter(survey -> { 
+                    return survey.getStatus() != SurveyStatus.DELETED; })
+                .toList();
     }
 
     /**
