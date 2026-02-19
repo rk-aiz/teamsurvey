@@ -294,6 +294,15 @@
 
         <!-- SortableJS (ドラッグ&ドロップ用ライブラリ) -->
         <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+        <!-- JSで使用するAPIのエンドポイント定義 -->
+        <script th:inline="javascript">
+            const PATTERN_API = {
+                listJson: /*[[@{/admin/pattern/fragment/list-json}]]*/ '/admin/pattern/fragment/list-json',
+                list:     /*[[@{/admin/pattern/fragment/list}]]*/      '/admin/pattern/fragment/list',
+                form:     /*[[@{/admin/pattern/fragment/form}]]*/      '/admin/pattern/fragment/form',
+                save:     /*[[@{/admin/pattern/fragment/save}]]*/      '/admin/pattern/fragment/save'
+            };
+        </script>
         <!-- 編集画面用スクリプト -->
         <script th:src="@{/js/admin/survey-edit.js}"></script>
     </main>
