@@ -76,7 +76,7 @@
 
             <!-- 公開中・終了の場合はメッセージを表示 -->
             <div th:if="${surveyForm.status.name() != 'DRAFT'}"
-                style="background-color: #fff3cd; color: #856404; padding: 10px; border: 1px solid #ffeeba; border-radius: 5px; margin-bottom: 15px;">
+                class="alert alert-secondary mb-3" role="alert">
                 <strong>注意:</strong> アンケートが公開(または終了)されているため、設問の構成は変更できません。
                 <br>変更が必要な場合は、詳細画面から「複製して新規作成」を行ってください。
             </div>
@@ -84,7 +84,7 @@
             <!-- 設問リストのループ -->
             <!-- stat.index を使うことで、questionForms[0], questionForms[1]... という名前で送信できる -->
             <div id="question-list">
-                <div th:each="question, stat : *{questionForms}" class="question-item card mb-3 p-3 bg-light"
+                <div th:each="question, stat : *{questionForms}" class="question-item card mb-3 p-3 bg-body-tertiary"
                     style="transition: background-color 0.3s;">
 
                     <!-- 設問IDとアンケートID (更新時に必要) -->
@@ -241,7 +241,7 @@
 
         <!-- 新規設問追加用テンプレート -->
         <template id="question-template">
-            <div class="question-item card mb-3 p-3 bg-light" style="transition: background-color 0.3s;">
+            <div class="question-item card mb-3 p-3 bg-body-tertiary" style="transition: background-color 0.3s;">
                 <input type="hidden" name="questionForms[].id" value="">
                 <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
                     <div class="d-flex align-items-center gap-3">

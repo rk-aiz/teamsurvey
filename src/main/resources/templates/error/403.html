@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="utf-8">
+<style>body{font-family:Arial,Helvetica,sans-serif;font-size:12px;text-align:center}h1{color:#06C;font-size:25px;line-height:60px;margin-top:56px}img{margin-top:40px}
+</style>
+</head>
+<body>
+<h1 id="a">403 - アクセス拒否</h1>
+<hr>
+<p>このページにアクセスする権限がありません</p>
+<p><a th:href="@{/}">メニュー画面へ</a></p>
+
+<!--/* 管理者のみ詳細を表示 */-->
+<div sec:authorize="hasRole('ADMIN')" style="margin: 30px auto; width: 80%; text-align: left; border: 1px solid #ccc; padding: 20px; background-color: #f8f9fa;">
+    <h3 style="color: #dc3545; margin-top: 0; border-bottom: 1px solid #ccc; padding-bottom: 10px;">Debug Info (Admin Only)</h3>
+    <p><strong>Status:</strong> <span th:text="${status}"></span></p>
+    <p><strong>Path:</strong> <span th:text="${path}"></span></p>
+    <p><strong>Message:</strong> <span th:text="${message}"></span></p>
+</div>
+</body>
+</html>

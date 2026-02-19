@@ -12,6 +12,7 @@ import org.springframework.web.filter.ForwardedHeaderFilter;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -54,6 +55,8 @@ public class ProxyConfig {
         });
         // SpringのForwardedHeaderFilterより先に実行させる
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        // エラー画面へのフォワード時(ERROR)などもフィルタを適用する
+        bean.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ERROR));
         return bean;
     }
 
@@ -64,6 +67,8 @@ public class ProxyConfig {
         bean.setFilter(new ForwardedHeaderFilter());
         // 上記のフィルタの直後に実行
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
+        // エラー画面へのフォワード時(ERROR)などもフィルタを適用する
+        bean.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ERROR));
         return bean;
     }
 }

@@ -27,7 +27,7 @@
                     </div>
                 </div>
                 <div class="text-end">
-                    <div class="card bg-light border-0 mb-2">
+                    <div class="card bg-body-tertiary border-0 mb-2">
                         <div class="card-body py-2 px-4">
                             <div class="small text-muted mb-1">総回答数</div>
                             <div class="h2 fw-bold text-primary mb-0" th:text="${aggregation.totalResponseCount}">0
@@ -45,7 +45,7 @@
 
             <!-- 設問ごとの集計結果ループ -->
             <div th:each="qa, stat : ${aggregation.questionAggregations}" class="card shadow-sm mb-4">
-                <div class="card-header bg-white py-3">
+                <div class="card-header bg-body-tertiary py-3">
                     <div class="d-flex align-items-center">
                         <span class="badge bg-secondary me-2" th:text="'Q' + ${stat.count}">Q1</span>
                         <h5 class="mb-0 fw-bold" th:text="${qa.question.text}">設問文</h5>
