@@ -7,7 +7,7 @@ let answerOptionCache = [];
 
 // 回答パターンデータを取得してキャッシュする
 function fetchAnswerOptions() {
-    return fetch("/admin/pattern/fragment/list-json")
+    return fetch(PATTERN_API.listJson)
         .then((response) => {
             if (!response.ok) throw new Error("Network response was not ok");
             return response.json();
@@ -138,7 +138,7 @@ function loadPatternList() {
     const editorContent = document.getElementById("patternEditorContent");
     if (!editorContent) return;
 
-    fetch("/admin/pattern/fragment/list")
+    fetch(PATTERN_API.list)
         .then((response) => response.text())
         .then((html) => {
             editorContent.innerHTML = html;
@@ -150,7 +150,7 @@ function loadPatternForm(id) {
     const editorContent = document.getElementById("patternEditorContent");
     if (!editorContent) return;
 
-    let url = "/admin/pattern/fragment/form";
+    let url = PATTERN_API.form;
     if (id) {
         url += "?id=" + id;
     }
@@ -204,7 +204,7 @@ function submitPatternForm(event) {
         headers[header] = token;
     }
 
-    fetch("/admin/pattern/fragment/save", {
+    fetch(PATTERN_API.save, {
         method: "POST",
         headers: headers,
         body: JSON.stringify(data),

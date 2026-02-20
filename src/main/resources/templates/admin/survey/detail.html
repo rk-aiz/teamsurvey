@@ -4,24 +4,25 @@
 
 <head>
     <title th:text="${title} ?: 'アンケート詳細'">アンケート詳細</title>
+    
+    <style>
+        /* プレビュー時のdisabled要素の視認性向上(ダークモード対応) */
+        .survey-preview .form-control:disabled {
+            background-color: var(--bs-secondary-bg);
+            color: var(--bs-body-color);
+            opacity: 1;
+        }
+
+        .survey-preview .form-check-input:disabled,
+        .survey-preview .form-check-input:disabled~.form-check-label {
+            opacity: 1;
+            color: var(--bs-body-color);
+        }
+    </style>
 </head>
 
 <body>
     <main layout:fragment="content">
-        <style>
-            /* プレビュー時のdisabled要素の視認性向上(ダークモード対応) */
-            .survey-preview .form-control:disabled {
-                background-color: var(--bs-secondary-bg);
-                color: var(--bs-body-color);
-                opacity: 1;
-            }
-
-            .survey-preview .form-check-input:disabled,
-            .survey-preview .form-check-input:disabled~.form-check-label {
-                opacity: 1;
-                color: var(--bs-body-color);
-            }
-        </style>
         <h2>アンケート詳細</h2>
         <table class="table table-bordered">
             <tr>
@@ -165,7 +166,7 @@
         </div>
         */-->
 
-        <!-- 対象グループ設定モーダル -->
+        <!--/* 対象グループ設定モーダル */-->
         <div class="modal fade" id="targetGroupModal" tabindex="-1" aria-labelledby="targetGroupModalLabel"
             aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">

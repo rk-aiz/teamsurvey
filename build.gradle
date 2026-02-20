@@ -34,8 +34,6 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'org.postgresql:postgresql'
-	annotationProcessor 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
 	
 	// Page, Pagable
 	// Source: https://mvnrepository.com/artifact/org.springframework.data/spring-data-commons
@@ -43,6 +41,9 @@ dependencies {
 
     // MapStruct
     implementation 'org.mapstruct:mapstruct:1.6.3'
+
+	annotationProcessor 'org.projectlombok:lombok:1.18.30'
+	annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
 
 	// Thymeleaf Layout
@@ -51,6 +52,7 @@ dependencies {
 	// Spring Security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
     testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
+
 	// Spring Security と Thymeleafの連携用ライブラリ
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 

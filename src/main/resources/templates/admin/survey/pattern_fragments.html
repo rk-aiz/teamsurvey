@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 
-    <!-- 一覧表示フラグメント -->
+    <!--/* 一覧表示フラグメント */-->
     <div th:fragment="list">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h6 class="mb-0">登録済みパターン</h6>
@@ -25,7 +25,7 @@
         </div>
     </div>
 
-    <!-- 編集フォームフラグメント -->
+    <!--/* 編集フォームフラグメント */-->
     <div th:fragment="form">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h6 class="mb-0" th:text="${answerOptionForm.answerOptionId == null ? '新規作成' : '編集'}">編集</h6>
@@ -43,7 +43,7 @@
                 <div class="text-danger small" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
             </div>
 
-            <!-- 選択肢の編集UI -->
+            <!--/* 選択肢の編集UI */-->
             <div class="mb-3">
                 <label class="form-label">選択肢</label>
                 <div id="pattern-items-container">
@@ -69,8 +69,8 @@
             </div>
         </form>
 
-        <!-- 新規追加用のテンプレート (JavaScriptで使用) -->
-        <!-- フラグメント内に含めることで、AJAXロード時にも利用可能にする -->
+        <!--/* 新規追加用のテンプレート (JavaScriptで使用) */-->
+        <!--/* フラグメント内に含めることで、AJAXロード時にも利用可能にする */-->
         <template id="pattern-item-template">
             <div class="input-group mb-2 pattern-item-row">
                 <span class="input-group-text handle" style="cursor: grab;"><i class="bi bi-grip-vertical"></i></span>

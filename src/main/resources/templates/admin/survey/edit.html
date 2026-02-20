@@ -4,6 +4,21 @@
 
 <head>
     <title th:text="${title} ?: 'アンケート編集'">アンケート編集</title>
+
+    <!--/* SortableJS (ドラッグ&ドロップ用ライブラリ) */-->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js" defer></script>
+
+    <!--/* JSで使用するAPIのエンドポイント定義 */-->
+    <script th:inline="javascript">
+        const PATTERN_API = {
+            listJson: /*[[@{/admin/pattern/fragment/list-json}]]*/ '/admin/pattern/fragment/list-json',
+            list:     /*[[@{/admin/pattern/fragment/list}]]*/      '/admin/pattern/fragment/list',
+            form:     /*[[@{/admin/pattern/fragment/form}]]*/      '/admin/pattern/fragment/form',
+            save:     /*[[@{/admin/pattern/fragment/save}]]*/      '/admin/pattern/fragment/save'
+        };
+    </script>
+    <!--/* 編集画面用スクリプト */-->
+    <script th:src="@{/js/admin/survey-edit.js}" defer></script>
 </head>
 
 <body>
@@ -11,11 +26,11 @@
         <h2>アンケート編集</h2>
 
         <form id="surveyEditForm" th:action="@{/admin/survey/save}" method="post" th:object="${surveyForm}">
-            <!-- アンケートID (更新時に必要) -->
+            <!--/* アンケートID (更新時に必要) */-->
             <input type="hidden" th:field="*{id}">
             <input type="hidden" th:field="*{new}">
 
-            <!-- グローバルエラー -->
+            <!--/* グローバルエラー */-->
             <div th:if="${#fields.hasErrors('global')}" style="color: red; margin-bottom: 10px;">
                 <p th:each="err : ${#fields.errors('global')}" th:text="${err}"></p>
             </div>
@@ -31,7 +46,7 @@
                 <tr>
                     <th>ステータス</th>
                     <td>
-                        <!-- 編集画面では変更不可(詳細画面で変更) -->
+                        <!--/* 編集画面では変更不可(詳細画面で変更) */-->
                         <span th:text="*{status}"></span>
                         <input type="hidden" th:field="*{status}">
                     </td>
@@ -74,20 +89,19 @@
             <hr>
             <h3>設問の編集</h3>
 
-            <!-- 公開中・終了の場合はメッセージを表示 -->
+            <!--/* 公開中・終了の場合はメッセージを表示 */-->
             <div th:if="${surveyForm.status.name() != 'DRAFT'}"
-                style="background-color: #fff3cd; color: #856404; padding: 10px; border: 1px solid #ffeeba; border-radius: 5px; margin-bottom: 15px;">
+                class="alert alert-secondary mb-3" role="alert">
                 <strong>注意:</strong> アンケートが公開(または終了)されているため、設問の構成は変更できません。
                 <br>変更が必要な場合は、詳細画面から「複製して新規作成」を行ってください。
             </div>
 
-            <!-- 設問リストのループ -->
-            <!-- stat.index を使うことで、questionForms[0], questionForms[1]... という名前で送信できる -->
+            <!--/* 設問リストのループ */-->
             <div id="question-list">
-                <div th:each="question, stat : *{questionForms}" class="question-item card mb-3 p-3 bg-light"
+                <div th:each="question, stat : *{questionForms}" class="question-item card mb-3 p-3 bg-body-tertiary"
                     style="transition: background-color 0.3s;">
 
-                    <!-- 設問IDとアンケートID (更新時に必要) -->
+                    <!--/* 設問IDとアンケートID (更新時に必要) */-->
                     <input type="hidden" th:field="*{questionForms[__${stat.index}__].id}">
 
                     <div
@@ -103,7 +117,7 @@
                             </div>
                         </div>
 
-                        <!-- 操作ボタン群 -->
+                        <!--/* 操作ボタン群 */-->
                         <div th:if="${surveyForm.status.name() == 'DRAFT'}">
                             <button type="button" onclick="moveUp(this)" class="btn btn-sm btn-outline-secondary me-1">
                                 <i class="bi bi-arrow-up"></i>
@@ -119,9 +133,9 @@
 
                     </div>
 
-                    <!-- 設問文入力欄 -->
+                    <!--/* 設問文入力欄 */-->
                     <div style="margin-bottom: 5px;">
-                        <!-- th:for と th:id で紐付ける -->
+                        <!--/* th:for と th:id で紐付ける */-->
                         <label th:for="${'q_text_' + stat.index}">設問文:</label><br>
                         <textarea th:id="${'q_text_' + stat.index}" th:field="*{questionForms[__${stat.index}__].text}"
                             class="form-control" rows="3"
@@ -143,7 +157,7 @@
                             </select>
                         </div>
 
-                        <!-- 回答パターン選択 -->
+                        <!--/* 回答パターン選択 */-->
                         <div class="pattern-container">
                             <label th:for="${'ans_pattern_' + stat.index}">回答パターン:</label>
                             <div class="input-group">
@@ -165,16 +179,16 @@
                             <div class="text-danger small mt-1"
                                 th:if="${#fields.hasErrors('questionForms[__${stat.index}__].answerOptionId')}"
                                 th:errors="*{questionForms[__${stat.index}__].answerOptionId}"></div>
-                            <!-- 選択肢プレビュー領域 -->
+                            <!--/* 選択肢プレビュー領域 */-->
                             <div class="pattern-preview text-muted small mt-1" style="word-break: break-all;"></div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 追加ボタン -->
+            <!--/* 追加ボタン */-->
             <div class="mt-3" th:if="${surveyForm.status.name() == 'DRAFT'}">
-                <!-- name="addQuestion" が重要 -->
+                <!--/* name="addQuestion" が重要 */-->
                 <button type="button" onclick="addQuestion()" class="btn btn-secondary">
                     <i class="bi bi-plus-circle"></i> 設問を追加
                 </button>
@@ -184,7 +198,7 @@
                 <button type="submit" class="btn btn-primary fw-bold px-4">保存</button>
             </div>
 
-            <!-- 回答対象グループ選択モーダル -->
+            <!--/* 回答対象グループ選択モーダル */-->
             <div class="modal fade" id="groupSelectionModal" tabindex="-1" aria-labelledby="groupSelectionModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
@@ -239,9 +253,9 @@
             <a th:href="@{/admin/survey/detail/{id}(id=${surveyForm.id})}" class="btn btn-link">詳細に戻る</a>
         </div>
 
-        <!-- 新規設問追加用テンプレート -->
+        <!--/* 新規設問追加用テンプレート */-->
         <template id="question-template">
-            <div class="question-item card mb-3 p-3 bg-light" style="transition: background-color 0.3s;">
+            <div class="question-item card mb-3 p-3 bg-body-tertiary" style="transition: background-color 0.3s;">
                 <input type="hidden" name="questionForms[].id" value="">
                 <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
                     <div class="d-flex align-items-center gap-3">
@@ -292,10 +306,6 @@
             </div>
         </template>
 
-        <!-- SortableJS (ドラッグ&ドロップ用ライブラリ) -->
-        <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-        <!-- 編集画面用スクリプト -->
-        <script th:src="@{/js/admin/survey-edit.js}"></script>
     </main>
 </body>
 

@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) {
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
                 // ★HTTPリクエストに対するセキュリティ設定
@@ -56,7 +56,12 @@ public class SecurityConfig {
                         // ログアウト時にセッションを無効にする
                         .invalidateHttpSession(true)
                         // ログアウト時にCookieを削除する
-                        .deleteCookies("JSESSIONID"));
+                        .deleteCookies("JSESSIONID"))
+
+                // ★セッション設定
+                .sessionManagement(session -> session
+                        // 無効なセッションID（タイムアウト等）でアクセスがあった場合の遷移先
+                        .invalidSessionUrl("/auth?timeout"));
 
         return http.build();
     }
