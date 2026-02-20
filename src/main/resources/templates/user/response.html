@@ -10,7 +10,7 @@
 <body>
     <main layout:fragment="content" class="container py-5 flex-grow-1" style="max-width: 800px;">
 
-        <!-- アンケートヘッダー -->
+        <!--/* アンケートヘッダー */-->
         <div class="card shadow-sm mb-4">
             <div class="card-body">
                 <h1 class="card-title h3" th:text="${survey.title}">タイトル</h1>
@@ -21,12 +21,12 @@
             </div>
         </div>
 
-        <!-- 回答フォーム -->
+        <!--/* 回答フォーム */-->
         <form th:action="@{/response/submit}" method="post" th:object="${responseForm}">
             <input type="hidden" th:field="*{username}">
             <input type="hidden" th:field="*{surveyId}">
 
-            <!-- 質問ループ -->
+            <!--/* 質問ループ */-->
             <div th:each="question, stat : ${survey.questions}" class="card mb-3 p-3">
                 <div class="d-flex align-items-start" style="font-weight: bold; margin-bottom: 10px;">
                     <h5 class="me-2 mb-0" style="white-space: nowrap;" th:text="'Q' + ${stat.count} + '.'">Q1.</h5>
@@ -36,18 +36,18 @@
                 </div>
 
                 <div>
-                    <!-- 質問ID (バインド用) -->
+                    <!--/* 質問ID (バインド用) */-->
                     <input type="hidden" th:field="*{details[__${stat.index}__].questionId}">
 
                     <th:block th:switch="${question.type.name()}">
-                        <!-- TEXT (自由記述) -->
+                        <!--/* TEXT (自由記述) */-->
                         <div th:case="'TEXT'">
                             <textarea class="form-control" rows="3"
                                 th:field="*{details[__${stat.index}__].responseText}"
                                 th:required="${question.required}"></textarea>
                         </div>
 
-                        <!-- RADIO (単一選択) -->
+                        <!--/* RADIO (単一選択) */-->
                         <div th:case="'RADIO'" class="ms-3 p-3">
                             <div th:each="item, itemStat : ${question.answerOption.items}" class="form-check">
                                 <input class="form-check-input" type="radio"
@@ -59,7 +59,7 @@
                             </div>
                         </div>
 
-                        <!-- CHECKBOX (複数選択) -->
+                        <!--/* CHECKBOX (複数選択) */-->
                         <div th:case="'CHECKBOX'" class="ms-3 p-3">
                             <div th:each="item, itemStat : ${question.answerOption.items}" class="form-check">
                                 <input class="form-check-input" type="checkbox"

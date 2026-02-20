@@ -4,12 +4,78 @@
 
 <head>
     <title>集計結果詳細</title>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+
+    <!-- グラフ描画用スクリプト -->
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            // Thymeleafのループ機能を使って、全設問のデータをJS配列として生成する
+            const chartDataList = [
+                /*[# th:each="qa, stat : ${aggregation.questionAggregations}"]*/
+                {
+                    id: 'chart-q-' + /*[[${stat.index}]]*/ '0',
+                    type: /*[[${qa.question.type}]]*/ 'RADIO',
+                    labels: /*[[${qa.optionStats.![label]}]]*/ [],
+                    counts: /*[[${qa.optionStats.![count]}]]*/ [],
+                    answerCount: /*[[${qa.answerCount}]]*/ 0
+                },
+                /*[/]*/
+            ];
+
+            // 生成されたデータを元にグラフを描画
+            const colors = ['#0d6efd', '#198754', '#ffc107', '#dc3545', '#0dcaf0', '#6610f2', '#d63384', '#fd7e14', '#20c997', '#6c757d'];
+
+            chartDataList.forEach(config => {
+                const ctx = document.getElementById(config.id);
+                if (!ctx) return; // データなし等でCanvas要素が存在しない場合はスキップ
+
+                const chartType = (config.type === 'CHECKBOX') ? 'bar' : 'pie';
+                const chartOptions = {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            display: (chartType === 'pie')
+                        }
+                    }
+                };
+
+                if (chartType === 'bar') {
+                    chartOptions.scales = {
+                        y: {
+                            beginAtZero: true,
+                            max: config.answerCount,
+                            ticks: { stepSize: 1 }
+                        }
+                    };
+                }
+
+                // データ数が色定義数を超える場合に対応するため、色をループさせて配列を生成
+                const backgroundColors = config.counts.map((_, i) => colors[i % colors.length]);
+
+                new Chart(ctx, {
+                    type: chartType,
+                    data: {
+                        labels: config.labels,
+                        datasets: [{
+                            label: '回答数',
+                            data: config.counts,
+                            backgroundColor: backgroundColors,
+                            borderWidth: 1
+                        }]
+                    },
+                    options: chartOptions
+                });
+            });
+        });
+    </script>
 </head>
 
 <body>
     <main layout:fragment="content">
         <div class="container">
-            <!-- ヘッダーエリア: アンケート基本情報 -->
+            <!--/* ヘッダーエリア: アンケート基本情報 */-->
             <div class="d-flex justify-content-between align-items-start mb-4">
                 <div>
                     <h2 class="h3 fw-bold mb-2" th:text="${aggregation.survey.title}">アンケートタイトル</h2>
@@ -43,7 +109,7 @@
 
             <hr class="mb-5">
 
-            <!-- 設問ごとの集計結果ループ -->
+            <!--/* 設問ごとの集計結果ループ */-->
             <div th:each="qa, stat : ${aggregation.questionAggregations}" class="card shadow-sm mb-4">
                 <div class="card-header bg-body-tertiary py-3">
                     <div class="d-flex align-items-center">
@@ -59,7 +125,7 @@
                 </div>
                 <div class="card-body">
 
-                    <!-- 選択式 (RADIO / CHECKBOX) の場合 -->
+                    <!--/* 選択式 (RADIO / CHECKBOX) の場合 */-->
                     <div th:if="${qa.question.type.name() == 'RADIO' || qa.question.type.name() == 'CHECKBOX'}">
                         <div th:if="${#lists.isEmpty(qa.optionStats)}" class="text-muted text-center py-3">
                             データがありません
@@ -67,7 +133,7 @@
                         <div th:unless="${#lists.isEmpty(qa.optionStats)}">
                             <div class="row align-items-center">
                                 <div class="col-md-7">
-                                    <!-- 総選択数を計算(CHECKBOX用) -->
+                                    <!--/* 総選択数を計算(CHECKBOX用) */-->
                                     <div th:each="opt : ${qa.optionStats}" class="mb-3"
                                         th:with="totalSelected=${#aggregates.sum(qa.optionStats.![count])},
                                                   isCheckbox=${qa.question.type.name() == 'CHECKBOX'},
@@ -91,64 +157,13 @@
                                     </div>
                                 </div>
                                 <div class="col-md-5">
-                                    <!-- グラフサイズ: 棒グラフ(CHECKBOX)は幅いっぱい、円グラフ(RADIO)はサイズ制限 -->
+                                    <!--/* グラフサイズ: 棒グラフ(CHECKBOX)は幅いっぱい、円グラフ(RADIO)はサイズ制限 */-->
                                     <div style="margin: 0 auto;"
                                         th:styleappend="${qa.question.type.name() == 'CHECKBOX'} ? 'width: 100%' : 'max-width: 300px'">
                                         <canvas th:id="'chart-q-' + ${stat.index}"></canvas>
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Chart.js描画スクリプト -->
-                            <script th:inline="javascript">
-                                /*<![CDATA[*/
-                                document.addEventListener('DOMContentLoaded', function () {
-                                    const ctx = document.getElementById('chart-q-' + /*[[${stat.index}]]*/ '0');
-                                    const labels = /*[[${qa.optionStats.![label]}]]*/[];
-                                    const data = /*[[${qa.optionStats.![count]}]]*/[];
-                                    const colors = ['#0d6efd', '#198754', '#ffc107', '#dc3545', '#0dcaf0', '#6610f2', '#d63384', '#fd7e14', '#20c997', '#6c757d'];
-                                    const type = /*[[${qa.question.type}]]*/ 'RADIO';
-                                    const answerCount = /*[[${qa.answerCount}]]*/ 0;
-
-                                    // CHECKBOX(複数選択)の場合は棒グラフ、それ以外(RADIO)は円グラフ
-                                    const chartType = (type === 'CHECKBOX') ? 'bar' : 'pie';
-
-                                    const chartOptions = {
-                                        responsive: true,
-                                        plugins: {
-                                            legend: {
-                                                position: 'bottom',
-                                                display: (chartType === 'pie') // 棒グラフの場合は凡例を非表示(ラベルで分かるため)
-                                            }
-                                        }
-                                    };
-
-                                    if (chartType === 'bar') {
-                                        chartOptions.scales = {
-                                            y: {
-                                                beginAtZero: true,
-                                                max: answerCount, // Y軸の最大値を回答者数に設定(これでバーの長さが割合と一致する)
-                                                ticks: { stepSize: 1 }
-                                            }
-                                        };
-                                    }
-
-                                    new Chart(ctx, {
-                                        type: chartType,
-                                        data: {
-                                            labels: labels,
-                                            datasets: [{
-                                                label: '回答数',
-                                                data: data,
-                                                backgroundColor: colors,
-                                                borderWidth: 1
-                                            }]
-                                        },
-                                        options: chartOptions
-                                    });
-                                });
-                                /*]]>*/
-                            </script>
                         </div>
                     </div>
 
@@ -176,8 +191,6 @@
             </div>
         </div>
 
-        <!-- Chart.js CDN -->
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </main>
 </body>
 
