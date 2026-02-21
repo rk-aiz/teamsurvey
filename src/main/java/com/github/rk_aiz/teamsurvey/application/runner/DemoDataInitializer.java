@@ -206,7 +206,8 @@ public class DemoDataInitializer implements CommandLineRunner {
                             .orElseThrow(() -> new IllegalStateException("Item not found for order: " + order));
                     detail.setSingleChoiceResponse(itemId);
                 } else if (question.getType() == QuestionType.CHECKBOX) {
-                    List<Integer> orders = (List<Integer>) val;
+                    List<Integer> orders = new ArrayList<>();
+                    orders.add((Integer) val);
                     MultiChoiceQuestion mcq = (MultiChoiceQuestion) question;
                     List<Integer> itemIds = mcq.getAnswerOption().getItems().stream()
                             .filter(i -> orders.contains(i.getItemOrder()))

@@ -1,4 +1,4 @@
-package com.github.rk_aiz.teamsurvey.application.exception;
+package com.github.rk_aiz.teamsurvey.exception;
 
 public class LoginRequiredException extends RuntimeException {
 

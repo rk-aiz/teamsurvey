@@ -1,6 +1,8 @@
 package com.github.rk_aiz.teamsurvey.infrastructure.repository.impl;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 import org.springframework.stereotype.Repository;
 
@@ -19,16 +21,31 @@ public class SurveyResultRepositoryImpl implements SurveyResultRepository {
 
     @Override
     public List<SurveyAggregation> findAll() {
-        return this.surveyResultMapper.selectAll();
+        return surveyResultMapper.selectAll();
+    }
+
+    @Override
+    public List<SurveyAggregation> findWithPagingByUserGroupIds(long offset, int pageSize, List<Integer> userGroupIds) {
+        return surveyResultMapper.selectWithPagingByUserGroupIds(offset, pageSize, userGroupIds);
     }
 
     @Override
     public SurveyAggregation findBySurveyId(Integer surveyId) {
-        return this.surveyResultMapper.selectById(surveyId);
+        return surveyResultMapper.selectById(surveyId);
     }
 
     @Override
-    public List<Response> findResponsesForCsv(Integer surveyId) {
-        return this.surveyResultMapper.selectResponsesForCsv(surveyId);
+    public void steamCsvWithConsumerBySurveyId(
+            Integer surveyId, Consumer<Map<String, Object>> rowConsumer) {
+        // ResultHandlerをここでラップして隠ぺいする
+        surveyResultMapper.streamForCsv(surveyId, resultContext -> {
+            Map<String, Object> row = resultContext.getResultObject();
+            rowConsumer.accept(row);
+        });
+    }
+
+    @Override
+    public long countByUserGroupIds(List<Integer> userGroupIds) {
+        return surveyResultMapper.countByUserGroupIds(userGroupIds);
     }
 }

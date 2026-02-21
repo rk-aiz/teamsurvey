@@ -1,9 +1,9 @@
 package com.github.rk_aiz.teamsurvey.application.constant;
 
 /**
- * Web層全体で使用する共通定数定義クラス
+ * Application層全体で使用する共通定数定義クラス
  */
-public class WebConst {
+public class ApplicationConst {
 
     /** フラッシュメッセージのキー: 処理成功時のメッセージ */
     public static final String MESSAGE = "message";
@@ -11,6 +11,6 @@ public class WebConst {
     /** フラッシュメッセージのキー: エラー発生時のメッセージ */
     public static final String ERROR_MESSAGE = "errorMessage";
 
-    private WebConst() {
+    private ApplicationConst() {
     }
 }

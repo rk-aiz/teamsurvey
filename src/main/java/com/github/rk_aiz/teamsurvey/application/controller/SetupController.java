@@ -41,8 +41,6 @@ public class SetupController {
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
 
-            System.out.println(accountForm.displayName());
-
         // 安全策: 二重送信などでアカウントが既にできている場合
         if (accountService.existsAdmin()) {
             return "redirect:/";

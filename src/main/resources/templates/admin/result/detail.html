@@ -16,8 +16,8 @@
                 {
                     id: 'chart-q-' + /*[[${stat.index}]]*/ '0',
                     type: /*[[${qa.question.type}]]*/ 'RADIO',
-                    labels: /*[[${qa.optionStats.![label]}]]*/ [],
-                    counts: /*[[${qa.optionStats.![count]}]]*/ [],
+                    labels: /*[[${qa.optionStats.![label]}]]*/[],
+                    counts: /*[[${qa.optionStats.![count]}]]*/[],
                     answerCount: /*[[${qa.answerCount}]]*/ 0
                 },
                 /*[/]*/
@@ -136,8 +136,8 @@
                                     <!--/* 総選択数を計算(CHECKBOX用) */-->
                                     <div th:each="opt : ${qa.optionStats}" class="mb-3"
                                         th:with="totalSelected=${#aggregates.sum(qa.optionStats.![count])},
-                                                  isCheckbox=${qa.question.type.name() == 'CHECKBOX'},
-                                                  displayPercent=${isCheckbox ? (totalSelected > 0 ? opt.count * 100.0 / totalSelected : 0) : opt.percentage}">
+                                                isCheckbox=${qa.question.type.name() == 'CHECKBOX'},
+                                                displayPercent=${isCheckbox ? (totalSelected > 0 ? opt.count * 100.0 / totalSelected : 0) : opt.percentage}">
 
                                         <div class="d-flex justify-content-between mb-1">
                                             <span class="fw-bold" th:text="${opt.label}">選択肢ラベル</span>

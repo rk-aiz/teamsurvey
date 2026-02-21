@@ -56,6 +56,8 @@ dependencies {
 	// Spring Security と Thymeleafの連携用ライブラリ
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 
+    // Source: https://mvnrepository.com/artifact/org.apache.commons/commons-csv
+    implementation 'org.apache.commons:commons-csv:1.14.1'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-thymeleaf-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'

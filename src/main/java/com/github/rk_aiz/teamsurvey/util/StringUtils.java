@@ -31,4 +31,16 @@ public class StringUtils {
             return trimmed;
         }
     }
+
+    /**
+     * CSVの特殊文字をエスケープします
+     */
+    public static String escapeCsv(String text) {
+        if (text == null)
+            return "";
+        if (text.contains(",") || text.contains("\"") || text.contains("\n") || text.contains("\r")) {
+            return "\"" + text.replace("\"", "\"\"") + "\"";
+        }
+        return text;
+    }
 }

@@ -11,6 +11,8 @@ import com.github.rk_aiz.teamsurvey.application.form.LoginForm;
 import com.github.rk_aiz.teamsurvey.domain.service.AccountService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @Controller
 @RequestMapping("/auth")
@@ -37,5 +39,5 @@ public class LoginController {
         }
 
         return "login";
-    }
+    }    
 }

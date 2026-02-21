@@ -162,7 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // システムグループの場合は操作不可にする(値は送信される)
                 if (isSystemGroup) {
                     authSelect.style.pointerEvents = "none";
-                    authSelect.style.backgroundColor = "#e9ecef"; // Bootstrap disabled color
+                    authSelect.style.backgroundColor = "var(--bs-secondary-bg)"; // Bootstrap disabled color
                     authSelect.setAttribute("tabindex", "-1"); // フォーカス移動も防ぐ
                 } else {
                     authSelect.style.pointerEvents = "";

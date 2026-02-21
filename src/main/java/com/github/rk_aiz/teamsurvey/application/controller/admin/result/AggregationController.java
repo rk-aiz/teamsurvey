@@ -1,9 +1,8 @@
 package com.github.rk_aiz.teamsurvey.application.controller.admin.result;
 
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+import java.io.PrintWriter;
 
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.SmartValidator;
@@ -11,10 +10,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.github.rk_aiz.teamsurvey.domain.model.Survey;
 import com.github.rk_aiz.teamsurvey.domain.model.result.SurveyAggregation;
-import com.github.rk_aiz.teamsurvey.domain.service.AccountService;
 import com.github.rk_aiz.teamsurvey.domain.service.SurveyResultService;
+import com.github.rk_aiz.teamsurvey.domain.service.SurveyService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,7 +33,7 @@ public class AggregationController {
     private static final String REDIRECT_TO_LIST = "redirect:/admin/response/list";
 
     /** DI */
-    private final AccountService surveyService;
+    private final SurveyService surveyService;
     private final SurveyResultService surveyResultService;
     private final SmartValidator validator;
 
@@ -76,22 +77,30 @@ public class AggregationController {
      * CSVダウンロード
      */
     @GetMapping("/download/{id}")
-    public ResponseEntity<byte[]> downloadCsv(@PathVariable("id") Integer id) {
-        String csvData = surveyResultService.generateCsv(id);
-        byte[] csvBytes = csvData.getBytes(StandardCharsets.UTF_8);
-        // BOM付与 (Excelで文字化けしないように)
-        byte[] csvBytesWithBom = new byte[csvBytes.length + 3];
-        csvBytesWithBom[0] = (byte) 0xEF;
-        csvBytesWithBom[1] = (byte) 0xBB;
-        csvBytesWithBom[2] = (byte) 0xBF;
-        System.arraycopy(csvBytes, 0, csvBytesWithBom, 3, csvBytes.length);
+    public void downloadCsv(
+        @PathVariable("id") Integer id,
+        HttpServletResponse response) throws IOException {
 
-        String filename = "survey_result_" + id + ".csv";
+        Survey survey = surveyService.findSurveyById(id);
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_TYPE, "text/csv; charset=UTF-8")
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
-                .body(csvBytesWithBom);
+        // 1. レスポンスヘッダーの設定（ダウンロード）
+        response.setContentType("text/csv; charset=UTF-8");
+        response.setHeader(
+                "Content-Disposition",
+                        String.format(
+                                "attachment; filename=\"survey%04d_result.csv\"",
+                                        survey.getId()
+                                )
+                );
+
+        // 2. 日本のExcel対策（BOMを付与して文字化けを防ぐ）
+        PrintWriter writer = response.getWriter();
+        writer.write('\ufeff'); 
+
+        // 3. サービスを呼び出す（先ほどのリポジトリ隠ぺいパターン
+        surveyResultService.exportToCsv(id, writer);
+        
+        writer.flush();
     }
 
 }
