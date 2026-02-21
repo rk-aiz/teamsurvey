@@ -2,6 +2,7 @@ package com.github.rk_aiz.teamsurvey.domain.service.impl;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import com.github.rk_aiz.teamsurvey.domain.model.AnswerOption;
 import com.github.rk_aiz.teamsurvey.domain.model.Response;
 import com.github.rk_aiz.teamsurvey.domain.model.ResponseDetail;
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
+import com.github.rk_aiz.teamsurvey.domain.model.UserGroup;
 import com.github.rk_aiz.teamsurvey.domain.model.question.Question;
 import com.github.rk_aiz.teamsurvey.domain.model.question.SingleChoiceQuestion;
 import com.github.rk_aiz.teamsurvey.domain.model.result.SurveyAggregation;
@@ -39,6 +41,12 @@ public class SurveyResultServiceImpl implements SurveyResultService {
     @Override
     public SurveyAggregation findSurveyAggregationById(Integer surveyId) throws IllegalArgumentException {
         return surveyResultRepository.findBySurveyId(surveyId);
+    }
+
+    @Override
+    public List<SurveyAggregation> findAggregationsWithPagingByUserGroups(Collection<UserGroup> userGroupIds) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findAggregationsByUserGroups'");
     }
 
     @Override

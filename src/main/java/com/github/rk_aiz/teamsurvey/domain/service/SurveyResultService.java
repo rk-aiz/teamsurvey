@@ -1,7 +1,9 @@
 package com.github.rk_aiz.teamsurvey.domain.service;
 
+import java.util.Collection;
 import java.util.List;
 
+import com.github.rk_aiz.teamsurvey.domain.model.UserGroup;
 import com.github.rk_aiz.teamsurvey.domain.model.result.SurveyAggregation;
 
 public interface SurveyResultService {
@@ -15,6 +17,13 @@ public interface SurveyResultService {
      * @throws IllegalArgumentException アンケートが存在しない場合
      */
     SurveyAggregation findSurveyAggregationById(Integer surveyId) throws IllegalArgumentException;
+
+    /**
+     * 
+     * @param userGroupIds
+     * @return
+     */
+    List<SurveyAggregation> findAggregationsWithPagingByUserGroups(Collection<UserGroup> userGroupIds);
 
     /**
      * 指定されたアンケートの回答データをCSV形式で生成します。

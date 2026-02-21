@@ -107,6 +107,29 @@
         ORDER BY s.created_at DESC
     </select>
 
+    <!-- ユーザーグループに紐づいたアンケートの集計ヘッダー情報を取得 -->
+    <select id="selectWithPagingByUserGroupIds" resultMap="SurveySummaryMap">
+        SELECT 
+            s.id AS survey_id,
+            s.title, s.status, s.result_visibility, s.deadline, s.created_at, s.updated_at,
+            (SELECT COUNT(*) FROM responses r WHERE r.survey_id = s.id) AS total_response_count
+        FROM surveys s
+		WHERE
+		<if test="userGroupIds != null and userGroupIds.size() > 0">
+			(s.id IN (SELECT stg.survey_id
+							FROM survey_target_groups stg
+							WHERE group_id IN
+							<foreach item="groupId" collection="userGroupIds" open="(" separator="," close=")">
+								#{groupId}
+							</foreach>)
+			            AND result_visibility = 'TARGET_GROUP')
+	                OR
+		</if>
+		result_visibility = 'ALL_USER'
+        ORDER BY s.created_at DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
     <!-- 2. 設問ごとの集計情報を取得 -->
     <select id="selectQuestionAggregations" resultMap="QuestionAggregationMap">
         SELECT 

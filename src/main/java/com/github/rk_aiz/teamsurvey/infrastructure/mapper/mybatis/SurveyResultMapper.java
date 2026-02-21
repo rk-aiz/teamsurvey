@@ -17,6 +17,19 @@ public interface SurveyResultMapper {
 
     SurveyAggregation selectById(@Param("id") Integer id);
 
+    /**
+     * ユーザーグループのリストからページネーション付きでアンケートを取得します
+     *
+     * @param offset
+     * @param limit
+     * @param userGroupIds
+     * @return
+     */
+    List<SurveyAggregation> selectWithPagingByUserGroupIds(
+            @Param("offset") long offset,
+            @Param("limit") int limit, 
+            @Param("userGroupIds") List<Integer> userGroupIds);
+
     List<QuestionAggregation> selectQuestionAggregations(@Param("surveyId") Integer surveyId);
 
     List<OptionStat> selectOptionStats(

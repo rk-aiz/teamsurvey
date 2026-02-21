@@ -23,6 +23,11 @@ public class SurveyResultRepositoryImpl implements SurveyResultRepository {
     }
 
     @Override
+    public List<SurveyAggregation> findWithPagingByUserGroupIds(long offset, int pageSize, List<Integer> userGroupIds) {
+        return surveyResultMapper.selectWithPagingByUserGroupIds(offset, pageSize, userGroupIds);
+    }
+
+    @Override
     public SurveyAggregation findBySurveyId(Integer surveyId) {
         return this.surveyResultMapper.selectById(surveyId);
     }
