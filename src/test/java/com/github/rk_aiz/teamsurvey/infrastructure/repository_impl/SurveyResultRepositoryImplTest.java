@@ -17,7 +17,11 @@ import com.github.rk_aiz.teamsurvey.infrastructure.repository.impl.SurveyResultR
 
 // H2データベースをPostgreSQL互換モードで起動するように設定を追加
 @SpringBootTest(properties = {
-        "spring.datasource.url=jdbc:h2:mem:testdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"
+        "spring.datasource.url=jdbc:h2:mem:testdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
+        "spring.datasource.driver-class-name=org.h2.Driver",
+        "spring.datasource.username=sa",
+        "spring.datasource.password=",
+        "spring.sql.init.mode=never"
 })
 @Transactional // テストメソッド終了後にDBの変更をロールバック(他のテストに影響を与えないため)
 class SurveyResultRepositoryImplTest {
@@ -37,6 +41,6 @@ class SurveyResultRepositoryImplTest {
         List<SurveyAggregation> list = surveyResultRepository.findWithPagingByUserGroupIds(
             0, 10, List.of(1, 2));
 
-        assertEquals(list.size(), 1);
+        assertEquals(1, list.size());
     }
 }
