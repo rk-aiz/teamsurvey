@@ -1,6 +1,8 @@
 package com.github.rk_aiz.teamsurvey.infrastructure.repository;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 import com.github.rk_aiz.teamsurvey.domain.model.Response;
 import com.github.rk_aiz.teamsurvey.domain.model.result.SurveyAggregation;
@@ -18,5 +20,8 @@ public interface SurveyResultRepository {
 
     SurveyAggregation findBySurveyId(Integer surveyId);
 
-    List<Response> findResponsesForCsv(Integer surveyId);
+    void steamCsvWithConsumerBySurveyId(
+            Integer surveyId, Consumer<Map<String, Object>> rowConsumer);
+
+    long countByUserGroupIds(List<Integer> userGroupIds);
 }

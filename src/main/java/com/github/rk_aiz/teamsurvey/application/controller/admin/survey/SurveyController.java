@@ -17,10 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.github.rk_aiz.teamsurvey.application.constant.WebConst;
+import com.github.rk_aiz.teamsurvey.application.constant.ApplicationConst;
 import com.github.rk_aiz.teamsurvey.application.form.SurveyForm;
 import com.github.rk_aiz.teamsurvey.application.validation.SurveyValidationGroup;
-import com.github.rk_aiz.teamsurvey.domain.exception.ServiceRuleException;
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
 import com.github.rk_aiz.teamsurvey.domain.model.UserGroup;
 import com.github.rk_aiz.teamsurvey.domain.service.AnswerOptionService;
@@ -28,6 +27,7 @@ import com.github.rk_aiz.teamsurvey.domain.service.SurveyService;
 import com.github.rk_aiz.teamsurvey.domain.service.SurveyTargetGroupService;
 import com.github.rk_aiz.teamsurvey.domain.service.UserGroupService;
 import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
+import com.github.rk_aiz.teamsurvey.exception.ServiceRuleException;
 import com.github.rk_aiz.teamsurvey.util.ServletUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -175,9 +175,9 @@ public class SurveyController {
         Survey newSurvey = surveyService.saveSurvey(surveyForm.toModel());
 
         if (surveyForm.isNew()) {
-            redirectAttributes.addFlashAttribute(WebConst.MESSAGE, "新しいアンケートが追加されました");
+            redirectAttributes.addFlashAttribute(ApplicationConst.MESSAGE, "新しいアンケートが追加されました");
         } else {
-            redirectAttributes.addFlashAttribute(WebConst.MESSAGE, "アンケートを更新しました");
+            redirectAttributes.addFlashAttribute(ApplicationConst.MESSAGE, "アンケートを更新しました");
         }
 
         // アンケートと対象グループの紐づけ情報保存
@@ -199,11 +199,11 @@ public class SurveyController {
 
         try {
             if (surveyService.tryChangeStatusById(id, status))
-                redirectAttributes.addFlashAttribute(WebConst.MESSAGE, "ステータスを変更しました");
+                redirectAttributes.addFlashAttribute(ApplicationConst.MESSAGE, "ステータスを変更しました");
         } catch (ServiceRuleException e) {
-            redirectAttributes.addFlashAttribute(WebConst.ERROR_MESSAGE, e.getMessage());
+            redirectAttributes.addFlashAttribute(ApplicationConst.ERROR_MESSAGE, e.getMessage());
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute(WebConst.ERROR_MESSAGE, "システムエラーが発生しました。");
+            redirectAttributes.addFlashAttribute(ApplicationConst.ERROR_MESSAGE, "システムエラーが発生しました。");
         }
 
         if (StringUtils.hasText(referer)) {
@@ -225,7 +225,7 @@ public class SurveyController {
         // アンケートと対象グループの紐づけ情報保存
         surveyTargetGroupService.save(id, groupIds);
 
-        redirectAttributes.addFlashAttribute(WebConst.MESSAGE, "対象グループを更新しました");
+        redirectAttributes.addFlashAttribute(ApplicationConst.MESSAGE, "対象グループを更新しました");
         return ServletUtils.redirect(SURVEY_DETAIL, id);
     }
 }

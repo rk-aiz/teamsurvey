@@ -27,10 +27,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.github.rk_aiz.teamsurvey.application.form.AccountForm;
 import com.github.rk_aiz.teamsurvey.application.form.UserGroupForm;
 import com.github.rk_aiz.teamsurvey.application.mapper.AccountFormMapper;
-import com.github.rk_aiz.teamsurvey.domain.exception.ServiceRuleException;
 import com.github.rk_aiz.teamsurvey.domain.model.UserAccount;
 import com.github.rk_aiz.teamsurvey.domain.service.AccountService;
 import com.github.rk_aiz.teamsurvey.domain.service.UserGroupService;
+import com.github.rk_aiz.teamsurvey.exception.ServiceRuleException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -56,21 +56,21 @@ public class AccountController {
     private final SmartValidator validator;
 
     /**
-     * 集計一覧画面を表示します
+     * アカウント一覧画面を表示します
      */
     @GetMapping
-    public String survey() {
+    public String account() {
         return "redirect:/admin/account/list";
     }
 
     /**
-     * 集計一覧画面を表示します
+     * アカウント一覧画面を表示します
      */
     @GetMapping("/list")
     public String list(
             @RequestParam(value = "username", required = false) String username,
             @RequestParam(value = "action", required = false) String action,
-            @PageableDefault(size = 20) Pageable pageable, Model model) {
+            @PageableDefault(size = 10) Pageable pageable, Model model) {
 
         // ページネーション付きで取得
         Page<UserAccount> users = accountService.findWithPaging(pageable);

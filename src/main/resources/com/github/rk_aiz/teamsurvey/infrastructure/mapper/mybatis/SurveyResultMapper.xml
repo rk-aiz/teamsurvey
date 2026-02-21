@@ -47,9 +47,9 @@
             <result property="createdAt" column="created_at" />
             <result property="updatedAt" column="updated_at" />
             <!-- 
-                Questionが抽象クラスの場合、MyBatisは直接インスタンス化できません。
-                以下のようにdiscriminatorを使用して、question_typeに基づいて適切な具象クラスに振り分ける必要があります。
-                valueにはDBの値、resultTypeには対応するJavaクラスの完全修飾名を指定してください。
+                Questionが抽象クラスの場合、MyBatisは直接インスタンス化出来ない。
+                discriminatorを使用して、question_typeに基づいて適切な具象クラスに振り分ける必要がある。
+                valueにはDBの値、resultTypeには対応するJavaクラスの完全修飾名を指定する。
             -->
             <discriminator javaType="string" column="question_type">
                 <case value="TEXT" resultType="com.github.rk_aiz.teamsurvey.domain.model.question.FreeResponseQuestion"/>
@@ -88,7 +88,7 @@
         <result property="percentage" column="percentage" />
     </resultMap>
 
-    <!-- 1. アンケート全体の集計情報を取得 -->
+    <!-- アンケート全体の集計情報を取得 -->
     <select id="selectById" resultMap="SurveyAggregationMap">
         SELECT 
             s.id AS survey_id, s.title, s.status, s.result_visibility, s.deadline, s.created_at, s.updated_at,
@@ -122,15 +122,15 @@
 							<foreach item="groupId" collection="userGroupIds" open="(" separator="," close=")">
 								#{groupId}
 							</foreach>)
-			            AND result_visibility = 'TARGET_GROUP')
-	                OR
+                        AND result_visibility = 'TARGET_GROUP')
+            OR
 		</if>
 		result_visibility = 'ALL_USER'
         ORDER BY s.created_at DESC
         LIMIT #{limit} OFFSET #{offset}
     </select>
 
-    <!-- 2. 設問ごとの集計情報を取得 -->
+    <!-- 設問ごとの集計情報を取得 -->
     <select id="selectQuestionAggregations" resultMap="QuestionAggregationMap">
         SELECT 
             q.id, q.survey_id, q.question_text, q.question_type, q.is_required, q.display_order, q.answer_pattern_id,
@@ -149,7 +149,7 @@
         ORDER BY q.display_order
     </select>
 
-    <!-- 3. 選択肢ごとの統計を取得 (件数と割合) -->
+    <!-- 選択肢ごとの統計を取得 (件数と割合) -->
     <select id="selectOptionStats" resultMap="OptionStatMap">
         SELECT 
             api.id AS option_id,
@@ -168,7 +168,7 @@
         ORDER BY api.item_order
     </select>
 
-    <!-- 4. 自由記述回答を取得 -->
+    <!-- 自由記述回答を取得 -->
     <select id="selectTextAnswers" resultType="string">
         SELECT answer_text, id
         FROM response_details
@@ -177,7 +177,7 @@
         ORDER BY id
     </select>
 
-    <!-- 5. 回答パターンの選択肢一覧を取得 -->
+    <!-- 回答パターンの選択肢一覧を取得 -->
     <select id="selectAnswerPatternItems" resultType="com.github.rk_aiz.teamsurvey.domain.model.AnswerOption$OptionItem">
         SELECT 
             id AS itemId,
@@ -188,31 +188,42 @@
         ORDER BY item_order
     </select>
 
-    <!-- 6. CSV出力用: 回答一覧取得 -->
-    <resultMap id="CsvResponseMap" type="com.github.rk_aiz.teamsurvey.domain.model.Response">
-        <id property="responseId" column="response_id" />
-        <result property="surveyId" column="survey_id" />
-        <result property="username" column="username" />
-        <result property="createdAt" column="created_at" />
-        <collection property="responseDetails" ofType="com.github.rk_aiz.teamsurvey.domain.model.ResponseDetail">
-            <id property="responseDetailId" column="detail_id" />
-            <result property="rawData" column="answer_value" />
-            <!-- IDだけ保持できれば良いので、便宜的にFreeResponseQuestionとしてマッピング -->
-            <association property="question" javaType="com.github.rk_aiz.teamsurvey.domain.model.question.FreeResponseQuestion">
-                <id property="id" column="question_id"/>
-            </association>
-        </collection>
-    </resultMap>
+    <select id="streamForCsv" resultType="java.util.LinkedHashMap" fetchSize="500">
+            SELECT 
+                r.id AS response_id, 
+                r.survey_id, 
+                r.username, 
+                r.created_at,
+                rd.id AS detail_id, 
+                q.id AS question_id, 
+                q.question_text, 
+                q.question_type, 
+                api.id AS answer_pattern_item_id, 
+                api.item_text, 
+                rd.answer_text
+            FROM responses r
+            LEFT JOIN response_details rd ON r.id = rd.response_id
+            LEFT JOIN questions q ON rd.question_id = q.id
+            LEFT JOIN answer_pattern_items api ON rd.answer_pattern_item_id = api.id
+            WHERE r.survey_id = ${surveyId}
+            ORDER BY r.id, rd.question_id
+    </select>
 
-    <select id="selectResponsesForCsv" resultMap="CsvResponseMap">
-        SELECT 
-            r.id AS response_id, r.survey_id, r.username, r.created_at,
-            rd.id AS detail_id, rd.question_id,
-            COALESCE(rd.answer_text, CAST(rd.answer_pattern_item_id AS VARCHAR)) AS answer_value
-        FROM responses r
-        LEFT JOIN response_details rd ON r.id = rd.response_id
-        WHERE r.survey_id = #{surveyId}
-        ORDER BY r.id, rd.question_id
+    <select id="countByUserGroupIds" resultType="long">
+        SELECT count(*)
+        FROM surveys s
+		WHERE
+		<if test="userGroupIds != null and userGroupIds.size() > 0">
+			(s.id IN (SELECT stg.survey_id
+							FROM survey_target_groups stg
+							WHERE group_id IN
+							<foreach item="groupId" collection="userGroupIds" open="(" separator="," close=")">
+								#{groupId}
+							</foreach>)
+                        AND result_visibility = 'TARGET_GROUP')
+            OR
+		</if>
+		result_visibility = 'ALL_USER'
     </select>
 
 </mapper>

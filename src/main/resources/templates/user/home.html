@@ -32,6 +32,25 @@
                             <span class="badge bg-primary rounded-pill">回答する</span>
                         </a>
                     </div>
+
+                    <h3 class="h5 text-secondary border-bottom pb-2 mb-3 mt-5">公開中のアンケート結果</h3>
+
+                    <div th:if="${surveyAggregations == null or surveyAggregations.isEmpty()}" class="alert alert-info"
+                        role="alert">
+                        現在、公開されているアンケート結果はありません。
+                    </div>
+
+                    <div th:if="${surveyAggregations != null and !surveyAggregations.isEmpty()}" class="list-group">
+                        <a th:each="agg : ${surveyAggregations}" th:href="@{/result/{id}(id=${agg.survey.id})}"
+                            class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="mb-1" th:text="${agg.survey.title}">アンケートタイトル</h5>
+                                <small class="text-muted">回答数: <span
+                                        th:text="${agg.totalResponseCount}">0</span></small>
+                            </div>
+                            <span class="badge bg-success rounded-pill">結果を見る</span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

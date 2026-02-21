@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.github.rk_aiz.teamsurvey.application.constant.WebConst;
+import com.github.rk_aiz.teamsurvey.application.constant.ApplicationConst;
 import com.github.rk_aiz.teamsurvey.application.form.AnswerOptionForm;
 import com.github.rk_aiz.teamsurvey.domain.model.AnswerOption;
 import com.github.rk_aiz.teamsurvey.domain.service.AnswerOptionService;
@@ -87,7 +87,7 @@ public class AnswerOptionController {
 
         answerOptionService.save(form.toModel());
 
-        return ResponseEntity.ok(Map.of(WebConst.MESSAGE, "回答パターンを保存しました。"));
+        return ResponseEntity.ok(Map.of(ApplicationConst.MESSAGE, "回答パターンを保存しました。"));
     }
 
     /**

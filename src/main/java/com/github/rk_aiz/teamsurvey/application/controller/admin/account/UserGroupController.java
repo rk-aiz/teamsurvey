@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.github.rk_aiz.teamsurvey.application.form.UserGroupForm;
-import com.github.rk_aiz.teamsurvey.domain.exception.ServiceRuleException;
 import com.github.rk_aiz.teamsurvey.domain.service.AccountService;
 import com.github.rk_aiz.teamsurvey.domain.service.UserGroupService;
+import com.github.rk_aiz.teamsurvey.exception.ServiceRuleException;
 import com.github.rk_aiz.teamsurvey.util.ServletUtils;
 
 import lombok.RequiredArgsConstructor;

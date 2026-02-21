@@ -1,4 +1,4 @@
-package com.github.rk_aiz.teamsurvey.domain.exception;
+package com.github.rk_aiz.teamsurvey.exception;
 
 /**
  * システムの整合性が取れない、あるいは想定外の状態など、

@@ -1,22 +1,35 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head>
-<meta charset="utf-8">
-<style>body{font-family:Arial,Helvetica,sans-serif;font-size:12px;text-align:center}h1{color:#06C;font-size:25px;line-height:60px;margin-top:56px}img{margin-top:40px}
-</style>
-</head>
-<body>
-<h1 id="a">403 - アクセス拒否</h1>
-<hr>
-<p>このページにアクセスする権限がありません</p>
-<p><a th:href="@{/}">メニュー画面へ</a></p>
+<html xmlns:th="http://www.thymeleaf.org" xml:lang="ja">
 
-<!--/* 管理者のみ詳細を表示 */-->
-<div sec:authorize="hasRole('ADMIN')" style="margin: 30px auto; width: 80%; text-align: left; border: 1px solid #ccc; padding: 20px; background-color: #f8f9fa;">
-    <h3 style="color: #dc3545; margin-top: 0; border-bottom: 1px solid #ccc; padding-bottom: 10px;">Debug Info (Admin Only)</h3>
-    <p><strong>Status:</strong> <span th:text="${status}"></span></p>
-    <p><strong>Path:</strong> <span th:text="${path}"></span></p>
-    <p><strong>Message:</strong> <span th:text="${message}"></span></p>
-</div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>403 Forbidden</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/bootstrap-icons.css}" rel="stylesheet">
+</head>
+
+<body class="bg-light d-flex align-items-center justify-content-center" style="height: 100vh;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center p-5">
+                        <div class="text-danger mb-4">
+                            <i class="bi bi-shield-lock-fill" style="font-size: 4rem;"></i>
+                        </div>
+                        <h1 class="h3 mb-3 fw-normal">アクセス権限がありません</h1>
+                        <p class="text-muted mb-4" th:text="${errorMessage}">
+                            このページを閲覧する権限がありません。
+                        </p>
+                        <div class="d-grid gap-2">
+                            <a th:href="@{/}" class="btn btn-primary">トップページへ戻る</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
+
 </html>

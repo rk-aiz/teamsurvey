@@ -14,7 +14,7 @@
             <div class="row justify-content-center">
                 <div class="col-lg-6 col-md-8">
                     <div class="card shadow-sm mt-4">
-                        <div class="card-header bg-white py-3">
+                        <div class="card-header py-3">
                             <h4 class="mb-0">アカウント設定</h4>
                         </div>
                         <div class="card-body p-4">
@@ -22,8 +22,7 @@
                             <form th:action="@{/setting/save}" method="post" th:object="${accountForm}">
                                 <div class="mb-3">
                                     <label for="username" class="form-label">ユーザーID</label>
-                                    <input type="text" class="form-control" th:field="*{username}" readonly
-                                        style="background-color: #f8f9fa;">
+                                    <input type="text" class="form-control" th:field="*{username}" readonly>
                                     <div class="form-text">ユーザーIDは変更できません。</div>
                                 </div>
 

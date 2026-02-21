@@ -4,7 +4,7 @@
 
 <head>
     <title th:text="${title} ?: 'アンケート詳細'">アンケート詳細</title>
-    
+
     <style>
         /* プレビュー時のdisabled要素の視認性向上(ダークモード対応) */
         .survey-preview .form-control:disabled {
@@ -67,10 +67,9 @@
         </table>
 
         <!--/* ステータス変更アクション */-->
-        <div
-            style="margin: 20px 0; padding: 15px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px;">
-            <h4 style="margin-top: 0;">ステータス変更</h4>
-            <div style="display: flex; gap: 10px;">
+        <div class="p-3 my-4 border rounded bg-body-tertiary">
+            <h4 class="mb-3">ステータス変更</h4>
+            <div class="d-flex flex-wrap gap-2">
 
                 <!--/* 下書き(DRAFT)の場合 -> 公開 (回答受付) */-->
                 <th:block th:if="${survey.status.name() == 'DRAFT'}">
