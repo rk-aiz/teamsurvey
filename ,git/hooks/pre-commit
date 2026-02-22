@@ -1,0 +1,11 @@
+#!/bin/sh
+echo "Running local tests before commit..."
+
+# テストを実行
+./gradlew test
+
+# テストが失敗（終了ステータスが0以外）したらコミットを中止
+if [ $? -ne 0 ]; then
+    echo "Tests failed. Commit aborted."
+    exit 1
+fi

@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xml:lang="ja"
-    layout:decorate="~{user/user_layout}">
+    layout:decorate="~{ ${layout} }">
 
 <head>
     <title>集計結果</title>
-    <!-- Chart.js CDN -->
+    <!--/* Chart.js CDN */-->
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 
-    <!-- グラフ描画用スクリプト -->
+    <!--/* グラフ描画用スクリプト */-->
     <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', function () {
             // Thymeleafのループ機能を使って、全設問のデータをJS配列として生成する
@@ -24,7 +24,7 @@
             ];
 
             // 生成されたデータを元にグラフを描画
-            const colors = ['#0d6efd', '#198754', '#ffc107', '#dc3545', '#0dcaf0', '#6610f2', '#d63384', '#fd7e14', '#20c997', '#6c757d'];
+            const colors = ['#5E81AC', '#A3BE8C', '#EBCB8B', '#D08770', '#BF616A', '#B48EAD', '#88C0D0', '#4C566A', '#81A1C1', '#8FBCBB'];
 
             chartDataList.forEach(config => {
                 const ctx = document.getElementById(config.id);
@@ -144,13 +144,8 @@
                                                     th:text="'(' + ${#numbers.formatDecimal(displayPercent, 1, 1)} + '%)'"></span>
                                             </span>
                                         </div>
-                                        <div class="progress" style="height: 10px;">
-                                            <div class="progress-bar" role="progressbar"
-                                                th:style="'width: ' + ${displayPercent} + '%'"
-                                                th:aria-valuenow="${displayPercent}" aria-valuemin="0"
-                                                aria-valuemax="100">
-                                            </div>
-                                        </div>
+                                        <progress class="w-100" style="height: 10px;"
+                                            th:attr="value=${displayPercent}, max=100"></progress>
                                     </div>
                                 </div>
                                 <div class="col-md-5">
