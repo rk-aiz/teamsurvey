@@ -36,6 +36,27 @@
 
                 <div class="card border-0 shadow-sm">
                     <div class="card-body p-4">
+                        <!--/* デモモード用表示 */-->
+                        <div th:if="${@environment.getProperty('app.demo-mode.enabled') == 'true'}" class="mb-4">
+                            <div class="alert alert-info small">
+                                <h6 class="alert-heading fw-bold"><i class="bi bi-info-circle-fill me-1"></i>デモモード</h6>
+                                <p class="mb-2">
+                                    ポートフォリオとして公開しています。<br>
+                                    以下のボタンでゲストとしてログインできます。
+                                </p>
+                                <form th:action="@{/authentication}" method="post">
+                                    <input type="hidden" name="usernameInput"
+                                        th:value="${@environment.getProperty('app.demo-mode.guest-username')}">
+                                    <input type="hidden" name="passwordInput"
+                                        th:value="${@environment.getProperty('app.demo-mode.guest-password')}">
+                                    <button type="submit" class="btn btn-info btn-sm w-100 text-white fw-bold">
+                                        <i class="bi bi-box-arrow-in-right me-1"></i> ゲストログイン
+                                    </button>
+                                </form>
+                            </div>
+                            <hr>
+                        </div>
+
                         <p class="text-muted text-center small mb-4">Please login</p>
 
                         <!--/* エラーメッセージ */-->

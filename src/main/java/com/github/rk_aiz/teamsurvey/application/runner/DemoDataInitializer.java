@@ -2,28 +2,36 @@ package com.github.rk_aiz.teamsurvey.application.runner;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import com.github.rk_aiz.teamsurvey.domain.model.UserAccount;
+import com.github.rk_aiz.teamsurvey.domain.model.AnswerOption;
 import com.github.rk_aiz.teamsurvey.domain.model.Response;
 import com.github.rk_aiz.teamsurvey.domain.model.ResponseDetail;
 import com.github.rk_aiz.teamsurvey.domain.model.Survey;
+import com.github.rk_aiz.teamsurvey.domain.model.Survey.SurveyBuilder;
+import com.github.rk_aiz.teamsurvey.domain.model.UserAccount;
+import com.github.rk_aiz.teamsurvey.domain.model.UserGroup;
+import com.github.rk_aiz.teamsurvey.domain.model.question.FreeResponseQuestion;
 import com.github.rk_aiz.teamsurvey.domain.model.question.MultiChoiceQuestion;
 import com.github.rk_aiz.teamsurvey.domain.model.question.Question;
 import com.github.rk_aiz.teamsurvey.domain.model.question.SingleChoiceQuestion;
 import com.github.rk_aiz.teamsurvey.domain.service.AccountService;
 import com.github.rk_aiz.teamsurvey.domain.service.ResponseService;
 import com.github.rk_aiz.teamsurvey.domain.service.SurveyService;
+import com.github.rk_aiz.teamsurvey.domain.type.Authority;
 import com.github.rk_aiz.teamsurvey.domain.type.QuestionType;
 import com.github.rk_aiz.teamsurvey.domain.type.ResponseStatus;
+import com.github.rk_aiz.teamsurvey.domain.type.ResultVisibility;
 import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
+import com.github.rk_aiz.teamsurvey.infrastructure.repository.SurveyTargetGroupRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,11 +42,21 @@ import lombok.extern.slf4j.Slf4j;
 public class DemoDataInitializer implements CommandLineRunner {
 
     private final SurveyService surveyService;
+    private final SurveyTargetGroupRepository surveyTargetGroupRepository;
     private final ResponseService responseService;
     private final AccountService accountService;
 
     @Value("${spring.sql.init.mode:embedded}")
     private String sqlInitMode;
+
+    @Value("${app.demo-mode.enabled:false}")
+    private boolean demoModeEnabled;
+
+    @Value("${app.demo-mode.guest-username:guest}")
+    private String guestUsername;
+
+    @Value("${app.demo-mode.guest-password:guestpass}")
+    private String guestPassword;
 
     @Override
     public void run(String... args) throws Exception {
@@ -48,10 +66,180 @@ public class DemoDataInitializer implements CommandLineRunner {
             return;
         }
 
-        initializeTestData();
+        if (demoModeEnabled) {
+            createGuestUser();
+        }
+
+        initializeDemoData();
     }
 
-    private void initializeTestData() {
+    private void initializeDemoData() {
+
+        UserGroup allUserGroup = new UserGroup(1, "全社員", Authority.USER, true);
+        UserGroup engineerUserGroup = new UserGroup(2, "エンジニア", Authority.USER, false);
+        UserGroup adminUserGroup = new UserGroup(99, "システム管理者", Authority.ADMIN, true);
+
+        createSurvey(
+        "ITエンジニア意識調査", 
+        ResultVisibility.TARGET_GROUP,
+        List.of(engineerUserGroup),
+        SingleChoiceQuestion.builder()
+                            .displayOrder(1)
+                            .text("Javaは難しいですか？")
+                            .required(true)
+                            .answerOption(AnswerOption.builder()
+                                    .answerOptionId(1)
+                                    .build())
+                            .build(),
+                    SingleChoiceQuestion.builder()
+                            .displayOrder(2)
+                            .text("Spring Frameworkは好きですか？")
+                            .required(true)
+                            .answerOption(AnswerOption.builder()
+                                    .answerOptionId(2)
+                                    .build())
+                            .build());
+
+        createSurvey(
+        "サービス満足度調査", 
+        ResultVisibility.ALL_USER,
+        List.of(allUserGroup),
+        SingleChoiceQuestion.builder()
+                            .displayOrder(1)
+                            .text("今回のサービスを利用して満足しましたか？")
+                            .required(true)
+                            .answerOption(AnswerOption.builder()
+                                    .answerOptionId(2)
+                                    .build())
+                            .build(),
+                    SingleChoiceQuestion.builder()
+                            .displayOrder(2)
+                            .text("サービスの品質を5段階で評価してください")
+                            .required(true)
+                            .answerOption(AnswerOption.builder()
+                                    .answerOptionId(3)
+                                    .build())
+                            .build(),
+                    FreeResponseQuestion.builder()
+                            .displayOrder(3)
+                            .text("その他、ご意見・ご要望があればご記入ください")
+                            .build());
+
+        createSurvey(
+        "【下書き】新規企画アンケート", 
+        ResultVisibility.TARGET_GROUP,
+            List.of(allUserGroup));
+
+        createSurvey(
+        "社内イベント感想", 
+        ResultVisibility.ALL_USER,
+        List.of(allUserGroup),
+                    FreeResponseQuestion.builder()
+                            .displayOrder(1)
+                            .text("イベントで最も印象に残ったことは何ですか？")
+                            .required(true)
+                            .build());
+
+        createSurvey(
+        "新入社員研修の感想", 
+        ResultVisibility.TARGET_GROUP,
+        List.of(engineerUserGroup),
+        SingleChoiceQuestion.builder()
+                            .displayOrder(1)
+                            .text("研修全体の満足度を教えてください")
+                            .required(true)
+                            .answerOption(AnswerOption.builder()
+                                    .answerOptionId(3)
+                                    .build())
+                            .build(),
+                    SingleChoiceQuestion.builder()
+                            .displayOrder(2)
+                            .text("研修の内容は難しかったですか？")
+                            .required(true)
+                            .answerOption(AnswerOption.builder()
+                                    .answerOptionId(1)
+                                    .build())
+                            .build(),
+                    FreeResponseQuestion.builder()
+                            .displayOrder(3)
+                            .text("研修で学んだことや感想を自由に記入してください")
+                            .build());
+
+        createSurvey(
+        "キャリア・昇進に関するアンケート", 
+        ResultVisibility.ADMIN_ONLY,
+        List.of(allUserGroup),
+        SingleChoiceQuestion.builder()
+                            .displayOrder(1)
+                            .text("将来、管理職(マネージャー)を目指したいですか？")
+                            .required(true)
+                            .answerOption(AnswerOption.builder()
+                                    .answerOptionId(2)
+                                    .build())
+                            .build(),
+                    SingleChoiceQuestion.builder()
+                            .displayOrder(2)
+                            .text("現在の評価制度やキャリアパスに満足していますか？")
+                            .required(true)
+                            .answerOption(AnswerOption.builder()
+                                    .answerOptionId(3)
+                                    .build())
+                            .build());
+
+        createSurvey(
+        "春のお花見イベント参加確認", 
+        ResultVisibility.ALL_USER,
+        List.of(allUserGroup),
+        SingleChoiceQuestion.builder()
+                            .displayOrder(1)
+                            .text("4/10(金)開催のお花見イベントに参加しますか？")
+                            .required(true)
+                            .answerOption(AnswerOption.builder()
+                                    .answerOptionId(2)
+                                    .build())
+                            .build(),
+                    FreeResponseQuestion.builder()
+                            .displayOrder(2)
+                            .text("アレルギーや食べたいものがあれば記入してください")
+                            .build());
+
+        createSurvey(
+        "開発ツールと技術関心に関する調査", 
+        ResultVisibility.ADMIN_ONLY,
+        List.of(engineerUserGroup),
+        MultiChoiceQuestion.builder()
+                            .displayOrder(1)
+                            .text("業務で主に使用しているデバイス・環境をすべて教えてください(複数選択可)")
+                            .required(true)
+                            .answerOption(AnswerOption.builder()
+                                    .answerOptionId(13)
+                                    .build())
+                            .build(),
+                    MultiChoiceQuestion.builder()
+                            .displayOrder(2)
+                            .text("現在の業務で感じている課題を選択してください(複数選択可)")
+                            .required(true)
+                            .answerOption(AnswerOption.builder()
+                                    .answerOptionId(15)
+                                    .build())
+                            .build(),
+                    MultiChoiceQuestion.builder()
+                            .displayOrder(3)
+                            .text("今後スキルアップしたい分野は？(複数選択可)")
+                            .required(true)
+                            .answerOption(AnswerOption.builder()
+                                    .answerOptionId(14)
+                                    .build())
+                            .build(), 
+                    MultiChoiceQuestion.builder()
+                            .displayOrder(4)
+                            .text("技術情報の主な入手元は？(複数選択可)")
+                            .required(true)
+                            .answerOption(AnswerOption.builder()
+                                    .answerOptionId(9)
+                                    .build())
+                            .build());
+
         log.info("初期データのアンケートステータス更新を開始します...");
 
         // ID=1: ITエンジニア意識調査
@@ -83,6 +271,27 @@ public class DemoDataInitializer implements CommandLineRunner {
         createTestResponses();
 
         log.info("初期データのアンケートステータス更新が完了しました。");
+    }
+
+    private void createSurvey(
+            String title, 
+            ResultVisibility resultVisibility,
+            List<UserGroup> targetGroups,
+            Question... questions
+            ) {
+
+        SurveyBuilder sb = Survey.builder()
+                .title(title)
+                .status(SurveyStatus.DRAFT)
+                .resultVisibility(resultVisibility)
+                .targetGroups(targetGroups)
+                .questions(Arrays.asList(questions));
+
+        Survey survey = surveyService.saveSurvey(sb.build());
+
+        surveyTargetGroupRepository.updateTargetGroups(
+                survey.getId(),
+                targetGroups.stream().map(UserGroup::getId).toList());
     }
 
     private boolean publishSurvey(Integer id) {
@@ -223,6 +432,37 @@ public class DemoDataInitializer implements CommandLineRunner {
 
         } catch (Exception e) {
             log.error("Failed to create response for survey {} user {}: {}", surveyId, username, e.getMessage());
+        }
+    }
+
+    /**
+     * デモモード用のゲストユーザーを作成します。
+     */
+    private void createGuestUser() {
+        if (accountService.findAccountByUsername(guestUsername).isPresent()) {
+            return;
+        }
+
+        log.info("デモモード: ゲストユーザー({})を作成します。", guestUsername);
+
+        UserGroup allUserGroup = new UserGroup(1, "全社員", Authority.USER, true);
+        UserGroup engineerUserGroup = new UserGroup(2, "エンジニア", Authority.USER, false);
+
+        try {
+            UserAccount guest = new UserAccount(
+                    guestUsername,
+                    "", // パスワードはsaveAccount内で設定(ハッシュ化)されるため、ここではダミー
+                    "guest@example.com",
+                    "ゲストユーザー",
+                    LocalDateTime.now(),
+                    LocalDateTime.now(),
+                    true,
+                    List.of(allUserGroup, engineerUserGroup)); // グループ設定が必要な場合は別途UserGroupService等で取得して設定
+
+            // AccountService内でハッシュ化されるため、平文のパスワードを渡す
+            accountService.saveAccount(guest, guestPassword, true);
+        } catch (Exception e) {
+            log.error("ゲストユーザーの作成に失敗しました: {}", e.getMessage());
         }
     }
 }

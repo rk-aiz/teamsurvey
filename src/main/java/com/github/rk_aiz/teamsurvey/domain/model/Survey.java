@@ -3,7 +3,6 @@ package com.github.rk_aiz.teamsurvey.domain.model;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -120,7 +119,7 @@ public class Survey {
     /**
      * 設問リストを返します。nullの場合は空のリストを作成して返します。
      */
-    public Collection<Question> getQuestions() {
+    public List<Question> getQuestions() {
         if (this.questions == null) {
             this.setQuestions(new ArrayList<>());
         }

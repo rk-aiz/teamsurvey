@@ -12,6 +12,7 @@ import com.github.rk_aiz.teamsurvey.infrastructure.entity.SurveyEntity;
 import com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.SurveyMapper;
 import com.github.rk_aiz.teamsurvey.infrastructure.repository.QuestionRepository;
 import com.github.rk_aiz.teamsurvey.infrastructure.repository.SurveyRepository;
+import com.github.rk_aiz.teamsurvey.infrastructure.repository.SurveyTargetGroupRepository;
 import com.github.rk_aiz.teamsurvey.infrastructure.repository.UserGroupRepository;
 
 import lombok.RequiredArgsConstructor;
