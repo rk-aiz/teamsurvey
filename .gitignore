@@ -52,3 +52,6 @@ Thumbs.db
 # ログなど
 *.log
 
+# SchemaSpy generated files
+/docs/schema/
+

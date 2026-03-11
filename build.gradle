@@ -19,6 +19,8 @@ configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
+    // SchemaSpy実行用の依存関係設定を定義
+    schemaspy
 }
 
 repositories {
@@ -69,6 +71,10 @@ dependencies {
     
     // H2データベース(テスト実行時のみ使用)
     testRuntimeOnly 'com.h2database:h2'
+
+    // SchemaSpy本体とドライバ (ドキュメント生成用)
+    schemaspy 'org.schemaspy:schemaspy:6.2.4'
+    schemaspy 'org.postgresql:postgresql:42.7.3'
 }
 
 tasks.named('test') {
@@ -79,4 +85,29 @@ tasks.withType(JavaCompile) {
 	options.compilerArgs += [
 		'-Amapstruct.verbose=true'
 	]
+}
+
+// SchemaSpyを実行するタスク
+tasks.register('generateDbDocs', JavaExec) {
+    group = 'documentation'
+    description = 'Generates database documentation using SchemaSpy'
+    classpath = configurations.schemaspy
+    mainClass = 'org.schemaspy.Main'
+
+    // 出力先ディレクトリがない場合は作成
+    doFirst {
+        file('docs/schema').mkdirs()
+    }
+
+    args = [
+        '-t', 'pgsql',
+        '-db', 'codeserverdb',      // application-codeserver.properties の設定を使用
+        '-host', 'db',              // コンテナ間通信のためホスト名は 'db'
+        '-port', '5432',
+        '-u', 'codeservertest',
+        '-p', 'codeserverpass',
+        '-s', 'public',
+        '-o', 'docs/schema',
+        '-font', 'IPAGothic'        // 日本語フォント指定
+    ]
 }
