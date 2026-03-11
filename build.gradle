@@ -99,13 +99,19 @@ tasks.register('generateDbDocs', JavaExec) {
         file('docs/schema').mkdirs()
     }
 
+    // 環境に応じて接続先を変更できるようにプロパティ化 (デフォルトは開発環境用)
+    def dbName = project.findProperty('dbName') ?: 'codeserverdb'
+    def dbHost = project.findProperty('dbHost') ?: 'db'
+    def dbPort = project.findProperty('dbPort') ?: '5432'
+    def dbUser = project.findProperty('dbUser') ?: 'codeservertest'
+    def dbPass = project.findProperty('dbPass') ?: 'codeserverpass'
     args = [
         '-t', 'pgsql',
-        '-db', 'codeserverdb',      // application-codeserver.properties の設定を使用
-        '-host', 'db',              // コンテナ間通信のためホスト名は 'db'
-        '-port', '5432',
-        '-u', 'codeservertest',
-        '-p', 'codeserverpass',
+        '-db', dbName,
+        '-host', dbHost,
+        '-port', dbPort,
+        '-u', dbUser,
+        '-p', dbPass,
         '-s', 'public',
         '-o', 'docs/schema',
         '-font', 'IPAGothic'        // 日本語フォント指定
