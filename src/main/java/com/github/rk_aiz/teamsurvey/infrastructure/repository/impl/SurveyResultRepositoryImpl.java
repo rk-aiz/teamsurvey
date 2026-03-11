@@ -6,7 +6,6 @@ import java.util.function.Consumer;
 
 import org.springframework.stereotype.Repository;
 
-import com.github.rk_aiz.teamsurvey.domain.model.Response;
 import com.github.rk_aiz.teamsurvey.domain.model.result.SurveyAggregation;
 import com.github.rk_aiz.teamsurvey.infrastructure.mapper.mybatis.SurveyResultMapper;
 import com.github.rk_aiz.teamsurvey.infrastructure.repository.SurveyResultRepository;

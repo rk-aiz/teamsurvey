@@ -7,7 +7,6 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.ResultHandler;
 
-import com.github.rk_aiz.teamsurvey.domain.model.Response;
 import com.github.rk_aiz.teamsurvey.domain.model.result.QuestionAggregation;
 import com.github.rk_aiz.teamsurvey.domain.model.result.QuestionAggregation.OptionStat;
 import com.github.rk_aiz.teamsurvey.domain.model.result.SurveyAggregation;

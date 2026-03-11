@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,14 +27,9 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class AggregationController {
 
-    /** 定数 */
-    private static final String MESSAGE = "message";
-    private static final String REDIRECT_TO_LIST = "redirect:/admin/response/list";
-
     /** DI */
     private final SurveyService surveyService;
     private final SurveyResultService surveyResultService;
-    private final SmartValidator validator;
 
     /**
      * 集計一覧画面を表示します

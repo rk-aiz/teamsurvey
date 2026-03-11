@@ -11,8 +11,6 @@ import com.github.rk_aiz.teamsurvey.application.form.LoginForm;
 import com.github.rk_aiz.teamsurvey.domain.service.AccountService;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestParam;
-
 
 @Controller
 @RequestMapping("/auth")
@@ -26,9 +24,9 @@ public class LoginController {
      * すでにログインしている場合はメニュー画面へリダイレクトします。
      */
     @GetMapping
-    public String showLogin(
-            @ModelAttribute LoginForm loginForm,
-            Principal principal) {
+    public String showLogin(@ModelAttribute LoginForm loginForm, Principal principal) {
+
+        // ログイン済みの場合はメニュー画面へリダイレクトする
         if (principal != null) {
             return "redirect:/";
         }
@@ -39,5 +37,5 @@ public class LoginController {
         }
 
         return "login";
-    }    
+    }
 }

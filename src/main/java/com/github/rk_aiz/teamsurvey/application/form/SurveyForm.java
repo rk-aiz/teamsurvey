@@ -3,13 +3,7 @@ package com.github.rk_aiz.teamsurvey.application.form;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -21,6 +15,10 @@ import com.github.rk_aiz.teamsurvey.domain.model.UserGroup;
 import com.github.rk_aiz.teamsurvey.domain.type.ResultVisibility;
 import com.github.rk_aiz.teamsurvey.domain.type.SurveyStatus;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

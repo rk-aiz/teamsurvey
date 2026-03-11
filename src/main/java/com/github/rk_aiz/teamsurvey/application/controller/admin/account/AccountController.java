@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.SmartValidator;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,7 +52,6 @@ public class AccountController {
     private final AccountService accountService;
     private final AccountFormMapper accountFormMapper;
     private final UserGroupService userGroupService;
-    private final SmartValidator validator;
 
     /**
      * アカウント一覧画面を表示します

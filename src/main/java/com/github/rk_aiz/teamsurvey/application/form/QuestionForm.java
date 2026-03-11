@@ -1,11 +1,5 @@
 package com.github.rk_aiz.teamsurvey.application.form;
 
-import java.util.Optional;
-
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-
 import org.springframework.beans.BeanUtils;
 
 import com.github.rk_aiz.teamsurvey.application.validation.OnDraftSurvey;
@@ -18,6 +12,9 @@ import com.github.rk_aiz.teamsurvey.domain.model.question.SingleChoiceQuestion;
 import com.github.rk_aiz.teamsurvey.domain.type.QuestionType;
 import com.github.rk_aiz.teamsurvey.util.StringUtils;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

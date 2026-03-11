@@ -2,6 +2,7 @@ package com.github.rk_aiz.teamsurvey.domain.service.impl;
 
 import java.util.Collection;
 
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -31,7 +32,10 @@ public class LoginUserDatailsServiceImpl implements UserDetailsService {
                     username + " => 指定しているユーザー名は存在しません");
         });
 
-        // TODO : UserAccount.isEnabled == false の処理
+        if (!loginUser.enabled()) {
+            throw new DisabledException(
+                    username + " => 指定しているユーザーは有効ではありません");
+        }
 
         Collection<? extends GrantedAuthority> authorities = loginUser
                 .assignedGroups()

@@ -4,12 +4,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import com.github.rk_aiz.teamsurvey.domain.model.Response;
 import com.github.rk_aiz.teamsurvey.domain.model.result.SurveyAggregation;
 
 /**
  * アンケート情報の永続化・検索を行うリポジトリのインターフェース。
- * (実装はインフラ層に配置する)
  */
 public interface SurveyResultRepository {
 

@@ -1,7 +1,6 @@
 package com.github.rk_aiz.teamsurvey.infrastructure.entity;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;

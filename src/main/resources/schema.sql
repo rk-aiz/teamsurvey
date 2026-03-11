@@ -58,9 +58,7 @@ CREATE TABLE authentications (
 	updated_at timestamp without time zone,
 	--- 有効フラグ (論理削除用: TRUE=有効, FALSE=無効/削除済み)
 	enabled BOOLEAN NOT NULL DEFAULT TRUE
-
 );
-
 
 -- ユーザーグループテーブル
 CREATE TABLE user_groups (

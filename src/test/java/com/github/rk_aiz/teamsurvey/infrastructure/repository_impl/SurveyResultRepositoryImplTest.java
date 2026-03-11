@@ -8,7 +8,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,9 +27,6 @@ class SurveyResultRepositoryImplTest {
 
     @Autowired
     private SurveyResultRepositoryImpl surveyResultRepository;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
 
     @Test
     @DisplayName("集計結果リストが正しく取得されること(DB接続あり)")

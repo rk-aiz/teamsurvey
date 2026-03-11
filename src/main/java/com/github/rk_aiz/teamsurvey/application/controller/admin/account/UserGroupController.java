@@ -43,7 +43,7 @@ public class UserGroupController {
     private final UserGroupService userGroupService;
 
     /**
-     * ユーザーグループ情報を保存します TODO : システムグループ関連の処理、UIの変更など
+     * ユーザーグループ情報を保存します
      */
     @PostMapping("/save")
     public String save(

@@ -45,6 +45,7 @@ public class DemoDataInitializer implements CommandLineRunner {
     private final SurveyTargetGroupRepository surveyTargetGroupRepository;
     private final ResponseService responseService;
     private final AccountService accountService;
+    private final CsvDemoDataLoader csvDemoDataLoader; // 新規追加
 
     @Value("${spring.sql.init.mode:embedded}")
     private String sqlInitMode;
@@ -70,11 +71,16 @@ public class DemoDataInitializer implements CommandLineRunner {
             createGuestUser();
         }
 
-        initializeDemoData();
+        // CSVベースのデータロードへ移行
+        // initializeDemoData(); 
+        // csvDemoDataLoader.loadAll();
+        
+        // 複雑な回答データなどは、CSV化が難しければコードで補完することも検討
+        // createTestResponses(); 
     }
 
+    // 以下のハードコードされた初期化メソッドは、CSV移行完了後に削除可能です
     private void initializeDemoData() {
-
         UserGroup allUserGroup = new UserGroup(1, "全社員", Authority.USER, true);
         UserGroup engineerUserGroup = new UserGroup(2, "エンジニア", Authority.USER, false);
         UserGroup adminUserGroup = new UserGroup(99, "システム管理者", Authority.ADMIN, true);
