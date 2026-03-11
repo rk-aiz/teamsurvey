@@ -72,4 +72,4 @@ docker-compose down
 
 - **[基本設計書](./docs/design/基本設計書.xlsx)**
 
-- **[データベース定義書](./docs/schema/DB定義書.xlsx)**
+- **[データベース定義(SchemaSpy)](https://rk-aiz.github.io/teamsurvey/index.html)**
